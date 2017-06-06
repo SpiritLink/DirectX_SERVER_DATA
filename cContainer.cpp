@@ -1,10 +1,9 @@
 #include "stdafx.h"
 #include "cContainer.h"
-#include "cPlayer.h"
-#include "cStuff.h"
-#include "cObject.h"
 
 cContainer::cContainer()
+	: m_dwPlayer1Time(0)
+	, m_dwPlayer2Time(0)
 {
 }
 
@@ -36,10 +35,19 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 		m_cPlayer1.SetPosition(x, y, z, Angle);
 		m_dwPlayer1Time = GetTickCount();
 	}
-	
-	
 }
 
+ST_PLAYER_POSITION cContainer::GetData(int nIndex)
+{
+	float x, y, z, Angle;
+	if (nIndex == 1)
+		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
+	if (nIndex == 2)
+		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
+	ST_PLAYER_POSITION result(x, y, z, Angle);
+	sprintf(result.szRoomName, "%s", "FROM SERVER");
+	return result;
+}
 
 void cContainer::SaveData()
 {

@@ -110,6 +110,14 @@ unsigned int _stdcall SEND_Position(void * arg)
 	int strLen = 0;
 	ST_PLAYER_POSITION stPosition;
 	stPosition = g_pDataManager->GetPlayerData(string(stData.szRoomName), stData.nPlayerIndex);
+	
+	// >> :
+	string text = "FROM SERVER";
+	sprintf(stPosition.szRoomName, "%s", text.c_str());
+
+	// << :
+
+
 
 	if (hClntSock != SOCKET_ERROR)
 	{

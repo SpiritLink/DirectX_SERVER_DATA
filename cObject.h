@@ -9,6 +9,7 @@ protected:
 public:
 	cObject();
 	virtual ~cObject();
-	virtual void SetPosition(float x, float y, float z, float Angle);
+	void SetPosition(IN float x, IN float y, IN float z, IN float Angle);
+	void GetPosition(OUT float* x, OUT float* y, OUT float* z, OUT float* Angle);
 };
 

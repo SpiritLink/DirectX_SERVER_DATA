@@ -1,6 +1,6 @@
 #pragma once
-class cPlayer;
-class cStuff;
+#include "cPlayer.h"
+#include "cStuff.h"
 
 class cContainer
 {
@@ -17,6 +17,7 @@ public:
 
 	void Setup(string key);
 	void UpdateData(ST_PLAYER_POSITION stRecv);
+	ST_PLAYER_POSITION GetData(int nIndex);
 	void SaveData();
 };
 

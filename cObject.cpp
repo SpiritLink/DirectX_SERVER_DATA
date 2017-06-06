@@ -16,10 +16,19 @@ cObject::~cObject()
 }
 
 
-void cObject::SetPosition(float x, float y, float z, float Angle)
+void cObject::SetPosition(IN float x, IN float y, IN float z, IN float Angle)
 {
 	fX = x;
 	fY = y;
 	fZ = z;
 	fAngle = Angle;
 }
+
+void cObject::GetPosition(OUT float* x, OUT float* y, OUT float* z, OUT float* Angle)
+{
+	*x = fX;
+	*y = fY;
+	*z = fZ;
+	*Angle = fAngle;
+}
+
