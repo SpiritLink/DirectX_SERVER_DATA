@@ -7,17 +7,20 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "targetver.h"
 
-#include <stdio.h>
-#include <tchar.h>
+#include <direct.h>
+#include <errno.h>
+#include <fstream>
 #include <iostream>
+#include <map>
+#include <process.h>
+#include <stdio.h>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
+#include <tchar.h>
+#include <time.h>
 #include <WinSock2.h>
 #include <Windows.h>
-#include <process.h>
-#include <map>
-#include <time.h>
 
 #define MAX_CLNT 256
 #define BUF_SIZE 100
@@ -43,6 +46,8 @@ protected: varType varName;\
 public: inline varType Get##funName(void) const { return varName; }\
 public: inline void Set##funName(varType var) { varName = var; }
 
+#define SAFE_DELETE(p) {if(p) delete p; p = NULL;}
+
 // TODO: 프로그램에 필요한 구조체는 여기에서 참조합니다.
 struct ST_PLAYER_POSITION
 {
@@ -56,13 +61,6 @@ struct ST_PLAYER_POSITION
 	float fAngle;
 	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
 	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
-};
-
-struct ST_SOCKET_POSITION
-{
-	SOCKET pSocket;
-	char szRoomName[50] = { 0, };
-	int  nPlayerIndex;
 };
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.

@@ -2,7 +2,6 @@
 #include "cDataManager.h"
 #include "cContainer.h"
 
-HANDLE hMutex;
 cDataManager::cDataManager()
 	:IsQuit(false)
 {
@@ -14,8 +13,6 @@ cDataManager::~cDataManager()
 }
 void cDataManager::Setup()
 {
-	hMutex = CreateMutex(NULL, FALSE, NULL);
-	int a = 3;
 }
 
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
@@ -47,4 +44,13 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	}
 
 	return stResult;
+}
+
+void cDataManager::Destroy()
+{
+	for each(auto p in m_mapContainer)
+	{
+		p.second->SaveData();
+		SAFE_DELETE(p.second);
+	}
 }

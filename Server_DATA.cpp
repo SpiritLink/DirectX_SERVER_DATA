@@ -4,7 +4,7 @@
 // >> : 구현되지 못한 부분입니다.
 HANDLE hMutex_DATA;
 
-unsigned int _stdcall SEND_PROCESS(void * arg);
+unsigned int _stdcall PROCESS_RECV(void * arg);
 CRITICAL_SECTION CS_DATA;
 
 int nCnt = 0;
@@ -45,9 +45,9 @@ void Server_DATA::Setup()
 		if (hClntSock > 0)
 		{
 			cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
-			hThread = (HANDLE)_beginthreadex(NULL, 0, SEND_PROCESS, (void*)&hClntSock, 0, NULL);
+			hThread = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV, (void*)&hClntSock, 0, NULL);
 			nCnt++;
-			cout << nCnt << endl;
+			cout << "Add Thread Count : " << nCnt << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -71,13 +71,11 @@ void Server_DATA::Destroy()
 	closesocket(hServSock);
 	WSACleanup();
 }
-unsigned int _stdcall SEND_PROCESS(void * arg)
+unsigned int _stdcall PROCESS_RECV(void * arg)
 {
 	SOCKET hClntSock = *((SOCKET*)arg);	/// << : SOCKET 정보 받아옴
 	int strLen = 0;
 	ST_PLAYER_POSITION RecvData;		/// << : 데이터 수신 버퍼
-	ST_SOCKET_POSITION stSendData;		/// << : 소켓과 데이터 정보를 담은 구조체
-	stSendData.pSocket = hClntSock;
 	HANDLE hProcess = NULL;
 
 	/* 정상적인 연결일때 */
@@ -87,14 +85,13 @@ unsigned int _stdcall SEND_PROCESS(void * arg)
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
 		g_pDataManager->ReceiveData(RecvData);
 		ReleaseMutex(hMutex_DATA);					// << : Release Mutex
-		sprintf(stSendData.szRoomName, "%s", RecvData.szRoomName);	// << : copy Room Name
-		stSendData.nPlayerIndex = RecvData.nPlayerIndex;																					
 	}
 	/* 비정상적인 연결일때 */
 	else
 	{
 		closesocket(hClntSock);
 		nCnt--;
+		cout << "Sub Thread Count : " << nCnt << endl;
 		return 0;
 	}
 
@@ -104,14 +101,13 @@ unsigned int _stdcall SEND_PROCESS(void * arg)
 		{
 			ST_PLAYER_POSITION stPosition;
 			stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
-			string text = "FROM SERVER";
-			sprintf(RecvData.szRoomName, "%s", text.c_str());
+			sprintf(RecvData.szRoomName, "%s", "FROM_SERVER");
 			send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
 			cout << "SEND_Position" << endl;
 		}
 		break;
 	}
 	nCnt--;
-	cout << nCnt << endl;
+	cout << "Sub Thread Count : " << nCnt << endl;
 	return 0;
 }

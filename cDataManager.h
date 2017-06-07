@@ -16,5 +16,6 @@ public:
 	void Setup();
 	void ReceiveData(ST_PLAYER_POSITION stRecv);
 	ST_PLAYER_POSITION GetPlayerData(string key, int nIndex);
+	void Destroy();
 };
 
