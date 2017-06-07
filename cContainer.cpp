@@ -23,28 +23,30 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	float x = stRecv.fX;
 	float y = stRecv.fY;
 	float z = stRecv.fZ;
-	float Angle = stRecv.fAngle;
+	float AngleX = stRecv.fAngleX;
+	float AngleY = stRecv.fAngleY;
+	float AngleZ = stRecv.fAngleZ;
 
 	if (stRecv.nPlayerIndex == 1)
 	{
-		m_cPlayer2.SetPosition(x, y, z, Angle);
+		m_cPlayer2.SetPosition(x, y, z, AngleX, AngleY, AngleZ);
 		m_dwPlayer2Time = GetTickCount();
 	}
 	else
 	{
-		m_cPlayer1.SetPosition(x, y, z, Angle);
+		m_cPlayer1.SetPosition(x, y, z, AngleX, AngleY, AngleZ);
 		m_dwPlayer1Time = GetTickCount();
 	}
 }
 
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
-	float x, y, z, Angle;
+	float x, y, z, AngleX, AngleY, AngleZ;
 	if (nIndex == 1)
-		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
+		m_cPlayer1.GetPosition(&x, &y, &z, &AngleX, &AngleY, &AngleZ);
 	if (nIndex == 2)
-		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
-	ST_PLAYER_POSITION result(x, y, z, Angle);
+		m_cPlayer2.GetPosition(&x, &y, &z, &AngleX, &AngleY, &AngleZ);
+	ST_PLAYER_POSITION result(x, y, z, AngleX, AngleY, AngleZ);
 	sprintf(result.szRoomName, "%s", "FROM SERVER");
 	return result;
 }
@@ -69,20 +71,24 @@ void cContainer::SaveData()
 	}
 
 	// << : 데이터 저장
-	float x, y, z, angle;
+	float x, y, z, angleX, angleY, angleZ;
 
 	outFile << m_sRoomName << endl;
-	m_cPlayer1.GetPosition(&x, &y, &z, &angle);
+	m_cPlayer1.GetPosition(&x, &y, &z, &angleX, &angleY, &angleZ);
 	outFile << "Player1 X " << x << endl;
 	outFile << "Player1 Y " << y << endl;
 	outFile << "Player1 Z " << z << endl;
-	outFile << "Player1 Angle " << angle << endl;
+	outFile << "Player1 AngleX " << angleX << endl;
+	outFile << "Player1 AngleY " << angleY << endl;
+	outFile << "Player1 AngleZ " << angleZ << endl;
 
-	m_cPlayer2.GetPosition(&x, &y, &z, &angle);
+	m_cPlayer2.GetPosition(&x, &y, &z, &angleX, &angleY, &angleZ);
 	outFile << "Player2 X " << x << endl;
 	outFile << "Player2 Y " << y << endl;
 	outFile << "Player2 Z " << z << endl;
-	outFile << "Player2 Angle " << angle << endl;
+	outFile << "Player2 AngleX " << angleX << endl;
+	outFile << "Player2 AngleY " << angleY << endl;
+	outFile << "Player2 AngleZ " << angleZ << endl;
 
 	outFile.close();
 }
