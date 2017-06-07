@@ -45,6 +45,13 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 
 	return stResult;
 }
+void cDataManager::SaveAllData()
+{
+	for each(auto p in m_mapContainer)
+	{
+		p.second->SaveData();
+	}
+}
 
 void cDataManager::Destroy()
 {

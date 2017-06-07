@@ -55,15 +55,21 @@ void Server_DATA::Setup()
 
 void Server_DATA::Update()
 {
+	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
+	{
+		cout << nCnt << endl;
+	}
+	
+	if (GetAsyncKeyState(VK_NUMPAD8) & 0x0001)
+	{
+		g_pDataManager->SaveAllData();
+	}
 	if (GetAsyncKeyState(VK_NUMPAD9) & 0x0001)
 	{
 		g_pTime->SetQuit(true);
 	}
 
-	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
-	{
-		cout << nCnt << endl;
-	}
+
 }
 
 void Server_DATA::Destroy()
