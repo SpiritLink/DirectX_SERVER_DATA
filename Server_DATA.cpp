@@ -5,9 +5,6 @@
 HANDLE hMutex_DATA;
 
 unsigned int _stdcall SEND_PROCESS(void * arg);
-unsigned int _stdcall SEND_Position(void * arg);
-unsigned int _stdcall SEND_ItemObject(void* arg);
-unsigned int _stdcall SEND_All(void* arg);
 CRITICAL_SECTION CS_DATA;
 
 int nCnt = 0;
@@ -78,82 +75,43 @@ unsigned int _stdcall SEND_PROCESS(void * arg)
 {
 	SOCKET hClntSock = *((SOCKET*)arg);	/// << : SOCKET 정보 받아옴
 	int strLen = 0;
-	ST_PLAYER_POSITION stPosition;		/// << : 데이터 수신 버퍼
+	ST_PLAYER_POSITION RecvData;		/// << : 데이터 수신 버퍼
 	ST_SOCKET_POSITION stSendData;		/// << : 소켓과 데이터 정보를 담은 구조체
 	stSendData.pSocket = hClntSock;
 	HANDLE hProcess = NULL;
 
-	///* 정상적인 연결일때 요청을 처리합니다 */
-	if (strLen = recv(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0) > 0)
+	/* 정상적인 연결일때 */
+	strLen = recv(hClntSock, (char*)&RecvData, sizeof(ST_PLAYER_POSITION), 0);
+	if ( strLen != 0 && strLen != -1)
 	{
-		///* 수신한 데이터를 적용합니다. */
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
-		g_pDataManager->ReceiveData(stPosition);
+		g_pDataManager->ReceiveData(RecvData);
 		ReleaseMutex(hMutex_DATA);					// << : Release Mutex
-		sprintf(stSendData.szRoomName, "%s", stPosition.szRoomName);	// << : copy Room Name
-		stSendData.nPlayerIndex = stPosition.nPlayerIndex;
-																					
-		switch (stPosition.nFROM_CLIENT)			///* 클라이언트가 원하는 데이터에 맞춰 스레드로 전송합니다. */			
-		{
-		case 0:
-			hProcess = (HANDLE)_beginthreadex(NULL, 0, SEND_Position, (void*)&stSendData, 0, NULL);
-			break;
-		case 1:
-			hProcess = (HANDLE)_beginthreadex(NULL, 0, SEND_ItemObject, (void*)&stSendData, 0, NULL);
-			break;
-		case 2:
-			hProcess = (HANDLE)_beginthreadex(NULL, 0, SEND_All, (void*)&stSendData, 0, NULL);
-			break;
-		}
+		sprintf(stSendData.szRoomName, "%s", RecvData.szRoomName);	// << : copy Room Name
+		stSendData.nPlayerIndex = RecvData.nPlayerIndex;																					
 	}
-	///* 비정상적인 연결을 해제합니다. */
+	/* 비정상적인 연결일때 */
 	else
 	{
 		closesocket(hClntSock);
+		nCnt--;
+		return 0;
 	}
 
-	WaitForSingleObject(hProcess, WAIT_MILLISECOND);	// << : 5초간 기다려도 처리되지 않으면 종료합니다.
-	CloseHandle(hProcess);
+	switch (RecvData.nFROM_CLIENT)			///* 클라이언트가 원하는 데이터에 맞춰 스레드로 전송합니다. */			
+	{
+	case 0:
+		{
+			ST_PLAYER_POSITION stPosition;
+			stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
+			string text = "FROM SERVER";
+			sprintf(RecvData.szRoomName, "%s", text.c_str());
+			send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
+			cout << "SEND_Position" << endl;
+		}
+		break;
+	}
 	nCnt--;
 	cout << nCnt << endl;
-	return 0;
-}
-
-unsigned int _stdcall SEND_Position(void * arg)
-{
-	ST_SOCKET_POSITION stData = *((ST_SOCKET_POSITION*)arg);	// << : type conversion
-	SOCKET hClntSock = stData.pSocket;
-	int strLen = 0;
-	ST_PLAYER_POSITION stPosition;
-	stPosition = g_pDataManager->GetPlayerData(string(stData.szRoomName), stData.nPlayerIndex);
-	
-	// >> :
-	string text = "FROM SERVER";
-	sprintf(stPosition.szRoomName, "%s", text.c_str());
-
-	// << :
-
-
-
-	if (hClntSock != SOCKET_ERROR)
-	{
-		send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
-		cout << "SEND_Position" << endl;
-	}
-	closesocket(hClntSock);				// << : Close Socket
-	return 0;
-}
-unsigned int _stdcall SEND_ItemObject(void* arg)
-{
-	SOCKET hClntSock = *((SOCKET*)arg);	// << : Init Socket
-	closesocket(hClntSock);				// << : Close Socket
-	return 0;
-}
-
-unsigned int _stdcall SEND_All(void* arg)
-{
-	SOCKET hClntSock = *((SOCKET*)arg);	// << : Init Socket
-	closesocket(hClntSock);				// << : Close Socket
-
 	return 0;
 }
