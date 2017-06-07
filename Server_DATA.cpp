@@ -10,6 +10,8 @@ unsigned int _stdcall SEND_ItemObject(void* arg);
 unsigned int _stdcall SEND_All(void* arg);
 CRITICAL_SECTION CS_DATA;
 
+int nCnt = 0;
+
 Server_DATA::Server_DATA()
 {
 }
@@ -47,12 +49,24 @@ void Server_DATA::Setup()
 		{
 			cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
 			hThread = (HANDLE)_beginthreadex(NULL, 0, SEND_PROCESS, (void*)&hClntSock, 0, NULL);
+			nCnt++;
+			cout << nCnt << endl;
 		}
+		if (g_pTime->GetQuit()) break;
 	}
 }
 
 void Server_DATA::Update()
 {
+	if (GetAsyncKeyState(VK_NUMPAD9) & 0x0001)
+	{
+		g_pTime->SetQuit(true);
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
+	{
+		cout << nCnt << endl;
+	}
 }
 
 void Server_DATA::Destroy()
@@ -100,6 +114,8 @@ unsigned int _stdcall SEND_PROCESS(void * arg)
 
 	WaitForSingleObject(hProcess, WAIT_MILLISECOND);	// << : 5초간 기다려도 처리되지 않으면 종료합니다.
 	CloseHandle(hProcess);
+	nCnt--;
+	cout << nCnt << endl;
 	return 0;
 }
 

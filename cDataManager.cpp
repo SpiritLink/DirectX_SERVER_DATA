@@ -2,6 +2,7 @@
 #include "cDataManager.h"
 #include "cContainer.h"
 
+HANDLE hMutex;
 cDataManager::cDataManager()
 	:IsQuit(false)
 {
@@ -10,6 +11,11 @@ cDataManager::cDataManager()
 
 cDataManager::~cDataManager()
 {
+}
+void cDataManager::Setup()
+{
+	hMutex = CreateMutex(NULL, FALSE, NULL);
+	int a = 3;
 }
 
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)

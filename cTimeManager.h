@@ -9,6 +9,7 @@ private:
 	SINGLETONE(cTimeManager);
 	time_t m_stTimer;
 	struct tm m_stT;
+	SYNTHESIZE(bool, IsQuit, Quit);
 public:
 	string GetLocalTime();
 };

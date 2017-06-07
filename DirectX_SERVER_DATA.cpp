@@ -16,10 +16,17 @@ int main()
 	DWORD dwThID;
 	HANDLE hThread;
 	unsigned long ulStackSize = 0;
+	
+	g_pDataManager->Setup();
 
 	Server_DATA* pServerData = new Server_DATA;
 	hThread = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) ThData_ACCEPT, (void*)&pServerData, 0, (unsigned*)&dwThID);	// << : 데이터 전송 스레드
 
+	while (true)
+	{
+		pServerData->Update();
+		if (g_pTime->GetQuit()) break;
+	}
 	WaitForSingleObject(hThread, INFINITE);
 
 	CloseHandle(hThread);
