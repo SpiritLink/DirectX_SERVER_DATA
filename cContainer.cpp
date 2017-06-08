@@ -15,7 +15,45 @@ cContainer::~cContainer()
 void cContainer::Setup(string key)
 {
 	m_sRoomName = key;
-	// >> : 파일을 연뒤 해당하는 데이터를 적용
+	string szFullPath = "Server/" + key + ".txt";
+	char szBuffer[1000];
+
+	char first[100] = { 0, };
+	char second[100] = { 0, };
+	float third;
+
+	fstream openFile(szFullPath.data(), std::ios::in);
+	if (!openFile.is_open())	// << : 파일이 열리지 않는 상황입니다.
+	{
+		SetDefault();
+		return;
+	}
+
+	while (!openFile.eof())		// << : Parsing Data
+	{
+		cPlayer* pTarget = NULL;
+		openFile.getline(szBuffer, 1000);
+		sscanf_s(szBuffer, "%s%s%f", &first, &second, &third);
+		if (string(first) == "player1")
+			pTarget = &m_cPlayer1;
+		if (string(first) == "player2")
+			pTarget = &m_cPlayer2;
+
+		if (pTarget == NULL) continue;		
+		
+		if (string(second) == "X")		
+			pTarget->SetX(third);
+		else if (string(second) == "Y")
+			pTarget->SetY(third);
+		else if (string(second) == "Z")
+			pTarget->SetZ(third);
+		else if (string(second) == "AngleX")
+			pTarget->SetAngleX(third);
+		else if (string(second) == "AngleY")
+			pTarget->SetAngleY(third);
+		else if (string(second) == "AngleZ")
+			pTarget->SetAngleZ(third);
+	}
 }
 
 void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
@@ -93,3 +131,19 @@ void cContainer::SaveData()
 	outFile.close();
 }
 
+void cContainer::SetDefault()
+{
+	m_cPlayer1.SetX(0);
+	m_cPlayer1.SetY(0);
+	m_cPlayer1.SetZ(0);
+	m_cPlayer1.SetAngleX(0);
+	m_cPlayer1.SetAngleY(0);
+	m_cPlayer1.SetAngleZ(0);
+
+	m_cPlayer2.SetX(0);
+	m_cPlayer2.SetY(0);
+	m_cPlayer2.SetZ(0);
+	m_cPlayer2.SetAngleX(0);
+	m_cPlayer2.SetAngleY(0);
+	m_cPlayer2.SetAngleZ(0);
+}
