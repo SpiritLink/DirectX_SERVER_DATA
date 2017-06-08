@@ -4,12 +4,9 @@
 #include "stdafx.h"
 #include "Server_DATA.h"
 
-unsigned int _stdcall ThData_ACCEPT(LPVOID lpParam)
-{
-	Server_DATA * pServerData = ((Server_DATA*)lpParam);
-	pServerData->Setup();
-	return 0;
-}
+unsigned int _stdcall ThData_ACCEPT(LPVOID lpParam);
+unsigned int _stdcall ThLog_PROCESS();
+
 
 int main()
 {
@@ -34,4 +31,19 @@ int main()
 	pServerData->Destroy();	
 	return 0;
 }
+unsigned int _stdcall ThData_ACCEPT(LPVOID lpParam)
+{
+	Server_DATA * pServerData = ((Server_DATA*)lpParam);
+	pServerData->Setup();
+	return 0;
+}
 
+unsigned int _stdcall ThLog_PROCESS()
+{
+	while (true)
+	{
+		g_pLog->PROCESS_QUEUE();
+		if (g_pTime->GetQuit()) break;
+	}
+	return 0;
+}

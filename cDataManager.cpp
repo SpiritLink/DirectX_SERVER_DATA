@@ -47,9 +47,10 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 }
 void cDataManager::SaveAllData()
 {
-	for each(auto p in m_mapContainer)
+	map<string, cContainer*>::iterator iter;
+	for (iter = m_mapContainer.begin(); iter != m_mapContainer.end(); ++iter)
 	{
-		p.second->SaveData();
+		g_pLog->EnqueueLog(iter->second);
 	}
 }
 
