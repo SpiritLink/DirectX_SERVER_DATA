@@ -5,7 +5,6 @@
 HANDLE hMutex_DATA;
 
 unsigned int _stdcall PROCESS_RECV(void * arg);
-unsigned int _stdcall PROCESS_FILESAVE();
 CRITICAL_SECTION CS_DATA;
 
 int nCnt = 0;
@@ -61,7 +60,7 @@ void Server_DATA::Update()
 	if (m_dwSaveTick + (ONE_SECOND * 10) < GetTickCount())
 	{
 		m_dwSaveTick = GetTickCount();
-		hThread_SAVE = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*))PROCESS_FILESAVE, NULL, 0, NULL);
+		g_pDataManager->SaveAllData();
 	}
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
 	{
@@ -121,11 +120,5 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	}
 	nCnt--;
 	cout << "Sub Thread Count : " << nCnt << endl;
-	return 0;
-}
-
-unsigned int _stdcall PROCESS_FILESAVE()
-{
-	g_pDataManager->SaveAllData();
 	return 0;
 }
