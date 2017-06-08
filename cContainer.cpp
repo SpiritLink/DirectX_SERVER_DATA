@@ -47,12 +47,8 @@ void cContainer::Setup(string key)
 			pTarget->SetY(third);
 		else if (string(second) == "Z")
 			pTarget->SetZ(third);
-		else if (string(second) == "AngleX")
-			pTarget->SetAngleX(third);
-		else if (string(second) == "AngleY")
-			pTarget->SetAngleY(third);
-		else if (string(second) == "AngleZ")
-			pTarget->SetAngleZ(third);
+		else if (string(second) == "Angle")
+			pTarget->SetAngle(third);
 	}
 }
 
@@ -61,30 +57,28 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	float x = stRecv.fX;
 	float y = stRecv.fY;
 	float z = stRecv.fZ;
-	float AngleX = stRecv.fAngleX;
-	float AngleY = stRecv.fAngleY;
-	float AngleZ = stRecv.fAngleZ;
+	float Angle = stRecv.fAngle;
 
 	if (stRecv.nPlayerIndex == 1)
 	{
-		m_cPlayer2.SetPosition(x, y, z, AngleX, AngleY, AngleZ);
+		m_cPlayer2.SetPosition(x, y, z, Angle);
 		m_dwPlayer2Time = GetTickCount();
 	}
 	else
 	{
-		m_cPlayer1.SetPosition(x, y, z, AngleX, AngleY, AngleZ);
+		m_cPlayer1.SetPosition(x, y, z, Angle);
 		m_dwPlayer1Time = GetTickCount();
 	}
 }
 
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
-	float x, y, z, AngleX, AngleY, AngleZ;
+	float x, y, z, Angle;
 	if (nIndex == 1)
-		m_cPlayer1.GetPosition(&x, &y, &z, &AngleX, &AngleY, &AngleZ);
+		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
 	if (nIndex == 2)
-		m_cPlayer2.GetPosition(&x, &y, &z, &AngleX, &AngleY, &AngleZ);
-	ST_PLAYER_POSITION result(x, y, z, AngleX, AngleY, AngleZ);
+		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
+	ST_PLAYER_POSITION result(x, y, z, Angle);
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 	return result;
 }
@@ -109,24 +103,20 @@ void cContainer::SaveData()
 	}
 
 	// << : 데이터 저장
-	float x, y, z, angleX, angleY, angleZ;
+	float x, y, z, angle;
 
 	outFile << m_sRoomName << endl;
-	m_cPlayer1.GetPosition(&x, &y, &z, &angleX, &angleY, &angleZ);
+	m_cPlayer1.GetPosition(&x, &y, &z, &angle);
 	outFile << "Player1 X " << x << endl;
 	outFile << "Player1 Y " << y << endl;
 	outFile << "Player1 Z " << z << endl;
-	outFile << "Player1 AngleX " << angleX << endl;
-	outFile << "Player1 AngleY " << angleY << endl;
-	outFile << "Player1 AngleZ " << angleZ << endl;
+	outFile << "Player1 Angle " << angle << endl;
 
-	m_cPlayer2.GetPosition(&x, &y, &z, &angleX, &angleY, &angleZ);
+	m_cPlayer2.GetPosition(&x, &y, &z, &angle);
 	outFile << "Player2 X " << x << endl;
 	outFile << "Player2 Y " << y << endl;
 	outFile << "Player2 Z " << z << endl;
-	outFile << "Player2 AngleX " << angleX << endl;
-	outFile << "Player2 AngleY " << angleY << endl;
-	outFile << "Player2 AngleZ " << angleZ << endl;
+	outFile << "Player2 Angle " << angle << endl;
 
 	outFile.close();
 }
@@ -136,14 +126,10 @@ void cContainer::SetDefault()
 	m_cPlayer1.SetX(0);
 	m_cPlayer1.SetY(0);
 	m_cPlayer1.SetZ(0);
-	m_cPlayer1.SetAngleX(0);
-	m_cPlayer1.SetAngleY(0);
-	m_cPlayer1.SetAngleZ(0);
+	m_cPlayer1.SetAngle(0);
 
 	m_cPlayer2.SetX(0);
 	m_cPlayer2.SetY(0);
 	m_cPlayer2.SetZ(0);
-	m_cPlayer2.SetAngleX(0);
-	m_cPlayer2.SetAngleY(0);
-	m_cPlayer2.SetAngleZ(0);
+	m_cPlayer2.SetAngle(0);
 }

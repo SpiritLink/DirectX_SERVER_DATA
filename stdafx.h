@@ -59,11 +59,9 @@ struct ST_PLAYER_POSITION
 	float fX;
 	float fY;
 	float fZ;
-	float fAngleX;
-	float fAngleY;
-	float fAngleZ;
-	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), fX(0.0f), fY(0.0f), fZ(0.0f), fAngleX(0.0f), fAngleY(0.0f), fAngleZ(0.0f) {};
-	ST_PLAYER_POSITION(float x, float y, float z, float angleX, float angleY, float angleZ) { fX = x, fY = y, fZ = z, fAngleX = angleX, fAngleY = angleY, fAngleZ = angleZ; };
+	float fAngle;
+	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
+	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
 };
 enum StuffCode
 {

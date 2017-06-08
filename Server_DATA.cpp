@@ -10,7 +10,7 @@ CRITICAL_SECTION CS_DATA;
 int nCnt = 0;
 
 Server_DATA::Server_DATA()
-	: m_dwSaveTick()
+	: m_dwSaveTick(0)
 {
 }
 
@@ -57,7 +57,7 @@ void Server_DATA::Setup()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	//if (m_dwSaveTick + 10000 < GetTickCount())
+	//if (m_dwSaveTick + (ONE_SECOND * 10) < GetTickCount())
 	//{
 	//	m_dwSaveTick = GetTickCount();
 	//	g_pDataManager->SaveAllData();
