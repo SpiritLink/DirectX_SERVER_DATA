@@ -10,7 +10,7 @@ CRITICAL_SECTION CS_DATA;
 int nCnt = 0;
 
 Server_DATA::Server_DATA()
-	: m_dwSaveTick(0)
+	: m_dwSaveTick()
 {
 }
 
@@ -57,11 +57,11 @@ void Server_DATA::Setup()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	if (m_dwSaveTick + (ONE_SECOND * 10) < GetTickCount())
-	{
-		m_dwSaveTick = GetTickCount();
-		g_pDataManager->SaveAllData();
-	}
+	//if (m_dwSaveTick + 10000 < GetTickCount())
+	//{
+	//	m_dwSaveTick = GetTickCount();
+	//	g_pDataManager->SaveAllData();
+	//}
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
 	{
 		cout << nCnt << endl;
@@ -112,7 +112,7 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 		{
 			ST_PLAYER_POSITION stPosition;
 			stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
-			sprintf(RecvData.szRoomName, "%s", "FROM_SERVER");
+			sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER",11);
 			send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
 			cout << "SEND_Position" << endl;
 		}

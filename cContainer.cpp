@@ -33,7 +33,7 @@ void cContainer::Setup(string key)
 	{
 		cPlayer* pTarget = NULL;
 		openFile.getline(szBuffer, 1000);
-		sscanf_s(szBuffer, "%s%s%f", &first, &second, &third);
+		sscanf_s(szBuffer, "%s %s %f", &first, &second, &third,100,100);
 		if (string(first) == "player1")
 			pTarget = &m_cPlayer1;
 		if (string(first) == "player2")
@@ -85,7 +85,7 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	if (nIndex == 2)
 		m_cPlayer2.GetPosition(&x, &y, &z, &AngleX, &AngleY, &AngleZ);
 	ST_PLAYER_POSITION result(x, y, z, AngleX, AngleY, AngleZ);
-	sprintf(result.szRoomName, "%s", "FROM SERVER");
+	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 	return result;
 }
 
@@ -97,7 +97,7 @@ void cContainer::SaveData()
 	if (!outFile.is_open())
 	{
 		char strFolderPath[] = "Server";
-		int nResult = mkdir(strFolderPath);
+		int nResult = _mkdir(strFolderPath);
 		if (nResult == 0)
 			cout << "폴더 생성 성공" << endl;
 		else if (nResult == -1)
