@@ -33,7 +33,7 @@ void cContainer::Setup(string key)
 	{
 		cPlayer* pTarget = NULL;
 		openFile.getline(szBuffer, 1000);
-		sscanf_s(szBuffer, "%s %s %f", &first, &second, &third,100,100);
+		sscanf(szBuffer, "%s %s %f", &first, &second, &third);
 		if (string(first) == "player1")
 			pTarget = &m_cPlayer1;
 		if (string(first) == "player2")

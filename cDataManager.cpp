@@ -4,6 +4,9 @@
 
 cDataManager::cDataManager()
 	:IsQuit(false)
+	, Option1(false)
+	, Option2(false)
+	, Option3(false)
 {
 }
 

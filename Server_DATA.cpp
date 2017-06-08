@@ -87,7 +87,6 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	SOCKET hClntSock = *((SOCKET*)arg);	/// << : SOCKET 정보 받아옴
 	int strLen = 0;
 	ST_PLAYER_POSITION RecvData;		/// << : 데이터 수신 버퍼
-	HANDLE hProcess = NULL;
 
 	/* 정상적인 연결일때 */
 	strLen = recv(hClntSock, (char*)&RecvData, sizeof(ST_PLAYER_POSITION), 0);
@@ -95,6 +94,7 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	{
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
 		g_pDataManager->ReceiveData(RecvData);
+		cout << RecvData.nPlayerIndex << " " << RecvData.fX << " " << RecvData.fY << " " << RecvData.fZ << " " << RecvData.fAngle << endl;
 		ReleaseMutex(hMutex_DATA);					// << : Release Mutex
 	}
 	/* 비정상적인 연결일때 */
@@ -117,6 +117,25 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 			cout << "SEND_Position" << endl;
 		}
 		break;
+	case 1:
+	{
+		ST_PLAYER_POSITION stPosition;
+		stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
+		sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER", 11);
+		send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
+		cout << "SEND_Position" << endl;
+	}
+		break;
+	case 2:
+	{
+		ST_PLAYER_POSITION stPosition;
+		stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
+		sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER", 11);
+		send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
+		cout << "SEND_Position" << endl;
+	}
+		break;
+
 	}
 	nCnt--;
 	cout << "Sub Thread Count : " << nCnt << endl;
