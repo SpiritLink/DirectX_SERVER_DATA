@@ -50,7 +50,7 @@ void cDataManager::SaveAllData()
 	map<string, cContainer*>::iterator iter;
 	for (iter = m_mapContainer.begin(); iter != m_mapContainer.end(); ++iter)
 	{
-		g_pLog->EnqueueLog(iter->second);
+		// << : 파일 저장을 구현해 봅시다.
 	}
 }
 
