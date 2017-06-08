@@ -3,9 +3,9 @@
 
 
 cStuff::cStuff()
-	: m_eType(STUFF_NONE)
-	, IsRunning(false)
+	: IsRunning(false)
 {
+	m_eType = STUFF_NONE;
 }
 
 

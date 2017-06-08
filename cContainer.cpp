@@ -22,7 +22,7 @@ void cContainer::Setup(string key)
 	char second[100] = { 0, };
 	float third;
 
-	fstream openFile(szFullPath.data(), std::ios::in);
+	fstream openFile(szFullPath.data());
 	if (!openFile.is_open())	// << : 파일이 열리지 않는 상황입니다.
 	{
 		SetDefault();
