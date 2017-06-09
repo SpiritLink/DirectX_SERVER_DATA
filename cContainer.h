@@ -1,6 +1,7 @@
 #pragma once
 #include "cPlayer.h"
 #include "cStuff.h"
+#define ONE_SECOND 1000
 
 class cContainer
 {
@@ -20,6 +21,7 @@ public:
 	void Setup(string key);
 	void UpdateData(ST_PLAYER_POSITION stRecv);
 	ST_PLAYER_POSITION GetData(int nIndex);
+	int GetOnlineUser();
 	void SaveData();
 	void SetDefault();
 };

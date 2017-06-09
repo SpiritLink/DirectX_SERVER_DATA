@@ -59,15 +59,19 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	float z = stRecv.fZ;
 	float Angle = stRecv.fAngle;
 
-	if (stRecv.nPlayerIndex == 1)
+	switch (stRecv.nPlayerIndex)
 	{
+	case 1:
 		m_cPlayer1.SetPosition(x, y, z, Angle);
 		m_dwPlayer1Time = GetTickCount();
-	}
-	else
-	{
+		break;
+	case 2:
 		m_cPlayer2.SetPosition(x, y, z, Angle);
 		m_dwPlayer2Time = GetTickCount();
+		break;
+	default:
+		// << : 현재 실행하는 부분이 없습니다.
+		break;
 	}
 }
 
@@ -81,6 +85,25 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	ST_PLAYER_POSITION result(x, y, z, Angle);
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 	return result;
+}
+
+int cContainer::GetOnlineUser()
+{
+	int nResult = 0;
+
+	if (GetTickCount() - m_dwPlayer1Time < ONE_SECOND)	// << 1플레이어가 1초안에 연결 되었었다면
+	{
+		nResult = nResult | (1 << 0);
+	}
+
+	if (GetTickCount() - m_dwPlayer2Time < ONE_SECOND)	// << 2플레이어가 1초안에 연결 되었었다면
+	{
+		nResult = nResult | (1 << 1);
+	}
+
+	cout << nResult << endl;
+		
+	return nResult;
 }
 
 void cContainer::SaveData()

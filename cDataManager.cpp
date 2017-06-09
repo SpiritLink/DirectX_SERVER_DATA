@@ -35,17 +35,23 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 
 	if (m_mapContainer[key] == NULL)
 		return ST_PLAYER_POSITION();
-	if (nIndex == 1)
+	switch (nIndex)
 	{
+	case 1:
 		stResult = m_mapContainer[key]->GetData(1);
 		stResult.nPlayerIndex = 2;
-	}
-	if (nIndex == 2)
-	{
+		break;
+	case 2:
 		stResult = m_mapContainer[key]->GetData(2);
 		stResult.nPlayerIndex = 1;
+		break;
+	default:
+		stResult.nPlayerIndex = 0;
+		break;
 	}
-
+	stResult.IsOnline = m_mapContainer[key]->GetOnlineUser();
+	stResult.nFROM_CLIENT = 0;
+	stResult.nFROM_SERVER = 0;
 	return stResult;
 }
 void cDataManager::SaveAllData()

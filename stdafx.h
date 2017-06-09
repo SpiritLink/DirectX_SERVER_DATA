@@ -57,11 +57,12 @@ struct ST_PLAYER_POSITION
 	int	  nFROM_SERVER;				// << : SERVER FLAG
 	int   nFROM_CLIENT;				// << : CLIENT FLAG
 	int	  nPlayerIndex;				// << : Current Player Index
+	int	  IsOnline;					// << : 다른 플레이어의 접속 상태 확인용
 	float fX;						
 	float fY;
 	float fZ;
 	float fAngle;
-	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
+	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), IsOnline(0), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
 	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
 };
 enum StuffCode
