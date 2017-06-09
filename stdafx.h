@@ -52,11 +52,12 @@ public: inline void Set##funName(varType var) { varName = var; }
 // TODO: 프로그램에 필요한 구조체는 여기에서 참조합니다.
 struct ST_PLAYER_POSITION
 {
-	char  szRoomName[50] = { 0, };
-	int	  nFROM_SERVER;
-	int   nFROM_CLIENT;
-	int	  nPlayerIndex;
-	float fX;
+	// << : 
+	char  szRoomName[50] = { 0, };	// << : Key
+	int	  nFROM_SERVER;				// << : SERVER FLAG
+	int   nFROM_CLIENT;				// << : CLIENT FLAG
+	int	  nPlayerIndex;				// << : Current Player Index
+	float fX;						
 	float fY;
 	float fZ;
 	float fAngle;

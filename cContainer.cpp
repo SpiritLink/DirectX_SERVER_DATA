@@ -61,13 +61,13 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 
 	if (stRecv.nPlayerIndex == 1)
 	{
-		m_cPlayer2.SetPosition(x, y, z, Angle);
-		m_dwPlayer2Time = GetTickCount();
+		m_cPlayer1.SetPosition(x, y, z, Angle);
+		m_dwPlayer1Time = GetTickCount();
 	}
 	else
 	{
-		m_cPlayer1.SetPosition(x, y, z, Angle);
-		m_dwPlayer1Time = GetTickCount();
+		m_cPlayer2.SetPosition(x, y, z, Angle);
+		m_dwPlayer2Time = GetTickCount();
 	}
 }
 
@@ -75,9 +75,9 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
 	float x, y, z, Angle;
 	if (nIndex == 1)
-		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
-	if (nIndex == 2)
 		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
+	if (nIndex == 2)
+		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
 	ST_PLAYER_POSITION result(x, y, z, Angle);
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 	return result;
