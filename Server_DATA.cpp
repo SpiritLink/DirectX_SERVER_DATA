@@ -41,10 +41,10 @@ void Server_DATA::Setup()
 		hClntSock = accept(hServSock, (SOCKADDR*)&clntAdr, &clntAdrSz);
 		if (hClntSock > 0)
 		{
-			cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
+			if(g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
 			hThread = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV, (void*)&hClntSock, 0, NULL);
 			g_nThreadCount++;
-			//cout << "Add Thread Count : " << g_nThreadCount << endl;
+			if(g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -53,10 +53,11 @@ void Server_DATA::Setup()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	if (g_pTime->GetSaveTimer() + 10 < g_pTime->GetLocalTime_UINT())
+	if (g_pTime->GetSaveTimer() + 10000 < clock())
 	{
-		g_pTime->SetSaveTimer(g_pTime->GetLocalTime_UINT());
+		g_pTime->SetSaveTimer(clock());
 		g_pDataManager->SaveAllData();
+		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
 	}
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
 	{
@@ -65,7 +66,10 @@ void Server_DATA::Update()
 	
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0x0001)
 	{
-		g_pDataManager->SaveAllData();
+		if (g_pTime->GetShowAllLog())
+			g_pTime->SetShowAllLog(false);
+		else if (!g_pTime->GetShowAllLog())
+			g_pTime->SetShowAllLog(true);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD9) & 0x0001)
 	{
@@ -84,16 +88,16 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	int strLen = 0;
 	ST_PLAYER_POSITION RecvData;		/// << : 데이터 수신 버퍼
 
-	/* 정상적인 연결일때 */
 	strLen = recv(hClntSock, (char*)&RecvData, sizeof(ST_PLAYER_POSITION), 0);
 
+	/* 정상적인 연결일때 */
 	if ( strLen != 0 && strLen != -1)
 	{
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
 		g_pDataManager->ReceiveData(RecvData);
-		if (RecvData.nPlayerIndex & IN_PLAYER1) cout << "플레이어 1";
-		if (RecvData.nPlayerIndex & IN_PLAYER2) cout << "플레이어 2";
-		cout << " " << RecvData.fX << " " << RecvData.fY << " " << RecvData.fZ << " " << RecvData.fAngle << endl;
+		if (RecvData.nPlayerIndex & IN_PLAYER1 && g_pTime->GetShowAllLog()) cout << "플레이어 1 ";
+		if (RecvData.nPlayerIndex & IN_PLAYER2 && g_pTime->GetShowAllLog()) cout << "플레이어 2 ";
+		if (g_pTime->GetShowAllLog()) cout << RecvData.fX << " " << RecvData.fY << " " << RecvData.fZ << " " << RecvData.fAngle << " 애니메이션 : " << RecvData.eAnimState << endl;
 		ReleaseMutex(hMutex_DATA);					// << : Release Mutex
 	}
 	/* 비정상적인 연결일때 */
@@ -101,7 +105,7 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	{
 		closesocket(hClntSock);
 		g_nThreadCount--;
-		//cout << "Sub Thread Count : " << g_nThreadCount << endl;
+		if(g_pTime->GetShowThread()) cout << "Sub Thread Count : " << g_nThreadCount << endl;
 		return 0;
 	}
 
@@ -113,7 +117,6 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 			stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
 			sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER",11);
 			send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
-			cout << "SEND_Position" << endl;
 		}
 		break;
 	case 1:
@@ -123,6 +126,6 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 
 	}
 	g_nThreadCount--;
-	//cout << "Sub Thread Count : " << g_nThreadCount << endl;
+	if(g_pTime->GetShowThread()) cout << "Sub Thread Count : " << g_nThreadCount << endl;
 	return 0;
 }

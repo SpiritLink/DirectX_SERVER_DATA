@@ -4,6 +4,8 @@
 cTimeManager::cTimeManager()
 	: IsQuit(false)
 	, SaveTimer(0)
+	, ShowAllLog(false)
+	, ShowThread(false)
 {
 	m_stTimer = time(NULL);				// 현재 시각을 초 단위로 얻습니다.
 	localtime_s(&m_stT, &m_stTimer);	// 초 단위의 시간을 분리하여 구조체에 넣기
