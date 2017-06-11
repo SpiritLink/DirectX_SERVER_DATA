@@ -62,23 +62,30 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	if (stRecv.nPlayerIndex & IN_PLAYER1)
 	{
 		m_cPlayer1.SetPosition(x, y, z, Angle);
+		m_cPlayer1.SetAnimState(stRecv.eAnimState);
 		m_nPlayer1Time = g_pTime->GetLocalTime_UINT();
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
 		m_cPlayer2.SetPosition(x, y, z, Angle);
+		m_cPlayer2.SetAnimState(stRecv.eAnimState);
 		m_nPlayer2Time = g_pTime->GetLocalTime_UINT();
 	}
 }
 
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
-	float x, y, z, Angle;
+	ST_PLAYER_POSITION result;
 	if (nIndex == 1)
-		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
+	{
+		m_cPlayer1.GetPosition(&result.fX, &result.fY, &result.fZ, &result.fAngle);
+		result.eAnimState = m_cPlayer1.GetAnimState();
+	}
 	if (nIndex == 2)
-		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
-	ST_PLAYER_POSITION result(x, y, z, Angle);
+	{
+		m_cPlayer2.GetPosition(&result.fX, &result.fY, &result.fZ, &result.fAngle);
+		result.eAnimState = m_cPlayer2.GetAnimState();
+	}
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 
 	return result;

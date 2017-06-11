@@ -3,6 +3,7 @@
 
 
 cPlayer::cPlayer()
+	: m_eAnimState(ANIM_IDLE)
 {
 }
 

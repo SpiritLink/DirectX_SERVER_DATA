@@ -54,6 +54,14 @@ public: inline void Set##funName(varType var) { varName = var; }
 #define SAFE_DELETE(p) {if(p) delete p; p = NULL;}
 
 // TODO: 프로그램에 필요한 구조체는 여기에서 참조합니다.
+enum animationState
+{
+	ANIM_IDLE,
+	ANIM_WALK,
+	ANIM_ATTACK,
+	ANIM_DEATH,
+};
+
 struct ST_PLAYER_POSITION
 {
 	// << : 
@@ -61,11 +69,12 @@ struct ST_PLAYER_POSITION
 	int	  nFROM_SERVER;				// << : SERVER FLAG
 	int   nFROM_CLIENT;				// << : CLIENT FLAG
 	int	  nPlayerIndex;				// << : Current Player Index
+	animationState eAnimState;		// << : Animation index
 	float fX;						
 	float fY;
 	float fZ;
 	float fAngle;
-	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
+	ST_PLAYER_POSITION() :nFROM_SERVER(0), nFROM_CLIENT(0), nPlayerIndex(0), eAnimState(ANIM_IDLE), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
 	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
 };
 enum StuffCode
