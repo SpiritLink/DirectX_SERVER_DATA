@@ -3,6 +3,7 @@
 
 cTimeManager::cTimeManager()
 	: IsQuit(false)
+	, SaveTimer(0)
 {
 	m_stTimer = time(NULL);				// 현재 시각을 초 단위로 얻습니다.
 	localtime_s(&m_stT, &m_stTimer);	// 초 단위의 시간을 분리하여 구조체에 넣기
@@ -34,7 +35,7 @@ unsigned int cTimeManager::GetLocalTime_UINT()
 	m_stTimer = time(NULL);
 	localtime_s(&m_stT, &m_stTimer);
 
-	unsigned int Result;
+	unsigned int Result = 0;
 	Result += m_stT.tm_hour * MINUTE * SECOND;
 	Result += m_stT.tm_min * SECOND;
 	Result += m_stT.tm_sec;

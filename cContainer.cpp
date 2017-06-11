@@ -76,9 +76,9 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
 	float x, y, z, Angle;
 	if (nIndex == 1)
-		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
-	if (nIndex == 2)
 		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
+	if (nIndex == 2)
+		m_cPlayer2.GetPosition(&x, &y, &z, &Angle);
 	ST_PLAYER_POSITION result(x, y, z, Angle);
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 

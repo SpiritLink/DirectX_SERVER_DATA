@@ -3,10 +3,6 @@
 #include "cContainer.h"
 
 cDataManager::cDataManager()
-	:IsQuit(false)
-	, Option1(false)
-	, Option2(false)
-	, Option3(false)
 {
 }
 
@@ -38,10 +34,10 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	switch (nIndex)
 	{
 	case 1:
-		stResult = m_mapContainer[key]->GetData(1);
+		stResult = m_mapContainer[key]->GetData(2);
 		break;
 	case 2:
-		stResult = m_mapContainer[key]->GetData(2);
+		stResult = m_mapContainer[key]->GetData(1);
 		break;
 	default:
 		stResult.nPlayerIndex = 0;

@@ -1,13 +1,9 @@
 #include "stdafx.h"
 #include "Server_DATA.h"
 
-// >> : 구현되지 못한 부분입니다.
 HANDLE hMutex_DATA;
-
 unsigned int _stdcall PROCESS_RECV(void * arg);
 CRITICAL_SECTION CS_DATA;
-
-int nCnt = 0;
 
 Server_DATA::Server_DATA()
 	: m_dwSaveTick(0)
@@ -47,8 +43,8 @@ void Server_DATA::Setup()
 		{
 			cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
 			hThread = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV, (void*)&hClntSock, 0, NULL);
-			nCnt++;
-			cout << "Add Thread Count : " << nCnt << endl;
+			g_nThreadCount++;
+			cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -57,14 +53,14 @@ void Server_DATA::Setup()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	//if (m_dwSaveTick + (ONE_SECOND * 10) < GetTickCount())
-	//{
-	//	m_dwSaveTick = GetTickCount();
-	//	g_pDataManager->SaveAllData();
-	//}
+	if (g_pTime->GetSaveTimer() + 10 < g_pTime->GetLocalTime_UINT())
+	{
+		g_pTime->SetSaveTimer(g_pTime->GetLocalTime_UINT());
+		g_pDataManager->SaveAllData();
+	}
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
 	{
-		cout << nCnt << endl;
+		cout << "현재 스레드 개수 : " << g_nThreadCount << endl;
 	}
 	
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0x0001)
@@ -90,6 +86,7 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 
 	/* 정상적인 연결일때 */
 	strLen = recv(hClntSock, (char*)&RecvData, sizeof(ST_PLAYER_POSITION), 0);
+
 	if ( strLen != 0 && strLen != -1)
 	{
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
@@ -101,8 +98,8 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	else
 	{
 		closesocket(hClntSock);
-		nCnt--;
-		cout << "Sub Thread Count : " << nCnt << endl;
+		g_nThreadCount--;
+		cout << "Sub Thread Count : " << g_nThreadCount << endl;
 		return 0;
 	}
 
@@ -118,26 +115,12 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 		}
 		break;
 	case 1:
-	{
-		ST_PLAYER_POSITION stPosition;
-		stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
-		sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER", 11);
-		send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
-		cout << "SEND_Position" << endl;
-	}
 		break;
 	case 2:
-	{
-		ST_PLAYER_POSITION stPosition;
-		stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
-		sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER", 11);
-		send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
-		cout << "SEND_Position" << endl;
-	}
 		break;
 
 	}
-	nCnt--;
-	cout << "Sub Thread Count : " << nCnt << endl;
+	g_nThreadCount--;
+	cout << "Sub Thread Count : " << g_nThreadCount << endl;
 	return 0;
 }
