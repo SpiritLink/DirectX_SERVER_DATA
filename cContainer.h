@@ -1,7 +1,7 @@
 #pragma once
 #include "cPlayer.h"
 #include "cStuff.h"
-#define ONE_SECOND 1000
+#define CONNECT_TIME 5
 
 class cContainer
 {
@@ -10,8 +10,8 @@ private:
 	cPlayer m_cPlayer1;			// 플레이어 1 데이터
 	cPlayer m_cPlayer2;			// 플레이어 2 데이터
 
-	DWORD	m_dwPlayer1Time;	// 플레이어 1 최근 접속 시간
-	DWORD	m_dwPlayer2Time;	// 플레이어 2 최근 접속 시간
+	unsigned int m_nPlayer1Time;	// 플레이어 1 최근 접속 시간
+	unsigned int m_nPlayer2Time;	// 플레이어 2 최근 접속 시간
 
 	// << : 아이템에 대한 정보를 저장할 공간이 필요 (최대 아이템 개수 10개)
 public:

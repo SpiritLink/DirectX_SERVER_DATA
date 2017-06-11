@@ -2,8 +2,8 @@
 #include "cContainer.h"
 
 cContainer::cContainer()
-	: m_dwPlayer1Time(0)
-	, m_dwPlayer2Time(0)
+	: m_nPlayer1Time(0)
+	, m_nPlayer2Time(0)
 {
 }
 
@@ -63,14 +63,11 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	{
 	case 1:
 		m_cPlayer1.SetPosition(x, y, z, Angle);
-		m_dwPlayer1Time = GetTickCount();
+		m_nPlayer1Time = g_pTime->GetLocalTime_UINT();
 		break;
 	case 2:
 		m_cPlayer2.SetPosition(x, y, z, Angle);
-		m_dwPlayer2Time = GetTickCount();
-		break;
-	default:
-		// << : 현재 실행하는 부분이 없습니다.
+		m_nPlayer2Time = g_pTime->GetLocalTime_UINT();
 		break;
 	}
 }
@@ -84,6 +81,7 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 		m_cPlayer1.GetPosition(&x, &y, &z, &Angle);
 	ST_PLAYER_POSITION result(x, y, z, Angle);
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
+
 	return result;
 }
 
@@ -91,17 +89,11 @@ int cContainer::GetOnlineUser()
 {
 	int nResult = 0;
 
-	if (GetTickCount() - m_dwPlayer1Time < ONE_SECOND)	// << 1플레이어가 1초안에 연결 되었었다면
-	{
-		nResult = nResult | (1 << 0);
-	}
-
-	if (GetTickCount() - m_dwPlayer2Time < ONE_SECOND)	// << 2플레이어가 1초안에 연결 되었었다면
-	{
-		nResult = nResult | (1 << 1);
-	}
-
-	cout << nResult << endl;
+	// << : 해당 부분을 UINT로 변경해야 합니다. (time.h 이용 시간 변경)
+	if (g_pTime->GetLocalTime_UINT() - m_nPlayer1Time < CONNECT_TIME)
+		nResult = nResult | (1 << 4);
+	if (g_pTime->GetLocalTime_UINT() - m_nPlayer2Time < CONNECT_TIME)
+		nResult = nResult | (1 << 5);
 		
 	return nResult;
 }

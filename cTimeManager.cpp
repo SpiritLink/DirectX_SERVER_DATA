@@ -13,7 +13,7 @@ cTimeManager::~cTimeManager()
 {
 }
 
-string cTimeManager::GetLocalTime()
+string cTimeManager::GetLocalTime_String()
 {
 	m_stTimer = time(NULL);
 	localtime_s(&m_stT, &m_stTimer);
@@ -27,4 +27,16 @@ string cTimeManager::GetLocalTime()
 		+	to_string(m_stT.tm_sec);
 
 	return sTime;
+}
+
+unsigned int cTimeManager::GetLocalTime_UINT()
+{
+	m_stTimer = time(NULL);
+	localtime_s(&m_stT, &m_stTimer);
+
+	unsigned int Result;
+	Result += m_stT.tm_hour * MINUTE * SECOND;
+	Result += m_stT.tm_min * SECOND;
+	Result += m_stT.tm_sec;
+	return Result;
 }

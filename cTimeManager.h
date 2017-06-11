@@ -2,6 +2,8 @@
 #include "stdafx.h"
 
 #define g_pTime cTimeManager::GetInstance()
+#define MINUTE 60
+#define SECOND 60
 
 class cTimeManager
 {
@@ -11,6 +13,7 @@ private:
 	struct tm m_stT;
 	SYNTHESIZE(bool, IsQuit, Quit);
 public:
-	string GetLocalTime();
+	string GetLocalTime_String();
+	unsigned int GetLocalTime_UINT();
 };
 
