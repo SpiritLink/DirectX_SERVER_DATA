@@ -59,16 +59,15 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	float z = stRecv.fZ;
 	float Angle = stRecv.fAngle;
 
-	switch (stRecv.nPlayerIndex)
+	if (stRecv.nPlayerIndex & IN_PLAYER1)
 	{
-	case 1:
 		m_cPlayer1.SetPosition(x, y, z, Angle);
 		m_nPlayer1Time = g_pTime->GetLocalTime_UINT();
-		break;
-	case 2:
+	}
+	else if (stRecv.nPlayerIndex & IN_PLAYER2)
+	{
 		m_cPlayer2.SetPosition(x, y, z, Angle);
 		m_nPlayer2Time = g_pTime->GetLocalTime_UINT();
-		break;
 	}
 }
 
@@ -91,9 +90,9 @@ int cContainer::GetOnlineUser()
 
 	// << : 해당 부분을 UINT로 변경해야 합니다. (time.h 이용 시간 변경)
 	if (g_pTime->GetLocalTime_UINT() - m_nPlayer1Time < CONNECT_TIME)
-		nResult = nResult | (1 << 4);
+		nResult = nResult | (OUT_PLAYER1);
 	if (g_pTime->GetLocalTime_UINT() - m_nPlayer2Time < CONNECT_TIME)
-		nResult = nResult | (1 << 5);
+		nResult = nResult | (OUT_PLAYER2);
 		
 	return nResult;
 }

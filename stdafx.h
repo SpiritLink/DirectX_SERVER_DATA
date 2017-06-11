@@ -26,6 +26,10 @@
 #define MAX_CLNT 256
 #define BUF_SIZE 100
 #define CLIENT_NUM 5
+#define IN_PLAYER1 1 << 4
+#define IN_PLAYER2 1 << 5
+#define OUT_PLAYER1 1 << 0
+#define OUT_PLAYER2 1 << 1
 
 using namespace std;
 

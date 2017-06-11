@@ -3,6 +3,7 @@
 #define PORT_DATA 1234
 #define WAIT_MILLISECOND 5000
 #define ONE_SECOND 1000
+
 class Server_DATA
 {
 private:

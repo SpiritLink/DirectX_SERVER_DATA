@@ -44,7 +44,7 @@ void Server_DATA::Setup()
 			cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
 			hThread = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV, (void*)&hClntSock, 0, NULL);
 			g_nThreadCount++;
-			cout << "Add Thread Count : " << g_nThreadCount << endl;
+			//cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -91,7 +91,9 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	{
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
 		g_pDataManager->ReceiveData(RecvData);
-		cout << RecvData.nPlayerIndex << " " << RecvData.fX << " " << RecvData.fY << " " << RecvData.fZ << " " << RecvData.fAngle << endl;
+		if (RecvData.nPlayerIndex & IN_PLAYER1) cout << "플레이어 1";
+		if (RecvData.nPlayerIndex & IN_PLAYER2) cout << "플레이어 2";
+		cout << " " << RecvData.fX << " " << RecvData.fY << " " << RecvData.fZ << " " << RecvData.fAngle << endl;
 		ReleaseMutex(hMutex_DATA);					// << : Release Mutex
 	}
 	/* 비정상적인 연결일때 */
@@ -99,7 +101,7 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	{
 		closesocket(hClntSock);
 		g_nThreadCount--;
-		cout << "Sub Thread Count : " << g_nThreadCount << endl;
+		//cout << "Sub Thread Count : " << g_nThreadCount << endl;
 		return 0;
 	}
 
@@ -121,6 +123,6 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 
 	}
 	g_nThreadCount--;
-	cout << "Sub Thread Count : " << g_nThreadCount << endl;
+	//cout << "Sub Thread Count : " << g_nThreadCount << endl;
 	return 0;
 }

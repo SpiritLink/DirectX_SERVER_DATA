@@ -31,18 +31,13 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 
 	if (m_mapContainer[key] == NULL)
 		return ST_PLAYER_POSITION();
-	switch (nIndex)
-	{
-	case 1:
+	
+	stResult.nPlayerIndex = 0;
+	if (nIndex & IN_PLAYER1)
 		stResult = m_mapContainer[key]->GetData(2);
-		break;
-	case 2:
+	if(nIndex & IN_PLAYER2)
 		stResult = m_mapContainer[key]->GetData(1);
-		break;
-	default:
-		stResult.nPlayerIndex = 0;
-		break;
-	}
+
 	stResult.nPlayerIndex = m_mapContainer[key]->GetOnlineUser();
 	stResult.nFROM_CLIENT = 0;
 	stResult.nFROM_SERVER = 0;
