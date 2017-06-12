@@ -6,9 +6,12 @@
 
 unsigned int _stdcall ThData_ACCEPT(LPVOID lpParam);
 int g_nThreadCount;
+HANDLE g_hMutex_DATA;
 
 int main()
 {
+	g_hMutex_DATA = CreateMutex(NULL, FALSE, NULL);
+	g_pDataManager->Setup();
 	DWORD dwThID;
 	HANDLE hThread;
 	unsigned long ulStackSize = 0;

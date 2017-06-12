@@ -33,22 +33,33 @@ void cContainer::Setup(string key)
 	{
 		cPlayer* pTarget = NULL;
 		openFile.getline(szBuffer, 1000);
-		sscanf(szBuffer, "%s %s %f", &first, &second, &third);
-		if (string(first) == "player1")
+		sscanf_s(szBuffer, "%s %s %f", &first,100, &second,100, &third);
+		if (strlen(szBuffer) <= 0) continue;
+
+		if (string(first) == "Player1")
 			pTarget = &m_cPlayer1;
-		if (string(first) == "player2")
+		else if (string(first) == "Player2")
 			pTarget = &m_cPlayer2;
 
 		if (pTarget == NULL) continue;		
 		
-		if (string(second) == "X")		
+		if (string(second) == "X")
+		{
 			pTarget->SetX(third);
+		}
 		else if (string(second) == "Y")
+		{
 			pTarget->SetY(third);
+		}
 		else if (string(second) == "Z")
+		{
 			pTarget->SetZ(third);
+		}
 		else if (string(second) == "Angle")
+		{
 			pTarget->SetAngle(third);
+		}
+		cout << " 파일 로딩 " << endl;
 	}
 }
 
@@ -126,7 +137,6 @@ void cContainer::SaveData()
 	// << : 데이터 저장
 	float x, y, z, angle;
 
-	outFile << m_sRoomName << endl;
 	m_cPlayer1.GetPosition(&x, &y, &z, &angle);
 	outFile << "Player1 X " << x << endl;
 	outFile << "Player1 Y " << y << endl;

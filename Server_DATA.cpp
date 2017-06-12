@@ -53,12 +53,13 @@ void Server_DATA::Setup()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	if (g_pTime->GetSaveTimer() + 10000 < clock())
+	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 10) < clock())
 	{
 		g_pTime->SetSaveTimer(clock());
 		g_pDataManager->SaveAllData();
 		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
 	}
+
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
 	{
 		cout << "현재 스레드 개수 : " << g_nThreadCount << endl;

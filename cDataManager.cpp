@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "cDataManager.h"
 #include "cContainer.h"
+CRITICAL_SECTION cs;
 
 cDataManager::cDataManager()
 {
@@ -12,10 +13,12 @@ cDataManager::~cDataManager()
 }
 void cDataManager::Setup()
 {
+	InitializeCriticalSection(&cs);
 }
 
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 {
+	EnterCriticalSection(&cs);
 	string key = string(stRecv.szRoomName);
 	if (m_mapContainer[key] == NULL)
 	{
@@ -23,6 +26,7 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 		m_mapContainer[key]->Setup(key);
 	}
 	m_mapContainer[key]->UpdateData(stRecv);
+	LeaveCriticalSection(&cs);
 }
 
 ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)

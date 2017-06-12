@@ -118,3 +118,4 @@ enum StuffCode
 #include "cTimeManager.h"
 
 extern int g_nThreadCount;
+extern HANDLE g_hMutex_DATA;
