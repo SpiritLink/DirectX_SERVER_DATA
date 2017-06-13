@@ -9,7 +9,6 @@ cStuff::cStuff()
 	, RotateY(0.0f)
 	, RotateZ(0.0f)
 {
-	m_eType = STUFF_NONE;
 }
 
 

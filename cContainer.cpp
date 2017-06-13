@@ -5,6 +5,7 @@ cContainer::cContainer()
 	: m_nPlayer1Time(0)
 	, m_nPlayer2Time(0)
 {
+	m_vecStuffPosition.resize(SWITCH_LASTNUM);
 }
 
 

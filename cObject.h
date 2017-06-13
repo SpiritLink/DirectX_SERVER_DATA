@@ -13,8 +13,5 @@ public:
 	void SetX(IN float Value);
 	void SetY(IN float Value);
 	void SetZ(IN float Value);
-	void SetAngle(IN float Value);
-
-
 };
 

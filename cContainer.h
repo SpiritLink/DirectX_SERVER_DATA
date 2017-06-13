@@ -13,7 +13,7 @@ private:
 	unsigned int m_nPlayer1Time;	// 플레이어 1 최근 접속 시간
 	unsigned int m_nPlayer2Time;	// 플레이어 2 최근 접속 시간
 
-	// << : 아이템에 대한 정보를 저장할 공간이 필요 (최대 아이템 개수 10개)
+	std::vector<cStuff> m_vecStuffPosition;	// << : 오브젝트
 public:
 	cContainer();
 	~cContainer();
