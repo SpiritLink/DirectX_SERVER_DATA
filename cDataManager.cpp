@@ -46,6 +46,24 @@ ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)
 	return ST_SOCKET_ADDR();
 }
 
+void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
+{
+	EnterCriticalSection(&cs);
+	string key = string(stRecv.szRoomName);
+	if (m_mapContainer[key] == NULL)
+	{
+		m_mapContainer[key] = new cContainer;
+		m_mapContainer[key]->Setup(key);
+	}
+	m_mapContainer[key]->UpdateData(stRecv);
+	cout << stRecv.nPlayerIndex << endl;
+	cout << stRecv.fX << endl;
+	cout << stRecv.fY << endl;
+	cout << stRecv.fZ << endl;
+	cout << stRecv.fAngle << endl;
+	LeaveCriticalSection(&cs);
+}
+
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 {
 	EnterCriticalSection(&cs);
@@ -85,7 +103,6 @@ void cDataManager::SaveAllData()
 
 void cDataManager::Update()
 {
-	int a = 3;
 	for each(auto p in m_mapContainer)
 	{
 		p.second->Update();

@@ -34,5 +34,6 @@ public:
 	void SetDefault();
 	void Update();
 	void UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr);
+	void UpdateData(ST_PLAYER_POSITION stRecv);
 };
 

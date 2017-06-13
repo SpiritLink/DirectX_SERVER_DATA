@@ -76,6 +76,8 @@ void Server_DATA::Setup_Current()
 	servAdr2.sin_family = AF_INET;	// << : IPV4 할당
 	servAdr2.sin_addr.s_addr = htonl(INADDR_ANY);
 	servAdr2.sin_port = PORT_DATA_RECV;
+	bool bValid = 1;
+	setsockopt(hServSock2, SOL_SOCKET, SO_REUSEADDR, (const char *)&bValid, sizeof(bValid));
 
 	if (bind(hServSock2, (SOCKADDR*)&servAdr2, sizeof(servAdr2)) == SOCKET_ERROR)
 		cout << "Server_DATA bind() Error" << endl;
@@ -92,8 +94,10 @@ void Server_DATA::Setup_Current()
 		Recv.stAddr = clntAdr2;
 		if (hClntSock2 > 0)
 		{
+			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr2.sin_addr) << endl;
 			hThread_RECV = (HANDLE)_beginthreadex(NULL, 0, Recv_From_Client, (void*)&Recv, 0, NULL);
 			g_nThreadCount++;
+			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -106,7 +110,7 @@ void Server_DATA::Update()
 	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 10) < clock())
 	{
 		g_pTime->SetSaveTimer(clock());
-		g_pDataManager->SaveAllData();
+		//g_pDataManager->SaveAllData();
 		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
 	}
 
@@ -209,23 +213,20 @@ unsigned int _stdcall Recv_From_Client(void* arg)
 		if (strLen1 == -1) break;
 
 		ST_FLAG stFlag = *(ST_FLAG*)szBuffer;
-		cout << stFlag.szRoomName << endl;
-		cout << stFlag.nPlayerIndex << endl;
 		switch (stFlag.eFlag)
 		{
-		case FLAG_IP:
-		{
-			g_pDataManager->ReceiveSocket(stFlag,RecvSocket);
-		}
-			break;
 		case FLAG_POSITION:
 		{
 			recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
-			ST_PLAYER_POSITION data = *(ST_PLAYER_POSITION*)szBuffer;
-			cout << data.fX << endl;
-			cout << data.fY << endl;
-			cout << data.fZ << endl;
-			cout << "수신 정상 완료" << endl;
+			ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
+			g_pDataManager->ReceiveData(RecvPosition);
+
+			cout << "FLAG_POSITION 좌표 수신" << endl;
+			ST_PLAYER_POSITION SendPosition;
+			int nIndex;
+			SendPosition = g_pDataManager->GetPlayerData(string(stFlag.szRoomName), RecvPosition.nPlayerIndex);
+			send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
+			cout << "FLAG_POSITION 좌표 전송" << endl;
 		}
 			break;
 		}

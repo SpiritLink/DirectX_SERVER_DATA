@@ -93,8 +93,29 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 		cout << inet_ntoa(Player2Sock.stAddr.sin_addr) << endl;
 		m_nPlayer2Time = clock();
 	}
+}
 
-	
+void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
+{
+	float x = stRecv.fX;
+	float y = stRecv.fY;
+	float z = stRecv.fZ;
+	float Angle = stRecv.fAngle;
+
+	if (stRecv.nPlayerIndex & IN_PLAYER1)
+	{
+		m_cPlayer1.SetPosition(x, y, z);
+		m_cPlayer1.SetAngle(Angle);
+		m_cPlayer1.SetAnimState(stRecv.eAnimState);
+		m_nPlayer1Time = clock();
+	}
+	else if (stRecv.nPlayerIndex & IN_PLAYER2)
+	{
+		m_cPlayer2.SetPosition(x, y, z);
+		m_cPlayer2.SetAngle(Angle);
+		m_cPlayer2.SetAnimState(stRecv.eAnimState);
+		m_nPlayer2Time = clock();
+	}
 }
 
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
@@ -183,17 +204,18 @@ void cContainer::SetDefault()
 
 void cContainer::Update()
 {
-	if (SwitchAddr1P)
-	{
-		SwitchAddr1P = false;
-		hThread1P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player1Sock, 0, NULL);
-	}
+	// << : 현재 클라이언트간 통신이 미구현 되었습니다.
+	//if (SwitchAddr1P)
+	//{
+	//	SwitchAddr1P = false;
+	//	hThread1P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player1Sock, 0, NULL);
+	//}
 
-	if (SwitchAddr2P)
-	{
-		SwitchAddr2P = false;
-		hThread2P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player2Sock, 0, NULL);
-	}
+	//if (SwitchAddr2P)
+	//{
+	//	SwitchAddr2P = false;
+	//	hThread2P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player2Sock, 0, NULL);
+	//}
 }
 
 unsigned int _stdcall SEND_DATA_TO_CLIENT(LPVOID lpParam)
