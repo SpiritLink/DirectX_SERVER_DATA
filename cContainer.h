@@ -14,15 +14,19 @@ private:
 	unsigned int m_nPlayer2Time;	// 플레이어 2 최근 접속 시간
 
 	std::vector<cStuff> m_vecStuffPosition;	// << : 오브젝트
+
+	bool SwitchPlayer1;			// << : 플레이어 1 스위치
+	bool SwitchPlayer2;			// << : 플레이어 2 스위치
 public:
 	cContainer();
 	~cContainer();
 
-	void Setup(string key);
-	void UpdateData(ST_PLAYER_POSITION stRecv);
 	ST_PLAYER_POSITION GetData(int nIndex);
 	int GetOnlineUser();
+	void OnSwitch();
+	void Setup(string key);
 	void SaveData();
 	void SetDefault();
+	void UpdateData(ST_PLAYER_POSITION stRecv);
 };
 

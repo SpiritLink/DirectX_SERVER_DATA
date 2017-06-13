@@ -4,6 +4,8 @@
 cContainer::cContainer()
 	: m_nPlayer1Time(0)
 	, m_nPlayer2Time(0)
+	, SwitchPlayer1(false)
+	, SwitchPlayer2(false)
 {
 	m_vecStuffPosition.resize(SWITCH_LASTNUM);
 }
@@ -170,4 +172,10 @@ void cContainer::SetDefault()
 	m_cPlayer2.SetY(0);
 	m_cPlayer2.SetZ(0);
 	m_cPlayer2.SetAngle(0);
+}
+
+void cContainer::OnSwitch()
+{
+	SwitchPlayer1 = true;
+	SwitchPlayer2 = true;
 }
