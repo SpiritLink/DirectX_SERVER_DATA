@@ -16,7 +16,7 @@ void cDataManager::Setup()
 	InitializeCriticalSection(&cs);
 }
 
-void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
+void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 {
 	EnterCriticalSection(&cs);
 	string key = string(stRecv.szRoomName);
@@ -25,7 +25,7 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 		m_mapContainer[key] = new cContainer;
 		m_mapContainer[key]->Setup(key);
 	}
-	m_mapContainer[key]->UpdateData(stRecv);
+	m_mapContainer[key]->UpdateData(stRecv,stAddr);
 	LeaveCriticalSection(&cs);
 }
 

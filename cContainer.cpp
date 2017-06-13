@@ -66,7 +66,7 @@ void cContainer::Setup(string key)
 	}
 }
 
-void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
+void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, SOCKADDR_IN stAddr)
 {
 	float x = stRecv.fX;
 	float y = stRecv.fY;
@@ -78,15 +78,21 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 		m_cPlayer1.SetPosition(x, y, z);
 		m_cPlayer1.SetAngle(Angle);
 		m_cPlayer1.SetAnimState(stRecv.eAnimState);
-		m_nPlayer1Time = g_pTime->GetLocalTime_UINT();
+		Player1Adr = stAddr;
+		m_nPlayer1Time = clock();
+		cout << inet_ntoa(Player1Adr.sin_addr) << endl;
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
 		m_cPlayer2.SetPosition(x, y, z);
 		m_cPlayer2.SetAngle(Angle);
 		m_cPlayer2.SetAnimState(stRecv.eAnimState);
-		m_nPlayer2Time = g_pTime->GetLocalTime_UINT();
+		Player2Adr = stAddr;
+		cout << inet_ntoa(Player2Adr.sin_addr) << endl;
+		m_nPlayer2Time = clock();
 	}
+
+	
 }
 
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
@@ -113,10 +119,9 @@ int cContainer::GetOnlineUser()
 {
 	int nResult = 0;
 
-	// << : 해당 부분을 UINT로 변경해야 합니다. (time.h 이용 시간 변경)
-	if (g_pTime->GetLocalTime_UINT() - m_nPlayer1Time < CONNECT_TIME)
+	if (m_nPlayer1Time + (ONE_SECOND * 5) < clock())
 		nResult = nResult | (OUT_PLAYER1);
-	if (g_pTime->GetLocalTime_UINT() - m_nPlayer2Time < CONNECT_TIME)
+	if (m_nPlayer2Time + (ONE_SECOND * 5) < clock())
 		nResult = nResult | (OUT_PLAYER2);
 		
 	return nResult;

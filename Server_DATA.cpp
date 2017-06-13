@@ -39,10 +39,14 @@ void Server_DATA::Setup()
 	{
 		clntAdrSz = sizeof(clntAdr);
 		hClntSock = accept(hServSock, (SOCKADDR*)&clntAdr, &clntAdrSz);
+		ST_SOCKET_ADDR Recv;
+		Recv.stSocket = hClntSock;
+		Recv.stAddr = clntAdr;
+		//cout << inet_ntoa(Recv.stAddr.sin_addr) << endl;
 		if (hClntSock > 0)
 		{
 			if(g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
-			hThread = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV, (void*)&hClntSock, 0, NULL);
+			hThread = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV, (void*)&Recv, 0, NULL);
 			g_nThreadCount++;
 			if(g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
@@ -85,9 +89,10 @@ void Server_DATA::Destroy()
 }
 unsigned int _stdcall PROCESS_RECV(void * arg)
 {
-	SOCKET hClntSock = *((SOCKET*)arg);	/// << : SOCKET 정보 받아옴
+	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;	// << : 소켓과 IP 주소
+	ST_PLAYER_POSITION RecvData;			/// << : 데이터 수신 버퍼
+	SOCKET hClntSock = RecvSocket.stSocket;	/// << : SOCKET 정보 받아옴
 	int strLen = 0;
-	ST_PLAYER_POSITION RecvData;		/// << : 데이터 수신 버퍼
 
 	strLen = recv(hClntSock, (char*)&RecvData, sizeof(ST_PLAYER_POSITION), 0);
 
@@ -95,7 +100,7 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 	if ( strLen != 0 && strLen != -1)
 	{
 		WaitForSingleObject(hMutex_DATA, INFINITE);	// << : Wait Mutex
-		g_pDataManager->ReceiveData(RecvData);
+		g_pDataManager->ReceiveData(RecvData,RecvSocket.stAddr);
 		if (RecvData.nPlayerIndex & IN_PLAYER1 && g_pTime->GetShowAllLog()) cout << "플레이어 1 ";
 		if (RecvData.nPlayerIndex & IN_PLAYER2 && g_pTime->GetShowAllLog()) cout << "플레이어 2 ";
 		if (g_pTime->GetShowAllLog()) cout << RecvData.fX << " " << RecvData.fY << " " << RecvData.fZ << " " << RecvData.fAngle << " 애니메이션 : " << RecvData.eAnimState << endl;
