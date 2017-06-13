@@ -16,6 +16,36 @@ void cDataManager::Setup()
 	InitializeCriticalSection(&cs);
 }
 
+void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
+{
+	/* 공간 동적할당 */
+	string key = string(stFlag.szRoomName);
+	if (m_mapContainer[key] == NULL)
+	{
+		m_mapContainer[key] = new cContainer;
+		m_mapContainer[key]->Setup(key);
+	}
+
+	/* 클라이언트 정보 저장 */
+	if (stFlag.nPlayerIndex & IN_PLAYER1)
+		m_mapContainer[key]->SetPlayer1Sock(stSocket);
+	else if (stFlag.nPlayerIndex & IN_PLAYER2)
+		m_mapContainer[key]->SetPlayer2Sock(stSocket);
+
+	m_mapContainer[key]->SetSwitchAddr1P(true);
+	m_mapContainer[key]->SetSwitchAddr2P(true);
+}
+
+ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)
+{
+	if (stFlag.nPlayerIndex == 1)
+		return g_pDataManager->m_mapContainer[string(stFlag.szRoomName)]->GetPlayer2Sock();
+	else if(stFlag.nPlayerIndex == 2)
+		return g_pDataManager->m_mapContainer[string(stFlag.szRoomName)]->GetPlayer1Sock();
+
+	return ST_SOCKET_ADDR();
+}
+
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 {
 	EnterCriticalSection(&cs);
@@ -25,7 +55,6 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 		m_mapContainer[key] = new cContainer;
 		m_mapContainer[key]->Setup(key);
 	}
-	m_mapContainer[key]->UpdateData(stRecv,stAddr);
 	LeaveCriticalSection(&cs);
 }
 
@@ -51,6 +80,15 @@ void cDataManager::SaveAllData()
 	for (iter = m_mapContainer.begin(); iter != m_mapContainer.end(); ++iter)
 	{
 		iter->second->SaveData();	// << : SaveLog
+	}
+}
+
+void cDataManager::Update()
+{
+	int a = 3;
+	for each(auto p in m_mapContainer)
+	{
+		p.second->Update();
 	}
 }
 

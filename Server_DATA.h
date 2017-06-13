@@ -1,9 +1,5 @@
 #pragma once
 
-#define PORT_DATA 1234
-#define WAIT_MILLISECOND 5000
-#define ONE_SECOND 1000
-
 class Server_DATA
 {
 private:
@@ -31,18 +27,4 @@ public:
 	void Destroy();
 };
 
-enum FLAG
-{
-	FLAG_NONE = 1 << 0,
-	FLAG_IP = 1 << 1,
-	FLAG_POSITION = 1 << 2,
-	FLAG_OBJECT_DATA = 1 << 3,
-	FLAG_ALL = 1 << 4,
-};
 
-struct ST_FLAG
-{
-	char szRoomName[50] = { 0, };
-	int nPlayerIndex;
-	int eFlag;
-};

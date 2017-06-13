@@ -34,7 +34,7 @@ void Server_DATA::Setup_Prev()
 	memset(&servAdr, 0, sizeof(servAdr));
 	servAdr.sin_family = AF_INET;	// << : IPV4 할당
 	servAdr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servAdr.sin_port = PORT_DATA;
+	servAdr.sin_port = PORT_DATA_RECV;
 
 	if (bind(hServSock, (SOCKADDR*)&servAdr, sizeof(servAdr)) == SOCKET_ERROR)
 		cout << "Server_DATA bind() Error" << endl;
@@ -63,9 +63,6 @@ void Server_DATA::Setup_Prev()
 
 void Server_DATA::Setup_Current()
 {
-	wsaData2;
-	hServSock2, hClntSock2;
-	servAdr2, clntAdr2;
 
 	InitializeCriticalSection(&CS_DATA2);
 	EnterCriticalSection(&CS_DATA2);
@@ -78,7 +75,7 @@ void Server_DATA::Setup_Current()
 	memset(&servAdr, 0, sizeof(servAdr));
 	servAdr2.sin_family = AF_INET;	// << : IPV4 할당
 	servAdr2.sin_addr.s_addr = htonl(INADDR_ANY);
-	servAdr2.sin_port = PORT_DATA;
+	servAdr2.sin_port = PORT_DATA_RECV;
 
 	if (bind(hServSock2, (SOCKADDR*)&servAdr2, sizeof(servAdr2)) == SOCKET_ERROR)
 		cout << "Server_DATA bind() Error" << endl;
@@ -111,6 +108,11 @@ void Server_DATA::Update()
 		g_pTime->SetSaveTimer(clock());
 		g_pDataManager->SaveAllData();
 		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD3) & 0x0001)
+	{
+		g_pDataManager->Update();
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
@@ -197,8 +199,8 @@ unsigned int _stdcall PROCESS_RECV2(void* arg)
 }
 unsigned int _stdcall Recv_From_Client(void* arg)
 {
-	ST_SOCKET_ADDR Recv = *(ST_SOCKET_ADDR*)arg;
-	SOCKET ClntSock = Recv.stSocket;
+	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
+	SOCKET ClntSock = RecvSocket.stSocket;
 	char szBuffer[BUF_SIZE * 10] = { 0, };
 	int strLen1,strLen2, i;
 
@@ -206,11 +208,16 @@ unsigned int _stdcall Recv_From_Client(void* arg)
 	{
 		if (strLen1 == -1) break;
 
-		ST_FLAG nFlag = *(ST_FLAG*)szBuffer;
-		cout << nFlag.szRoomName << endl;
-		cout << nFlag.nPlayerIndex << endl;
-		switch (nFlag.eFlag)
+		ST_FLAG stFlag = *(ST_FLAG*)szBuffer;
+		cout << stFlag.szRoomName << endl;
+		cout << stFlag.nPlayerIndex << endl;
+		switch (stFlag.eFlag)
 		{
+		case FLAG_IP:
+		{
+			g_pDataManager->ReceiveSocket(stFlag,RecvSocket);
+		}
+			break;
 		case FLAG_POSITION:
 		{
 			recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);

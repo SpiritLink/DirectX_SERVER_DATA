@@ -15,21 +15,24 @@ private:
 
 	std::vector<cStuff> m_vecStuffPosition;	// << : 오브젝트
 
-	bool SwitchPlayer1;			// << : 플레이어 1 스위치
-	bool SwitchPlayer2;			// << : 플레이어 2 스위치
+	SYNTHESIZE(ST_SOCKET_ADDR, Player1Sock, Player1Sock);
+	SYNTHESIZE(ST_SOCKET_ADDR, Player2Sock, Player2Sock);
 
-	SOCKADDR_IN Player1Adr;		// << : 플레이어 1 주소
-	SOCKADDR_IN Player2Adr;		// << : 플레이어 2 주소
+	SYNTHESIZE(bool, SwitchAddr1P, SwitchAddr1P);	// << : 상대에게 주소를 전달해야 하는가 ?
+	SYNTHESIZE(bool, SwitchAddr2P, SwitchAddr2P);
+
+	HANDLE hThread1P, hThread2P;
+	
 public:
 	cContainer();
 	~cContainer();
 
 	ST_PLAYER_POSITION GetData(int nIndex);
 	int GetOnlineUser();
-	void OnSwitch();
 	void Setup(string key);
 	void SaveData();
 	void SetDefault();
-	void UpdateData(ST_PLAYER_POSITION stRecv, SOCKADDR_IN stAddr);
+	void Update();
+	void UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr);
 };
 

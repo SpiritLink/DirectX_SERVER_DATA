@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "cContainer.h"
 
+unsigned int _stdcall SEND_DATA_TO_CLIENT(LPVOID lpParam);
+
 cContainer::cContainer()
 	: m_nPlayer1Time(0)
 	, m_nPlayer2Time(0)
-	, SwitchPlayer1(false)
-	, SwitchPlayer2(false)
+	, SwitchAddr1P(false)
+	, SwitchAddr2P(false)
 {
 	m_vecStuffPosition.resize(SWITCH_LASTNUM);
 }
@@ -66,7 +68,7 @@ void cContainer::Setup(string key)
 	}
 }
 
-void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, SOCKADDR_IN stAddr)
+void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 {
 	float x = stRecv.fX;
 	float y = stRecv.fY;
@@ -78,17 +80,17 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, SOCKADDR_IN stAddr)
 		m_cPlayer1.SetPosition(x, y, z);
 		m_cPlayer1.SetAngle(Angle);
 		m_cPlayer1.SetAnimState(stRecv.eAnimState);
-		Player1Adr = stAddr;
+		Player1Sock = stAddr;
 		m_nPlayer1Time = clock();
-		cout << inet_ntoa(Player1Adr.sin_addr) << endl;
+		cout << inet_ntoa(Player1Sock.stAddr.sin_addr) << endl;
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
 		m_cPlayer2.SetPosition(x, y, z);
 		m_cPlayer2.SetAngle(Angle);
 		m_cPlayer2.SetAnimState(stRecv.eAnimState);
-		Player2Adr = stAddr;
-		cout << inet_ntoa(Player2Adr.sin_addr) << endl;
+		Player2Sock = stAddr;
+		cout << inet_ntoa(Player2Sock.stAddr.sin_addr) << endl;
 		m_nPlayer2Time = clock();
 	}
 
@@ -179,8 +181,33 @@ void cContainer::SetDefault()
 	m_cPlayer2.SetAngle(0);
 }
 
-void cContainer::OnSwitch()
+void cContainer::Update()
 {
-	SwitchPlayer1 = true;
-	SwitchPlayer2 = true;
+	if (SwitchAddr1P)
+	{
+		SwitchAddr1P = false;
+		hThread1P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player1Sock, 0, NULL);
+	}
+
+	if (SwitchAddr2P)
+	{
+		SwitchAddr2P = false;
+		hThread2P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player2Sock, 0, NULL);
+	}
 }
+
+unsigned int _stdcall SEND_DATA_TO_CLIENT(LPVOID lpParam)
+{
+	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)lpParam;
+	RecvSocket.stAddr.sin_port = PORT_DATA_SEND;
+
+	int result = connect(RecvSocket.stSocket, (SOCKADDR*)&RecvSocket.stAddr, sizeof(RecvSocket.stAddr));
+	if (result == SOCKET_ERROR)
+		cout << "DATA TO CLIENT Connect Error" << endl;
+
+	ST_FLAG stFlag;
+	stFlag.eFlag = FLAG_POSITION;
+	send(RecvSocket.stSocket, (char*)&stFlag, sizeof(ST_FLAG), 0);
+	return 0;
+}
+

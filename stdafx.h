@@ -33,6 +33,11 @@
 #define OUT_PLAYER2 1 << 1
 #define ONE_SECOND 1000
 
+#define PORT_DATA_RECV 1234
+#define PORT_DATA_SEND 1235
+#define WAIT_MILLISECOND 5000
+#define ONE_SECOND 1000
+
 using namespace std;
 
 
@@ -135,6 +140,21 @@ enum SwitchInfo
 	SWITCH_DOOR_2NDROOM2,
 
 	SWITCH_LASTNUM
+};
+
+enum FLAG
+{
+	FLAG_NONE = 1 << 0,
+	FLAG_IP = 1 << 1,
+	FLAG_POSITION = 1 << 2,
+	FLAG_OBJECT_DATA = 1 << 3,
+	FLAG_ALL = 1 << 4,
+};
+struct ST_FLAG
+{
+	char szRoomName[50] = { 0, };
+	int nPlayerIndex;
+	int eFlag;
 };
 struct ST_SOCKET_ADDR
 {
