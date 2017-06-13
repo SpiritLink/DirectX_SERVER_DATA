@@ -32,3 +32,11 @@ public:
 	void Destroy();
 };
 
+enum FLAG
+{
+	FLAG_NONE = 1 << 0,
+	FLAG_IP = 1 << 1,
+	FLAG_POSITION = 1 << 2,
+	FLAG_OBJECT_DATA = 1 << 3,
+	FLAG_ALL = 1 << 4,
+};

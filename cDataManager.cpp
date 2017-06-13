@@ -43,8 +43,6 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 		stResult = m_mapContainer[key]->GetData(1);
 
 	stResult.nPlayerIndex = m_mapContainer[key]->GetOnlineUser();
-	stResult.nFROM_CLIENT = 0;
-	stResult.nFROM_SERVER = 0;
 	return stResult;
 }
 void cDataManager::SaveAllData()

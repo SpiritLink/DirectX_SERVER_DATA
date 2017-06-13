@@ -7,6 +7,8 @@ unsigned int _stdcall PROCESS_RECV(void * arg);
 
 unsigned int _stdcall PROCESS_SEND(void* arg);
 unsigned int _stdcall PROCESS_RECV2(void* arg);
+unsigned int _stdcall Recv_From_Client(void* arg);
+unsigned int _stdcall Send_From_Server(void* arg);
 CRITICAL_SECTION CS_DATA;
 CRITICAL_SECTION CS_DATA2;
 
@@ -93,7 +95,7 @@ void Server_DATA::Setup_Current()
 		Recv.stAddr = clntAdr2;
 		if (hClntSock2 > 0)
 		{
-			hThread_RECV = (HANDLE)_beginthreadex(NULL, 0, PROCESS_RECV2, (void*)&Recv, 0, NULL);
+			hThread_RECV = (HANDLE)_beginthreadex(NULL, 0, Recv_From_Client, (void*)&Recv, 0, NULL);
 			g_nThreadCount++;
 		}
 		if (g_pTime->GetQuit()) break;
@@ -163,22 +165,10 @@ unsigned int _stdcall PROCESS_RECV(void * arg)
 		return 0;
 	}
 
-	switch (RecvData.nFROM_CLIENT)			///* 클라이언트가 원하는 데이터에 맞춰 스레드로 전송합니다. */			
-	{
-	case 0:
-		{
-			ST_PLAYER_POSITION stPosition;
-			stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
-			sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER",11);
-			send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
-		}
-		break;
-	case 1:
-		break;
-	case 2:
-		break;
-
-	}
+	ST_PLAYER_POSITION stPosition;
+	stPosition = g_pDataManager->GetPlayerData(string(RecvData.szRoomName), RecvData.nPlayerIndex);
+	sprintf_s(RecvData.szRoomName, "%s", "FROM_SERVER", 11);
+	send(hClntSock, (char*)&stPosition, sizeof(ST_PLAYER_POSITION), 0);	// << : send Function
 	g_nThreadCount--;
 	if(g_pTime->GetShowThread()) cout << "Sub Thread Count : " << g_nThreadCount << endl;
 	return 0;
@@ -205,4 +195,41 @@ unsigned int _stdcall PROCESS_RECV2(void* arg)
 	closesocket(ClntSock);
 	return 0;
 }
+unsigned int _stdcall Recv_From_Client(void* arg)
+{
+	ST_SOCKET_ADDR Recv = *(ST_SOCKET_ADDR*)arg;
+	SOCKET ClntSock = Recv.stSocket;
+	char szBuffer[BUF_SIZE * 10] = { 0, };
+	int strLen1,strLen2, i;
+
+	while ((strLen1 = recv(ClntSock, szBuffer, sizeof(int), 0)) != 0)
+	{
+		if (strLen1 == -1) break;
+
+		int nFlag = *(char*)szBuffer;
+
+		switch (nFlag)
+		{
+		case FLAG_POSITION:
+		{
+			recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
+			ST_PLAYER_POSITION data = *(ST_PLAYER_POSITION*)szBuffer;
+			cout << data.fX << endl;
+			cout << data.fY << endl;
+			cout << data.fZ << endl;
+			cout << "수신 정상 완료" << endl;
+		}
+			break;
+		}
+		continue;
+	}
+
+	closesocket(ClntSock);
+	return 0;
+}
+unsigned int _stdcall Send_From_Server(void* arg)
+{
+	return 0;
+}
+
 
