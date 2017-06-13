@@ -3,7 +3,11 @@
 
 
 cStuff::cStuff()
-	: IsRunning(false)
+	: m_eType(STUFF_NONE)
+	, IsRunning(false)
+	, RotateX(0.0f)
+	, RotateY(0.0f)
+	, RotateZ(0.0f)
 {
 	m_eType = STUFF_NONE;
 }

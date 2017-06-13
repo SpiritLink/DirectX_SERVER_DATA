@@ -11,3 +11,13 @@ cPlayer::cPlayer()
 cPlayer::~cPlayer()
 {
 }
+
+void cPlayer::SetAngle(float Value)
+{
+	fAngle = Value;
+}
+
+float cPlayer::GetAngle()
+{
+	return fAngle;
+}

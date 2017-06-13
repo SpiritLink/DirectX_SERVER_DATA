@@ -6,6 +6,9 @@ class cStuff : public cObject
 protected:
 	StuffCode	m_eType;
 	bool		IsRunning;
+	float RotateX;
+	float RotateY;
+	float RotateZ;
 public:
 	cStuff();
 	virtual ~cStuff() override;

@@ -72,13 +72,15 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 
 	if (stRecv.nPlayerIndex & IN_PLAYER1)
 	{
-		m_cPlayer1.SetPosition(x, y, z, Angle);
+		m_cPlayer1.SetPosition(x, y, z);
+		m_cPlayer1.SetAngle(Angle);
 		m_cPlayer1.SetAnimState(stRecv.eAnimState);
 		m_nPlayer1Time = g_pTime->GetLocalTime_UINT();
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
-		m_cPlayer2.SetPosition(x, y, z, Angle);
+		m_cPlayer2.SetPosition(x, y, z);
+		m_cPlayer2.SetAngle(Angle);
 		m_cPlayer2.SetAnimState(stRecv.eAnimState);
 		m_nPlayer2Time = g_pTime->GetLocalTime_UINT();
 	}
@@ -89,12 +91,14 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	ST_PLAYER_POSITION result;
 	if (nIndex == 1)
 	{
-		m_cPlayer1.GetPosition(&result.fX, &result.fY, &result.fZ, &result.fAngle);
+		m_cPlayer1.GetPosition(&result.fX, &result.fY, &result.fZ);
+		result.fAngle = m_cPlayer1.GetAngle();
 		result.eAnimState = m_cPlayer1.GetAnimState();
 	}
 	if (nIndex == 2)
 	{
-		m_cPlayer2.GetPosition(&result.fX, &result.fY, &result.fZ, &result.fAngle);
+		m_cPlayer2.GetPosition(&result.fX, &result.fY, &result.fZ);
+		result.fAngle = m_cPlayer2.GetAngle();
 		result.eAnimState = m_cPlayer2.GetAnimState();
 	}
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
@@ -137,13 +141,15 @@ void cContainer::SaveData()
 	// << : 데이터 저장
 	float x, y, z, angle;
 
-	m_cPlayer1.GetPosition(&x, &y, &z, &angle);
+	m_cPlayer1.GetPosition(&x, &y, &z);
+	angle = m_cPlayer1.GetAngle();
 	outFile << "Player1 X " << x << endl;
 	outFile << "Player1 Y " << y << endl;
 	outFile << "Player1 Z " << z << endl;
 	outFile << "Player1 Angle " << angle << endl;
 
-	m_cPlayer2.GetPosition(&x, &y, &z, &angle);
+	m_cPlayer2.GetPosition(&x, &y, &z);
+	angle = m_cPlayer2.GetAngle();
 	outFile << "Player2 X " << x << endl;
 	outFile << "Player2 Y " << y << endl;
 	outFile << "Player2 Z " << z << endl;
