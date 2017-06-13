@@ -78,7 +78,7 @@ void Server_DATA::Setup_Current()
 	memset(&servAdr, 0, sizeof(servAdr));
 	servAdr2.sin_family = AF_INET;	// << : IPV4 วาด็
 	servAdr2.sin_addr.s_addr = htonl(INADDR_ANY);
-	servAdr2.sin_port = PORT_CLIENT;
+	servAdr2.sin_port = PORT_DATA;
 
 	if (bind(hServSock2, (SOCKADDR*)&servAdr2, sizeof(servAdr2)) == SOCKET_ERROR)
 		cout << "Server_DATA bind() Error" << endl;
@@ -202,13 +202,14 @@ unsigned int _stdcall Recv_From_Client(void* arg)
 	char szBuffer[BUF_SIZE * 10] = { 0, };
 	int strLen1,strLen2, i;
 
-	while ((strLen1 = recv(ClntSock, szBuffer, sizeof(int), 0)) != 0)
+	while ((strLen1 = recv(ClntSock, szBuffer, sizeof(ST_FLAG), 0)) != 0)
 	{
 		if (strLen1 == -1) break;
 
-		int nFlag = *(char*)szBuffer;
-
-		switch (nFlag)
+		ST_FLAG nFlag = *(ST_FLAG*)szBuffer;
+		cout << nFlag.szRoomName << endl;
+		cout << nFlag.nPlayerIndex << endl;
+		switch (nFlag.eFlag)
 		{
 		case FLAG_POSITION:
 		{
