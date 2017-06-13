@@ -26,3 +26,17 @@ void cStuff::SetIsRunning(bool Value)
 {
 	IsRunning = Value;
 }
+
+void cStuff::SetRotate(float x, float y, float z)
+{
+	RotateX = x;
+	RotateY = y;
+	RotateZ = z;
+}
+
+void cStuff::GetRotate(float * x, float * y, float * z)
+{
+	*x = RotateX;
+	*y = RotateY;
+	*z = RotateZ;
+}

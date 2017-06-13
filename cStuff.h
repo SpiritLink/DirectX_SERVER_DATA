@@ -14,6 +14,8 @@ public:
 	virtual ~cStuff() override;
 	void SetItemType(StuffCode eType);
 	void SetIsRunning(bool Value);
+	void SetRotate(float x, float y, float z);
+	void GetRotate(float* x, float* y, float* z);
 };
 
 
