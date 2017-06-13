@@ -34,6 +34,6 @@ int main()
 unsigned int _stdcall ThData_ACCEPT(LPVOID lpParam)
 {
 	Server_DATA * pServerData = ((Server_DATA*)lpParam);
-	pServerData->Setup();
+	pServerData->Setup_Current();
 	return 0;
 }
