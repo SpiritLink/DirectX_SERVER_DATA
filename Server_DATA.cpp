@@ -146,6 +146,7 @@ void Server_DATA::Update()
 void Server_DATA::Destroy()
 {
 	closesocket(hServSock_RECV);
+	closesocket(hServSock_SEND);
 	WSACleanup();
 }
 
@@ -212,6 +213,7 @@ unsigned int _stdcall SEND_DATA_CLIENT(void* arg)
 
 	while (true)
 	{
+		// << : 여기서 컨테이너를 확인, 얻어야할 정보가 있다면 얻어오는 식으로
 		if (prevTime + (ONE_SECOND * 2) > clock()) continue;
 		prevTime = clock();
 
@@ -220,8 +222,6 @@ unsigned int _stdcall SEND_DATA_CLIENT(void* arg)
 		sprintf_s(stFlag.szRoomName, "SERVER", 6);
 
 		send(ClntSock, (char*)&stFlag, sizeof(ST_FLAG), 0);	// << : 플래그 전송
-
-
 	}
 
 	closesocket(ClntSock);
