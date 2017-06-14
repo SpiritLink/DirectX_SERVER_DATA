@@ -109,9 +109,11 @@ void Server_DATA::Update()
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
 	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 10) < clock())
 	{
+		WaitForSingleObject(g_hMutex_DATA, INFINITE);
 		g_pTime->SetSaveTimer(clock());
-		//g_pDataManager->SaveAllData();
+		g_pDataManager->SaveAllData();
 		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
+		ReleaseMutex(g_hMutex_DATA);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD3) & 0x0001)
@@ -219,12 +221,14 @@ unsigned int _stdcall Recv_From_Client(void* arg)
 		{
 			recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
 			ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
+			WaitForSingleObject(g_hMutex_DATA, INFINITE);
 			g_pDataManager->ReceiveData(RecvPosition);
 
 			cout << "FLAG_POSITION 좌표 수신" << endl;
 			ST_PLAYER_POSITION SendPosition;
 			int nIndex;
 			SendPosition = g_pDataManager->GetPlayerData(string(stFlag.szRoomName), RecvPosition.nPlayerIndex);
+			ReleaseMutex(g_hMutex_DATA);
 			send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
 			cout << "FLAG_POSITION 좌표 전송" << endl;
 		}

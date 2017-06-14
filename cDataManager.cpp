@@ -56,10 +56,10 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 		m_mapContainer[key]->Setup(key);
 	}
 	m_mapContainer[key]->UpdateData(stRecv);
-	cout << stRecv.nPlayerIndex << endl;
-	cout << stRecv.fX << endl;
-	cout << stRecv.fY << endl;
-	cout << stRecv.fZ << endl;
+	cout << stRecv.nPlayerIndex << " ";
+	cout << stRecv.fX << " ";
+	cout << stRecv.fY << " ";
+	cout << stRecv.fZ << " ";
 	cout << stRecv.fAngle << endl;
 	LeaveCriticalSection(&cs);
 }

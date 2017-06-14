@@ -142,10 +142,16 @@ int cContainer::GetOnlineUser()
 {
 	int nResult = 0;
 
-	if (m_nPlayer1Time + (ONE_SECOND * 5) < clock())
+	if (m_nPlayer1Time + (ONE_SECOND * 5) > clock())
+	{
 		nResult = nResult | (OUT_PLAYER1);
-	if (m_nPlayer2Time + (ONE_SECOND * 5) < clock())
+		cout << "1P 立加 犬牢" << endl;
+	}
+	if (m_nPlayer2Time + (ONE_SECOND * 5) > clock())
+	{
 		nResult = nResult | (OUT_PLAYER2);
+		cout << "2P 立加 犬牢" << endl;
+	}
 		
 	return nResult;
 }
