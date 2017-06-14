@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Server_DATA.h"
 
-HANDLE hMutex_DATA;
-HANDLE hMutex_DATA2;
 CRITICAL_SECTION CS_SERVER;
 
 // << : 스레드 함수
@@ -22,7 +20,6 @@ Server_DATA::~Server_DATA()
 
 void Server_DATA::Setup_RECV()
 {
-	hMutex_DATA2 = CreateMutex(NULL, FALSE, NULL);
 	InitializeCriticalSection(&CS_SERVER);
 	EnterCriticalSection(&CS_SERVER);
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
@@ -100,7 +97,7 @@ void Server_DATA::Setup_SEND()
 		SendSock.stAddr = clntAdr_SEND;
 		if (hClntSock_SEND > 0)
 		{
-			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_RECV.sin_addr) << endl;
+			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_SEND.sin_addr) << endl;
 			hTestSend = (HANDLE)_beginthreadex(NULL, 0, SEND_DATA_CLIENT, (void*)&SendSock, 0, NULL);
 			g_nThreadCount++;
 			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
