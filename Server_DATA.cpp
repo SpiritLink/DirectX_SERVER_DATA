@@ -12,6 +12,8 @@ unsigned int _stdcall Send_From_Server(void* arg);
 CRITICAL_SECTION CS_DATA;
 CRITICAL_SECTION CS_DATA2;
 
+void ProcessPosition(void* arg, string RoomName);
+
 Server_DATA::Server_DATA()
 {
 }
@@ -177,21 +179,16 @@ unsigned int _stdcall Recv_From_Client(void* arg)
 		ST_FLAG stFlag = *(ST_FLAG*)szBuffer;
 		switch (stFlag.eFlag)
 		{
+		case FLAG_NONE:
+			break;
+		case FLAG_IP:
+			break;
 		case FLAG_POSITION:
-		{
-			recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
-			ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
-			WaitForSingleObject(g_hMutex_DATA, INFINITE);
-			g_pDataManager->ReceiveData(RecvPosition);
-
-			cout << "FLAG_POSITION ÁÂÇ¥ ¼ö½Å" << endl;
-			ST_PLAYER_POSITION SendPosition;
-			int nIndex;
-			SendPosition = g_pDataManager->GetPlayerData(string(stFlag.szRoomName), RecvPosition.nPlayerIndex);
-			ReleaseMutex(g_hMutex_DATA);
-			send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
-			cout << "FLAG_POSITION ÁÂÇ¥ Àü¼Û" << endl;
-		}
+			ProcessPosition(&RecvSocket, string(stFlag.szRoomName));
+			break;
+		case FLAG_OBJECT_DATA:
+			break;
+		case FLAG_ALL:
 			break;
 		}
 		continue;
@@ -206,3 +203,21 @@ unsigned int _stdcall Send_From_Server(void* arg)
 }
 
 
+void ProcessPosition(void* arg,string RoomName)
+{
+	SOCKET ClntSock = *(SOCKET*)arg;
+	char szBuffer[1000] = { 0, };
+	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
+	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
+	g_pDataManager->ReceiveData(RecvPosition);
+
+	cout << "FLAG_POSITION ÁÂÇ¥ ¼ö½Å" << endl;
+	ST_PLAYER_POSITION SendPosition;
+	int nIndex;
+	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
+	ReleaseMutex(g_hMutex_DATA);
+	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
+	cout << "FLAG_POSITION ÁÂÇ¥ Àü¼Û" << endl;
+
+}
