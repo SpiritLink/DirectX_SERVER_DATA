@@ -227,7 +227,7 @@ void cContainer::Update()
 unsigned int _stdcall SEND_DATA_TO_CLIENT(LPVOID lpParam)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)lpParam;
-	RecvSocket.stAddr.sin_port = PORT_DATA_SEND;
+	RecvSocket.stAddr.sin_port = PORT_DATA_OUT;
 
 	int result = connect(RecvSocket.stSocket, (SOCKADDR*)&RecvSocket.stAddr, sizeof(RecvSocket.stAddr));
 	if (result == SOCKET_ERROR)
