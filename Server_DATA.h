@@ -3,17 +3,19 @@
 class Server_DATA
 {
 private:
-	int clntAdrSz;
+	int clntAdrSz_RECV, clntAdrSz_SEND;
 	WSADATA wsaData;
-	SOCKET hServSock, hClntSock;
-	SOCKADDR_IN servAdr, clntAdr;
+	SOCKET hServSock_RECV, hServSock_SEND, hClntSock_RECV, hClntSock_SEND;
+	SOCKADDR_IN servAddr_RECV,servAddr_SEND, clntAdr_RECV, clntAdr_SEND;
 
 	HANDLE hThread, hThread_SAVE, hThread_RECV, hThread_SEND;
+	HANDLE hTestRecv, hTestSend;
 public:
 	Server_DATA();
 	~Server_DATA();
 
-	void Setup();
+	void Setup_RECV();
+	void Setup_SEND();
 	void Update();
 	void Destroy();
 };

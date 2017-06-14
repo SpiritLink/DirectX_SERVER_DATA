@@ -3,11 +3,12 @@
 
 HANDLE hMutex_DATA;
 HANDLE hMutex_DATA2;
-CRITICAL_SECTION CS_DATA;
-CRITICAL_SECTION CS_DATA2;
+CRITICAL_SECTION CS_SEND;
+CRITICAL_SECTION CS_RECV;
 
 // << : 스레드 함수
-unsigned int _stdcall INTERECT_CLIENT(void* arg);
+unsigned int _stdcall RECV_DATA_CLIENT(void* arg);	// << : 수신
+unsigned int _stdcall SEND_DATA_CLIENT(void* arg);	// << : 전송
 // << : 일반 함수
 void ProcessPosition(void* arg, string RoomName);
 
@@ -20,48 +21,96 @@ Server_DATA::~Server_DATA()
 {
 }
 
-void Server_DATA::Setup()
+void Server_DATA::Setup_RECV()
 {
-
-	InitializeCriticalSection(&CS_DATA2);
-	EnterCriticalSection(&CS_DATA2);
+	InitializeCriticalSection(&CS_RECV);
+	EnterCriticalSection(&CS_RECV);
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 		cout << "Server_DATA WSAStartup() Error!" << endl;
-
-	hMutex_DATA2 = CreateMutex(NULL, FALSE, NULL);
-	hServSock = socket(PF_INET, SOCK_STREAM, 0);
-
-	memset(&servAdr, 0, sizeof(servAdr));
-	servAdr.sin_family = AF_INET;	// << : IPV4 할당
-	servAdr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servAdr.sin_port = PORT_DATA_RECV;
 	bool bValid = 1;
-	setsockopt(hServSock, SOL_SOCKET, SO_REUSEADDR, (const char *)&bValid, sizeof(bValid));
+	hMutex_DATA2 = CreateMutex(NULL, FALSE, NULL);
 
-	if (bind(hServSock, (SOCKADDR*)&servAdr, sizeof(servAdr)) == SOCKET_ERROR)
-		cout << "Server_DATA bind() Error" << endl;
-	if (listen(hServSock, CLIENT_NUM) == SOCKET_ERROR)
-		cout << "Server_DATA listen() error" << endl;
-	LeaveCriticalSection(&CS_DATA2);
+	/* RECV Sock 초기화 */
+	hServSock_RECV = socket(PF_INET, SOCK_STREAM, 0);
+
+	memset(&servAddr_RECV, 0, sizeof(servAddr_RECV));
+	servAddr_RECV.sin_family = AF_INET;	// << : IPV4 할당
+	servAddr_RECV.sin_addr.s_addr = htonl(INADDR_ANY);
+	servAddr_RECV.sin_port = PORT_DATA_RECV;
+
+	setsockopt(hServSock_RECV, SOL_SOCKET, SO_REUSEADDR, (const char *)&bValid, sizeof(bValid));
+
+	if (bind(hServSock_RECV, (SOCKADDR*)&servAddr_RECV, sizeof(servAddr_RECV)) == SOCKET_ERROR)
+		cout << "RECV bind() Error" << endl;
+	if (listen(hServSock_RECV, CLIENT_NUM) == SOCKET_ERROR)
+		cout << "RECV listen() error" << endl;
+
+
+	LeaveCriticalSection(&CS_RECV);
 
 	while (true)
 	{
 		/* 클라이언트가 연결을 시도했을때 처리하는 부분 */
-		clntAdrSz = sizeof(clntAdr);
-		hClntSock = accept(hServSock, (SOCKADDR*)&clntAdr, &clntAdrSz);
-		ST_SOCKET_ADDR Recv;
-		Recv.stSocket = hClntSock;
-		Recv.stAddr = clntAdr;
-		if (hClntSock > 0)
+		clntAdrSz_RECV = sizeof(clntAdr_RECV);
+		hClntSock_RECV = accept(hServSock_RECV, (SOCKADDR*)&clntAdr_RECV, &clntAdrSz_RECV);
+		ST_SOCKET_ADDR RecvSock, SendSock;
+		RecvSock.stSocket = hClntSock_RECV;
+		RecvSock.stAddr = clntAdr_RECV;
+		if (hClntSock_RECV > 0)
 		{
-			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr.sin_addr) << endl;
-			hThread_RECV = (HANDLE)_beginthreadex(NULL, 0, INTERECT_CLIENT, (void*)&Recv, 0, NULL);
+			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_RECV.sin_addr) << endl;
+			hTestRecv = (HANDLE)_beginthreadex(NULL, 0, RECV_DATA_CLIENT, (void*)&RecvSock, 0, NULL);
+			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
+			g_nThreadCount++;
+		}
+		if (g_pTime->GetQuit()) break;
+	}
+
+}
+
+void Server_DATA::Setup_SEND()
+{
+	InitializeCriticalSection(&CS_SEND);
+	EnterCriticalSection(&CS_SEND);
+
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+		cout << "Server_DATA WSAStartup() Error!" << endl;
+	bool bValid = 1;
+
+	/* SEND Sock 초기화 */
+	hServSock_SEND = socket(PF_INET, SOCK_STREAM, 0);
+
+	memset(&servAddr_SEND, 0, sizeof(servAddr_SEND));
+	servAddr_SEND.sin_family = AF_INET;
+	servAddr_SEND.sin_addr.s_addr = htonl(INADDR_ANY);
+	servAddr_SEND.sin_port = PORT_DATA_SEND;
+
+	setsockopt(hServSock_SEND, SOL_SOCKET, SO_REUSEADDR, (const char *)&bValid, sizeof(bValid));
+
+	if (bind(hServSock_SEND, (SOCKADDR*)&servAddr_SEND, sizeof(servAddr_SEND)) == SOCKET_ERROR)
+		cout << "SEND bind() Error" << endl;
+	if (listen(hServSock_RECV, CLIENT_NUM) == SOCKET_ERROR)
+		cout << "SEND listen() error" << endl;
+
+	while (true)
+	{
+		/* 클라이언트가 연결을 시도했을때 처리하는 부분 */
+		clntAdrSz_SEND = sizeof(clntAdr_SEND);
+		hClntSock_SEND = accept(hServSock_SEND, (SOCKADDR*)&clntAdr_SEND, &clntAdrSz_SEND);
+		ST_SOCKET_ADDR RecvSock, SendSock;
+		SendSock.stSocket = hClntSock_SEND;
+		SendSock.stAddr = clntAdr_SEND;
+		if (hClntSock_SEND > 0)
+		{
+			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_RECV.sin_addr) << endl;
+			hTestSend = (HANDLE)_beginthreadex(NULL, 0, SEND_DATA_CLIENT, (void*)&RecvSock, 0, NULL);
 			g_nThreadCount++;
 			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
 
+	LeaveCriticalSection(&CS_SEND);
 }
 
 void Server_DATA::Update()
@@ -101,16 +150,35 @@ void Server_DATA::Update()
 
 void Server_DATA::Destroy()
 {
-	closesocket(hServSock);
+	closesocket(hServSock_RECV);
 	WSACleanup();
 }
 
-unsigned int _stdcall INTERECT_CLIENT(void* arg)
+void ProcessPosition(void* arg, string RoomName)
+{
+	SOCKET ClntSock = *(SOCKET*)arg;
+	char szBuffer[1000] = { 0, };
+	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
+	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
+	g_pDataManager->ReceiveData(RecvPosition);
+
+	cout << "FLAG_POSITION 좌표 수신" << endl;
+	ST_PLAYER_POSITION SendPosition;
+	int nIndex;
+	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
+	ReleaseMutex(g_hMutex_DATA);
+	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
+	cout << "FLAG_POSITION 좌표 전송" << endl;
+
+}
+
+unsigned int _stdcall RECV_DATA_CLIENT(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
 	SOCKET ClntSock = RecvSocket.stSocket;
 	char szBuffer[BUF_SIZE * 10] = { 0, };
-	int strLen1,strLen2, i;
+	int strLen1, strLen2, i;
 
 	while ((strLen1 = recv(ClntSock, szBuffer, sizeof(ST_FLAG), 0)) != 0)
 	{
@@ -136,23 +204,15 @@ unsigned int _stdcall INTERECT_CLIENT(void* arg)
 
 	closesocket(ClntSock);
 	return 0;
-}
 
-void ProcessPosition(void* arg,string RoomName)
+
+	return 0;
+}
+unsigned int _stdcall SEND_DATA_CLIENT(void* arg)
 {
-	SOCKET ClntSock = *(SOCKET*)arg;
-	char szBuffer[1000] = { 0, };
-	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
-	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
-	WaitForSingleObject(g_hMutex_DATA, INFINITE);
-	g_pDataManager->ReceiveData(RecvPosition);
+	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
+	SOCKET ClntSock = RecvSocket.stSocket;
 
-	cout << "FLAG_POSITION 좌표 수신" << endl;
-	ST_PLAYER_POSITION SendPosition;
-	int nIndex;
-	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
-	ReleaseMutex(g_hMutex_DATA);
-	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
-	cout << "FLAG_POSITION 좌표 전송" << endl;
-
+	return 0;
 }
+
