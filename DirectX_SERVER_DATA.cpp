@@ -7,6 +7,7 @@
 unsigned int _stdcall RECV_REQUEST_CLIENT(LPVOID lpParam);
 unsigned int _stdcall SEND_REQUEST_CLIENT(LPVOID lpParam);
 
+int g_nNetworkID = 0;
 int g_nThreadCount;
 HANDLE g_hMutex_DATA;
 

@@ -4,10 +4,14 @@
 CRITICAL_SECTION CS_SERVER;
 
 // << : 스레드 함수
-unsigned int _stdcall RECV_DATA_CLIENT(void* arg);	// << : 수신
-unsigned int _stdcall SEND_DATA_CLIENT(void* arg);	// << : 전송
+unsigned int _stdcall RECV_REQUEST(void* arg);	// << : 수신
+unsigned int _stdcall SEND_REQUEST(void* arg);	// << : 전송
 // << : 일반 함수
 void ProcessPosition(void* arg, string RoomName);
+
+void RecvPosition();
+
+void SendNetworkID(SOCKET* pSocket);
 
 Server_DATA::Server_DATA()
 {
@@ -54,7 +58,7 @@ void Server_DATA::Setup_RECV()
 		if (hClntSock_RECV > 0)
 		{
 			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_RECV.sin_addr) << endl;
-			hTestRecv = (HANDLE)_beginthreadex(NULL, 0, RECV_DATA_CLIENT, (void*)&RecvSock, 0, NULL);
+			hTestRecv = (HANDLE)_beginthreadex(NULL, 0, RECV_REQUEST, (void*)&RecvSock, 0, NULL);
 			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 			g_nThreadCount++;
 		}
@@ -98,7 +102,7 @@ void Server_DATA::Setup_SEND()
 		if (hClntSock_SEND > 0)
 		{
 			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_SEND.sin_addr) << endl;
-			hTestSend = (HANDLE)_beginthreadex(NULL, 0, SEND_DATA_CLIENT, (void*)&SendSock, 0, NULL);
+			hTestSend = (HANDLE)_beginthreadex(NULL, 0, SEND_REQUEST, (void*)&SendSock, 0, NULL);
 			g_nThreadCount++;
 			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 		}
@@ -150,26 +154,7 @@ void Server_DATA::Destroy()
 	WSACleanup();
 }
 
-void ProcessPosition(void* arg, string RoomName)
-{
-	SOCKET ClntSock = *(SOCKET*)arg;
-	char szBuffer[1000] = { 0, };
-	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
-	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
-	WaitForSingleObject(g_hMutex_DATA, INFINITE);
-	g_pDataManager->ReceiveData(RecvPosition);
-
-	cout << "FLAG_POSITION 좌표 수신" << endl;
-	ST_PLAYER_POSITION SendPosition;
-	int nIndex;
-	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
-	ReleaseMutex(g_hMutex_DATA);
-	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
-	cout << "FLAG_POSITION 좌표 전송" << endl;
-
-}
-
-unsigned int _stdcall RECV_DATA_CLIENT(void* arg)
+unsigned int _stdcall RECV_REQUEST(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
 	SOCKET ClntSock = RecvSocket.stSocket;
@@ -183,7 +168,10 @@ unsigned int _stdcall RECV_DATA_CLIENT(void* arg)
 		ST_FLAG stFlag = *(ST_FLAG*)szBuffer;
 		switch (stFlag.eFlag)
 		{
-		case FLAG_NONE:
+		case FLAG_NONE:	// << : 접속 확인용 ?
+			break;
+		case FLAG_NETWORK_ID:
+			SendNetworkID(&ClntSock);
 			break;
 		case FLAG_IP:
 			break;
@@ -202,7 +190,7 @@ unsigned int _stdcall RECV_DATA_CLIENT(void* arg)
 	return 0;
 }
 
-unsigned int _stdcall SEND_DATA_CLIENT(void* arg)
+unsigned int _stdcall SEND_REQUEST(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
 	SOCKET ClntSock = RecvSocket.stSocket;
@@ -242,5 +230,35 @@ unsigned int _stdcall SEND_DATA_CLIENT(void* arg)
 
 	closesocket(ClntSock);
 	return 0;
+}
+
+void ProcessPosition(void* arg, string RoomName)
+{
+	SOCKET ClntSock = *(SOCKET*)arg;
+	char szBuffer[1000] = { 0, };
+	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
+	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
+	g_pDataManager->ReceiveData(RecvPosition);
+
+	cout << "FLAG_POSITION 좌표 수신" << endl;
+	ST_PLAYER_POSITION SendPosition;
+	int nIndex;
+	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
+	ReleaseMutex(g_hMutex_DATA);
+	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
+	cout << "FLAG_POSITION 좌표 전송" << endl;
+
+}
+
+void RecvPosition()
+{
+
+}
+
+void SendNetworkID(SOCKET* pSocket)
+{
+	int ID = g_nNetworkID++;
+	send(*pSocket, (char*)&ID, sizeof(int), 0);
 }
 

@@ -31,9 +31,6 @@ void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
 		m_mapContainer[key]->SetPlayer1Sock(stSocket);
 	else if (stFlag.nPlayerIndex & IN_PLAYER2)
 		m_mapContainer[key]->SetPlayer2Sock(stSocket);
-
-	m_mapContainer[key]->SetSwitchAddr1P(true);
-	m_mapContainer[key]->SetSwitchAddr2P(true);
 }
 
 ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)

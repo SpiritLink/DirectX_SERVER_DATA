@@ -145,10 +145,12 @@ enum SwitchInfo
 enum FLAG
 {
 	FLAG_NONE = 1 << 0,
-	FLAG_IP = 1 << 1,
-	FLAG_POSITION = 1 << 2,
-	FLAG_OBJECT_DATA = 1 << 3,
-	FLAG_ALL = 1 << 4,
+	FLAG_NETWORK_ID = 1 << 1,
+	FLAG_ROOM_NAME = 1 << 2,
+	FLAG_IP = 1 << 3,
+	FLAG_POSITION = 1 << 4,
+	FLAG_OBJECT_DATA = 1 << 5,
+	FLAG_ALL = 1 << 6,
 };
 struct ST_FLAG
 {
@@ -204,5 +206,6 @@ struct ST_ALL_DATA
 #include "cDataManager.h"
 #include "cTimeManager.h"
 
+extern int g_nNetworkID;
 extern int g_nThreadCount;
 extern HANDLE g_hMutex_DATA;
