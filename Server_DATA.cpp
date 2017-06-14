@@ -174,11 +174,11 @@ unsigned int _stdcall RECV_DATA_CLIENT(void* arg)
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
 	SOCKET ClntSock = RecvSocket.stSocket;
 	char szBuffer[BUF_SIZE * 10] = { 0, };
-	int strLen1, strLen2, i;
+	int strLen;
 
-	while ((strLen1 = recv(ClntSock, szBuffer, sizeof(ST_FLAG), 0)) != 0)
+	while ((strLen = recv(ClntSock, szBuffer, sizeof(ST_FLAG), 0)) != 0)
 	{
-		if (strLen1 == -1) break;
+		if (strLen == -1) break;
 
 		ST_FLAG stFlag = *(ST_FLAG*)szBuffer;
 		switch (stFlag.eFlag)
@@ -222,6 +222,22 @@ unsigned int _stdcall SEND_DATA_CLIENT(void* arg)
 		sprintf_s(stFlag.szRoomName, "SERVER", 6);
 
 		send(ClntSock, (char*)&stFlag, sizeof(ST_FLAG), 0);	// << : 플래그 전송
+
+		switch (stFlag.eFlag)
+		{
+		case FLAG_NONE:
+			break;
+		case FLAG_IP:
+			break;
+		case FLAG_POSITION:
+			break;
+		case FLAG_OBJECT_DATA:
+			break;
+		case FLAG_ALL:
+			break;
+		}
+		
+		// << : 만약 네트워크 아이디가 -1이라면 수신하고 적용은 하지 않는다.
 	}
 
 	closesocket(ClntSock);

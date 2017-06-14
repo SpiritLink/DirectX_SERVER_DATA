@@ -153,6 +153,7 @@ enum FLAG
 struct ST_FLAG
 {
 	char szRoomName[50] = { 0, };
+	int nNetworkID;
 	int nPlayerIndex;
 	int eFlag;
 };

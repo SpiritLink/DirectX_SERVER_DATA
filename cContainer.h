@@ -15,11 +15,11 @@ private:
 
 	std::vector<cStuff> m_vecStuffPosition;	// << : 오브젝트
 
+	SYNTHESIZE(int, nPlayer1NetID, Player1NetID);
+	SYNTHESIZE(int, nPlayer2NetID, Player2NetID);
+
 	SYNTHESIZE(ST_SOCKET_ADDR, Player1Sock, Player1Sock);
 	SYNTHESIZE(ST_SOCKET_ADDR, Player2Sock, Player2Sock);
-
-	SYNTHESIZE(bool, SwitchAddr1P, SwitchAddr1P);	// << : 상대에게 주소를 전달해야 하는가 ?
-	SYNTHESIZE(bool, SwitchAddr2P, SwitchAddr2P);
 
 	HANDLE hThread1P, hThread2P;
 	

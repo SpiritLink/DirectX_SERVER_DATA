@@ -1,13 +1,11 @@
 #include "stdafx.h"
 #include "cContainer.h"
 
-unsigned int _stdcall SEND_DATA_TO_CLIENT(LPVOID lpParam);
-
 cContainer::cContainer()
 	: m_nPlayer1Time(0)
 	, m_nPlayer2Time(0)
-	, SwitchAddr1P(false)
-	, SwitchAddr2P(false)
+	, nPlayer1NetID(-1)
+	, nPlayer2NetID(-1)
 {
 	m_vecStuffPosition.resize(SWITCH_LASTNUM);
 }
@@ -210,32 +208,5 @@ void cContainer::SetDefault()
 
 void cContainer::Update()
 {
-	// << : 현재 클라이언트간 통신이 미구현 되었습니다.
-	//if (SwitchAddr1P)
-	//{
-	//	SwitchAddr1P = false;
-	//	hThread1P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player1Sock, 0, NULL);
-	//}
-
-	//if (SwitchAddr2P)
-	//{
-	//	SwitchAddr2P = false;
-	//	hThread2P = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_DATA_TO_CLIENT, (void*)&Player2Sock, 0, NULL);
-	//}
-}
-
-unsigned int _stdcall SEND_DATA_TO_CLIENT(LPVOID lpParam)
-{
-	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)lpParam;
-	RecvSocket.stAddr.sin_port = PORT_DATA_OUT;
-
-	int result = connect(RecvSocket.stSocket, (SOCKADDR*)&RecvSocket.stAddr, sizeof(RecvSocket.stAddr));
-	if (result == SOCKET_ERROR)
-		cout << "DATA TO CLIENT Connect Error" << endl;
-
-	ST_FLAG stFlag;
-	stFlag.eFlag = FLAG_POSITION;
-	send(RecvSocket.stSocket, (char*)&stFlag, sizeof(ST_FLAG), 0);
-	return 0;
 }
 
