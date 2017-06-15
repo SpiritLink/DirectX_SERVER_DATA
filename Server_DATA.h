@@ -1,6 +1,7 @@
 #pragma once
 
 #define MAXCLIENT_ROOM 2
+#include "cStuff.h"
 
 class Server_DATA
 {
@@ -20,6 +21,27 @@ public:
 	void Setup_SEND();
 	void Update();
 	void Destroy();
+};
+
+struct ST_ALL_DATA
+{
+	// << : 플레이어 데이터
+	float manX;
+	float manY;
+	float manZ;
+	float manAngle;
+	int manAnim;
+	StuffCode manItem[INVENTORY_SIZE];
+
+	float womanX;
+	float womanY;
+	float womanZ;
+	float womanAngle;
+	int womanAnim;
+	StuffCode womanItem[INVENTORY_SIZE];
+
+	// << : 맵 데이터
+	cStuff mapData[SWITCH_LASTNUM];
 };
 
 

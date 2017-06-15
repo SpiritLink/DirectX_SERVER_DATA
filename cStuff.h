@@ -4,7 +4,7 @@
 class cStuff : public cObject
 {
 protected:
-	bool		IsRunning;
+	bool  IsRunning;
 	float RotateX;
 	float RotateY;
 	float RotateZ;

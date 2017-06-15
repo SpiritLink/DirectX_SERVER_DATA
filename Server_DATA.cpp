@@ -287,8 +287,12 @@ void SendRoomName(SOCKET* pSocket,ST_FLAG* flag)
 
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
 {
-	// << : 모든 데이터의 내용을 만든다.
-
+	ST_ALL_DATA stData;
+	// << : 플레이어 정보
+	g_pDataManager->GetManData(string(flag->szRoomName), &stData.manX, &stData.manY, &stData.manZ, &stData.manAngle);
+	g_pDataManager->GetWomanData(string(flag->szRoomName), &stData.womanX, &stData.womanY, &stData.womanZ, &stData.womanAngle);
+	// << : 맵 정보
+	g_pDataManager->GetMapData(string(flag->szRoomName), stData.mapData);
 	// << : 해당 내용을 전송한다.
 }
 

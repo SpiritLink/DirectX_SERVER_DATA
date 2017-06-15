@@ -1,7 +1,6 @@
 #pragma once
 #include "cObject.h"
 
-#define INVENTORY_SIZE 25
 
 class cPlayer : public cObject
 {

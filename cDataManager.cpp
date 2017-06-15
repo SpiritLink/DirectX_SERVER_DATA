@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "cDataManager.h"
 #include "cContainer.h"
+#include "cPlayer.h"
+#include "cStuff.h"
+
 CRITICAL_SECTION cs;
 
 cDataManager::cDataManager()
@@ -11,6 +14,7 @@ cDataManager::cDataManager()
 cDataManager::~cDataManager()
 {
 }
+
 void cDataManager::Setup()
 {
 	InitializeCriticalSection(&cs);
@@ -89,6 +93,22 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	stResult.nPlayerIndex = m_mapContainer[key]->GetOnlineUser();
 	return stResult;
 }
+
+void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
+{
+	m_mapContainer[key]->GetManPosition(x, y, z, angle);
+}
+
+void cDataManager::GetWomanData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
+{
+	m_mapContainer[key]->GetWomanPosition(x, y, z, angle);
+}
+
+void cDataManager::GetMapData(IN string key, OUT cStuff * arrMap)
+{
+	m_mapContainer[key]->GetMa
+}
+
 void cDataManager::SaveAllData()
 {
 	map<string, cContainer*>::iterator iter;

@@ -29,6 +29,7 @@
 #define CLIENT_NUM 5
 #define IN_PLAYER1 1 << 4
 #define IN_PLAYER2 1 << 5
+#define INVENTORY_SIZE 25
 #define OUT_PLAYER1 1 << 0
 #define OUT_PLAYER2 1 << 1
 #define ONE_SECOND 1000
@@ -68,6 +69,7 @@ enum animationState
 	ANIM_ATTACK,
 	ANIM_DEATH,
 };
+
 enum StuffCode
 {
 	STUFF_NONE,
@@ -152,6 +154,7 @@ enum FLAG
 	FLAG_POSITION = 1 << 5,
 	FLAG_OBJECT_DATA = 1 << 6
 };
+
 struct ST_FLAG
 {
 	char szRoomName[50] = { 0, };
@@ -159,6 +162,7 @@ struct ST_FLAG
 	int nPlayerIndex;
 	int eFlag;
 };
+
 struct ST_SOCKET_ADDR
 {
 	SOCKET stSocket;
@@ -178,28 +182,6 @@ struct ST_PLAYER_POSITION
 	ST_PLAYER_POSITION() : nPlayerIndex(0), eAnimState(ANIM_IDLE), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
 	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
 };
-
-struct ST_ALL_DATA
-{
-	// << : Player Data
-	char  szRoomName[50] = { 0, };	// << : Key
-	int	  nPlayerIndex;				// << : Current Player Index
-	animationState eAnimState;		// << : Animation index
-	float fX;
-	float fY;
-	float fZ;
-	float fAngle;
-	// << : Object Data
-	float objectPosX[SWITCH_LASTNUM];	// << : PosX
-	float objectPosY[SWITCH_LASTNUM];	// << : PosY
-	float objectPosZ[SWITCH_LASTNUM];	// << : PosZ
-	float objectRotX[SWITCH_LASTNUM];	// << : RotX
-	float objectRotY[SWITCH_LASTNUM];	// << : RotY
-	float objectRotZ[SWITCH_LASTNUM];	// << : RotZ
-	StuffCode objectType[SWITCH_LASTNUM];	// << : objectType
-	bool objectRunning[SWITCH_LASTNUM];		// << : Is Object Run?
-};
-
 
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
