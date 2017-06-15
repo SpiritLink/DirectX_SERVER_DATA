@@ -104,9 +104,9 @@ void cDataManager::GetWomanData(IN string key, OUT float * x, OUT float * y, OUT
 	m_mapContainer[key]->GetWomanPosition(x, y, z, angle);
 }
 
-void cDataManager::GetMapData(IN string key, OUT cStuff * arrMap)
+void cDataManager::GetMapData(IN string key, OUT float * X, OUT float * Y, OUT float * Z, OUT float * rotX, OUT float * rotY, OUT float * rotZ, OUT bool * IsRun)
 {
-	m_mapContainer[key]->GetMa
+	
 }
 
 void cDataManager::SaveAllData()

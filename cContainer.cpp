@@ -1,11 +1,6 @@
 #include "stdafx.h"
 #include "cContainer.h"
 
-#define WOMAN "Woman"
-#define MAN "Man"
-#define POSITION "Position"
-#define INVENTORY_INDEX "InventoryIndex"
-
 cContainer::cContainer()
 	: m_nManTime(0)
 	, m_nWomanTime(0)
@@ -119,9 +114,14 @@ void cContainer::GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, O
 	*angle = m_stWoman.GetAngle();
 }
 
-void cContainer::GetMap(OUT cStuff * arrStuff)
+void cContainer::GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun)
 {
-	arrStuff = m_aStuff;
+	for (int i = 0; i < SWITCH_LASTNUM; ++i)
+	{
+		m_aStuff[i].GetPosition(&X[i], &Y[i], &Z[i]);
+		m_aStuff[i].GetRotate(&rotX[i], &rotY[i], &rotZ[i]);
+		IsRun[i] = m_aStuff[i].GetIsRunning();
+	}
 }
 
 void cContainer::SaveData()

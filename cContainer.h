@@ -32,7 +32,7 @@ public:
 	int GetOnlineUser();
 	void GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
-	void GetMap(OUT cStuff* arrStuff);
+	void GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	void Setup(string key)
 	{
 		m_sRoomName = key;

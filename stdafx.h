@@ -39,9 +39,12 @@
 #define WAIT_MILLISECOND 5000
 #define ONE_SECOND 1000
 
+#define WOMAN "Woman"
+#define MAN "Man"
+#define POSITION "Position"
+#define INVENTORY_INDEX "InventoryIndex"
+
 using namespace std;
-
-
 
 #define SINGLETONE(class_name) \
 		private :	\

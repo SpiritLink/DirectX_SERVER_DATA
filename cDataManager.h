@@ -22,7 +22,7 @@ public:
 	ST_PLAYER_POSITION GetPlayerData(string key, int nIndex);
 	void GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetWomanData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
-	void GetMapData(IN string key, OUT cStuff* arrMap);
+	void GetMapData(IN string key, OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	void Update();
 	void Destroy();
 };

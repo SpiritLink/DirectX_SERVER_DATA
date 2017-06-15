@@ -37,3 +37,9 @@ void cStuff::GetRotate(float * x, float * y, float * z)
 	*y = RotateY;
 	*z = RotateZ;
 }
+
+bool cStuff::GetIsRunning()
+{
+	return IsRunning;
+}
+

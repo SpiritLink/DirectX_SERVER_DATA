@@ -292,8 +292,11 @@ void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
 	g_pDataManager->GetManData(string(flag->szRoomName), &stData.manX, &stData.manY, &stData.manZ, &stData.manAngle);
 	g_pDataManager->GetWomanData(string(flag->szRoomName), &stData.womanX, &stData.womanY, &stData.womanZ, &stData.womanAngle);
 	// << : 맵 정보
-	g_pDataManager->GetMapData(string(flag->szRoomName), stData.mapData);
+	// << : float에 담아주는 식으로 처리해야함.
+	g_pDataManager->GetMapData(string(flag->szRoomName),stData.mapX,stData.mapY,stData.mapZ,stData.mapRotX, stData.mapRotY, stData.mapRotZ,stData.mapIsRunning);
 	// << : 해당 내용을 전송한다.
+
+	send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
 }
 
 
