@@ -2,6 +2,7 @@
 #include "stdafx.h"
 
 #define g_pNetworkManager cNetworkManager::GetInstance()
+
 class cNetworkManager
 {
 private:

@@ -12,6 +12,8 @@ void ProcessPosition(void* arg, string RoomName);
 void RecvPosition();
 
 void SendNetworkID(SOCKET* pSocket);
+void SendRoomName(SOCKET* pSocket, ST_FLAG* flag);
+void SendAllData(SOCKET* pSocket, ST_FLAG* flag);
 
 Server_DATA::Server_DATA()
 {
@@ -173,14 +175,18 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 		case FLAG_NETWORK_ID:
 			SendNetworkID(&ClntSock);
 			break;
+		case FLAG_ROOM_NAME:
+			SendRoomName(&ClntSock,&stFlag);
+			break;
+		case FLAG_ALL_DATA:
+			SendAllData(&ClntSock, &stFlag);
+			break;
 		case FLAG_IP:
 			break;
 		case FLAG_POSITION:
 			ProcessPosition(&RecvSocket, string(stFlag.szRoomName));
 			break;
 		case FLAG_OBJECT_DATA:
-			break;
-		case FLAG_ALL:
 			break;
 		}
 		continue;
@@ -221,8 +227,6 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			break;
 		case FLAG_OBJECT_DATA:
 			break;
-		case FLAG_ALL:
-			break;
 		}
 		
 		// << : 만약 네트워크 아이디가 -1이라면 수신하고 적용은 하지 않는다.
@@ -261,4 +265,32 @@ void SendNetworkID(SOCKET* pSocket)
 	int ID = g_nNetworkID++;
 	send(*pSocket, (char*)&ID, sizeof(int), 0);
 }
+
+void SendRoomName(SOCKET* pSocket,ST_FLAG* flag)
+{
+	int IsOk = 0;
+	string RoomName = flag->szRoomName;
+	if (g_pNetworkManager->m_mapRoom[RoomName].size() < MAXCLIENT_ROOM)	// << : 접속 가능한 상황
+	{
+		IsOk = true;
+		send(*pSocket, (char*)&IsOk, sizeof(int), 0);
+		if(flag->nNetworkID != -1)
+			g_pNetworkManager->m_mapRoom[RoomName].push_back(flag->nNetworkID);
+	}
+	else
+	{
+		IsOk = false;
+		send(*pSocket, (char*)&IsOk, sizeof(int), 0);
+		cout << "현재 방인원수 : " << g_pNetworkManager->m_mapRoom[RoomName].size() << "방 이름 : " << RoomName << endl;
+	}
+}
+
+void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
+{
+	// << : 모든 데이터의 내용을 만든다.
+
+	// << : 해당 내용을 전송한다.
+}
+
+
 

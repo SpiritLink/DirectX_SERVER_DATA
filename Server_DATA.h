@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAXCLIENT_ROOM 2
+
 class Server_DATA
 {
 private:
