@@ -31,14 +31,14 @@ struct ST_ALL_DATA
 	float manZ;
 	float manAngle;
 	int manAnim;
-	StuffCode manItem[INVENTORY_SIZE];
+	int manItem[INVENTORY_SIZE];
 
 	float womanX;
 	float womanY;
 	float womanZ;
 	float womanAngle;
 	int womanAnim;
-	StuffCode womanItem[INVENTORY_SIZE];
+	int womanItem[INVENTORY_SIZE];
 
 	// << : ¸Ê µ¥ÀÌÅÍ
 	float mapX[SWITCH_LASTNUM];

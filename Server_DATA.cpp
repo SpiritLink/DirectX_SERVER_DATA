@@ -14,6 +14,7 @@ void RecvPosition();
 void SendNetworkID(SOCKET* pSocket);
 void SendRoomName(SOCKET* pSocket, ST_FLAG* flag);
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag);
+void SendPosition(SOCKET* pSocket, ST_FLAG* flag);
 
 Server_DATA::Server_DATA()
 {
@@ -184,7 +185,8 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 		case FLAG_IP:
 			break;
 		case FLAG_POSITION:
-			ProcessPosition(&RecvSocket, string(stFlag.szRoomName));
+			//ProcessPosition(&RecvSocket, string(stFlag.szRoomName));
+			SendPosition(&ClntSock, &stFlag);
 			break;
 		case FLAG_OBJECT_DATA:
 			break;
@@ -299,5 +301,11 @@ void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
 	send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
 }
 
+void SendPosition(SOCKET* pSocket, ST_FLAG* flag)
+{
+	string key = (flag->szRoomName);
+	ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
+	send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
+}
 
 

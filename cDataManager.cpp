@@ -96,6 +96,11 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 
 void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
+	if (m_mapContainer[key] == NULL)
+	{
+		m_mapContainer[key] = new cContainer;
+		m_mapContainer[key]->Setup(key);
+	}
 	m_mapContainer[key]->GetManPosition(x, y, z, angle);
 }
 
