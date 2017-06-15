@@ -2,12 +2,11 @@
 #include "cContainer.h"
 
 cContainer::cContainer()
-	: m_nPlayer1Time(0)
-	, m_nPlayer2Time(0)
+	: m_nManTime(0)
+	, m_nWomanTime(0)
 	, nPlayer1NetID(-1)
 	, nPlayer2NetID(-1)
 {
-	m_vecStuffPosition.resize(SWITCH_LASTNUM);
 }
 
 
@@ -40,9 +39,9 @@ void cContainer::Setup(string key)
 		if (strlen(szBuffer) <= 0) continue;
 
 		if (string(first) == "Player1")
-			pTarget = &m_cPlayer1;
+			pTarget = &m_stMan;
 		else if (string(first) == "Player2")
-			pTarget = &m_cPlayer2;
+			pTarget = &m_stWoman;
 
 		if (pTarget == NULL) continue;		
 		
@@ -75,21 +74,21 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 
 	if (stRecv.nPlayerIndex & IN_PLAYER1)
 	{
-		m_cPlayer1.SetPosition(x, y, z);
-		m_cPlayer1.SetAngle(Angle);
-		m_cPlayer1.SetAnimState(stRecv.eAnimState);
+		m_stMan.SetPosition(x, y, z);
+		m_stMan.SetAngle(Angle);
+		m_stMan.SetAnimState(stRecv.eAnimState);
 		Player1Sock = stAddr;
-		m_nPlayer1Time = clock();
+		m_nManTime = clock();
 		cout << inet_ntoa(Player1Sock.stAddr.sin_addr) << endl;
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
-		m_cPlayer2.SetPosition(x, y, z);
-		m_cPlayer2.SetAngle(Angle);
-		m_cPlayer2.SetAnimState(stRecv.eAnimState);
+		m_stWoman.SetPosition(x, y, z);
+		m_stWoman.SetAngle(Angle);
+		m_stWoman.SetAnimState(stRecv.eAnimState);
 		Player2Sock = stAddr;
 		cout << inet_ntoa(Player2Sock.stAddr.sin_addr) << endl;
-		m_nPlayer2Time = clock();
+		m_nWomanTime = clock();
 	}
 }
 
@@ -102,17 +101,17 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 
 	if (stRecv.nPlayerIndex & IN_PLAYER1)
 	{
-		m_cPlayer1.SetPosition(x, y, z);
-		m_cPlayer1.SetAngle(Angle);
-		m_cPlayer1.SetAnimState(stRecv.eAnimState);
-		m_nPlayer1Time = clock();
+		m_stMan.SetPosition(x, y, z);
+		m_stMan.SetAngle(Angle);
+		m_stMan.SetAnimState(stRecv.eAnimState);
+		m_nManTime = clock();
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
-		m_cPlayer2.SetPosition(x, y, z);
-		m_cPlayer2.SetAngle(Angle);
-		m_cPlayer2.SetAnimState(stRecv.eAnimState);
-		m_nPlayer2Time = clock();
+		m_stWoman.SetPosition(x, y, z);
+		m_stWoman.SetAngle(Angle);
+		m_stWoman.SetAnimState(stRecv.eAnimState);
+		m_nWomanTime = clock();
 	}
 }
 
@@ -121,15 +120,15 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	ST_PLAYER_POSITION result;
 	if (nIndex == 1)
 	{
-		m_cPlayer1.GetPosition(&result.fX, &result.fY, &result.fZ);
-		result.fAngle = m_cPlayer1.GetAngle();
-		result.eAnimState = m_cPlayer1.GetAnimState();
+		m_stMan.GetPosition(&result.fX, &result.fY, &result.fZ);
+		result.fAngle = m_stMan.GetAngle();
+		result.eAnimState = m_stMan.GetAnimState();
 	}
 	if (nIndex == 2)
 	{
-		m_cPlayer2.GetPosition(&result.fX, &result.fY, &result.fZ);
-		result.fAngle = m_cPlayer2.GetAngle();
-		result.eAnimState = m_cPlayer2.GetAnimState();
+		m_stWoman.GetPosition(&result.fX, &result.fY, &result.fZ);
+		result.fAngle = m_stWoman.GetAngle();
+		result.eAnimState = m_stWoman.GetAnimState();
 	}
 	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 
@@ -140,12 +139,12 @@ int cContainer::GetOnlineUser()
 {
 	int nResult = 0;
 
-	if (m_nPlayer1Time + (ONE_SECOND * 5) > clock())
+	if (m_nManTime + (ONE_SECOND * 5) > clock())
 	{
 		nResult = nResult | (OUT_PLAYER1);
 		cout << "1P 접속 확인" << endl;
 	}
-	if (m_nPlayer2Time + (ONE_SECOND * 5) > clock())
+	if (m_nWomanTime + (ONE_SECOND * 5) > clock())
 	{
 		nResult = nResult | (OUT_PLAYER2);
 		cout << "2P 접속 확인" << endl;
@@ -176,15 +175,15 @@ void cContainer::SaveData()
 	// << : 데이터 저장
 	float x, y, z, angle;
 
-	m_cPlayer1.GetPosition(&x, &y, &z);
-	angle = m_cPlayer1.GetAngle();
+	m_stMan.GetPosition(&x, &y, &z);
+	angle = m_stMan.GetAngle();
 	outFile << "Player1 X " << x << endl;
 	outFile << "Player1 Y " << y << endl;
 	outFile << "Player1 Z " << z << endl;
 	outFile << "Player1 Angle " << angle << endl;
 
-	m_cPlayer2.GetPosition(&x, &y, &z);
-	angle = m_cPlayer2.GetAngle();
+	m_stWoman.GetPosition(&x, &y, &z);
+	angle = m_stWoman.GetAngle();
 	outFile << "Player2 X " << x << endl;
 	outFile << "Player2 Y " << y << endl;
 	outFile << "Player2 Z " << z << endl;
@@ -195,15 +194,56 @@ void cContainer::SaveData()
 
 void cContainer::SetDefault()
 {
-	m_cPlayer1.SetX(0);
-	m_cPlayer1.SetY(0);
-	m_cPlayer1.SetZ(0);
-	m_cPlayer1.SetAngle(0);
+	m_stMan.SetX(0);
+	m_stMan.SetY(0);
+	m_stMan.SetZ(0);
+	m_stMan.SetAngle(0);
 
-	m_cPlayer2.SetX(0);
-	m_cPlayer2.SetY(0);
-	m_cPlayer2.SetZ(0);
-	m_cPlayer2.SetAngle(0);
+	m_stWoman.SetX(0);
+	m_stWoman.SetY(0);
+	m_stWoman.SetZ(0);
+	m_stWoman.SetAngle(0);
+
+	// << : 초기 아이템과 관련된 설정
+	for (int i = 0; i < SWITCH_LASTNUM; ++i)	// << : 아이템 활성화 상태
+		m_aStuff[i].SetIsRunning(false);
+
+	m_aStuff[SWITCH_ONMAP_CROWBAR].SetIsRunning(true);
+	m_aStuff[SWITCH_ONMAP_CROWBAR].SetPosition(-40, 12, 12);
+	m_aStuff[SWITCH_ONMAP_CROWBAR].SetRotate(0, D3DX_PI / 2.2f, 0);
+
+	m_aStuff[SWITCH_ONMAP_PAPER1].SetIsRunning(true);
+	m_aStuff[SWITCH_ONMAP_PAPER1].SetPosition(10, 0.7f, 18);
+	m_aStuff[SWITCH_ONMAP_PAPER1].SetRotate(0, 0, 0);
+
+	m_aStuff[SWITCH_ONMAP_PAPER2].SetIsRunning(true);
+	m_aStuff[SWITCH_ONMAP_PAPER2].SetPosition(-38, 12.7f, -6);
+	m_aStuff[SWITCH_ONMAP_PAPER2].SetRotate(0, 0, 0);
+
+	m_aStuff[SWITCH_ONMAP_PAPER3].SetIsRunning(true);
+	m_aStuff[SWITCH_ONMAP_PAPER3].SetPosition(-17.5f, 27.7f, -10.5f);
+	m_aStuff[SWITCH_ONMAP_PAPER3].SetRotate(0, 0, 0);
+
+	m_aStuff[SWITCH_ONMAP_KEY1].SetIsRunning(true);
+	m_aStuff[SWITCH_ONMAP_KEY1].SetPosition(-14.0f, 0.3f, 1.5f);
+	m_aStuff[SWITCH_ONMAP_KEY1].SetRotate(0, D3DX_PI / 2.5f, 0);
+
+	m_aStuff[SWITCH_ONMAP_KEY2].SetIsRunning(true);
+	m_aStuff[SWITCH_ONMAP_KEY2].SetPosition(-30, 12.3f, -13);
+	m_aStuff[SWITCH_ONMAP_KEY2].SetRotate(0, 0.3f, 0);
+
+	m_aStuff[SWITCH_ONMAP_KEY3].SetIsRunning(false);
+	m_aStuff[SWITCH_ONMAP_CROWBAR].SetPosition(0, 0, 0);
+	m_aStuff[SWITCH_ONMAP_CROWBAR].SetRotate(0, 0, 0);
+
+	for (int i = SWITCH_ONMAP_BRICK1; i <= SWITCH_ONMAP_BRICK5; ++i)
+	{
+		m_aStuff[i].SetIsRunning(false);
+		m_aStuff[i].SetPosition(0, 0, 0);
+		m_aStuff[i].SetRotate(0, 0, 0);
+	}
+
+	m_aStuff[SWITCH_FIRSTFLOOR_WOODBOARD1].SetPosition(-7, 12, 19.5f);
 }
 
 void cContainer::Update()

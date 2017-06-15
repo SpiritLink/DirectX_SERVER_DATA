@@ -2,18 +2,19 @@
 #include "cPlayer.h"
 #include "cStuff.h"
 #define CONNECT_TIME 5
+#define D3DX_PI 3.141592654f
 
 class cContainer
 {
 private:
 	string	m_sRoomName;		// 방이름
-	cPlayer m_cPlayer1;			// 플레이어 1 데이터
-	cPlayer m_cPlayer2;			// 플레이어 2 데이터
+	cPlayer m_stMan;			// 남자 데이터
+	cPlayer m_stWoman;			// 여자 데이터
 
-	clock_t m_nPlayer1Time;	// 플레이어 1 최근 접속 시간
-	clock_t m_nPlayer2Time;	// 플레이어 2 최근 접속 시간
+	clock_t m_nManTime;			// 남자 최근 접속 시간
+	clock_t m_nWomanTime;		// 여자 최근 접속 시간
 
-	std::vector<cStuff> m_vecStuffPosition;	// << : 오브젝트
+	cStuff m_aStuff[SWITCH_LASTNUM];	// << : 오브젝트
 
 	SYNTHESIZE(int, nPlayer1NetID, Player1NetID);
 	SYNTHESIZE(int, nPlayer2NetID, Player2NetID);
