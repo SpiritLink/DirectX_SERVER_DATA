@@ -17,7 +17,14 @@ cPlayer::~cPlayer()
 int cPlayer::GetItem(int Index)
 {
 	if (Index >= INVENTORY_SIZE) return -1;
-	return Inventory[Index];
+	return (int)Inventory[Index];
+}
+
+void cPlayer::SetItem(int Index, int Type)
+{
+	if (Index >= INVENTORY_SIZE) return;
+
+	Inventory[Index] = (StuffCode)Type;
 }
 
 void cPlayer::SetAngle(float Value)

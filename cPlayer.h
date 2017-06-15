@@ -13,6 +13,7 @@ public:
 	cPlayer();
 	virtual ~cPlayer() override;
 	int GetItem(int Index);
+	void SetItem(int Index, int Type);
 	void SetAngle(float Value);
 	float GetAngle();
 };

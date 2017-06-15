@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "cContainer.h"
 
+#define WOMAN "Woman"
+#define MAN "Man"
+#define POSITION "Position"
+#define INVENTORY_INDEX "InventoryIndex"
+
 cContainer::cContainer()
 	: m_nManTime(0)
 	, m_nWomanTime(0)
@@ -20,9 +25,12 @@ void cContainer::Setup(string key)
 	string szFullPath = "Server/" + key + ".txt";
 	char szBuffer[1000];
 
-	char first[100] = { 0, };
-	char second[100] = { 0, };
-	float third;
+	char Key1[100] = { 0, };
+	char Key2[100] = { 0, };
+	char Key3Str[100] = { 0, };
+	int Key3Int = 0;
+	float Key4Float = 0;
+	float Key4Int = 0;
 
 	fstream openFile(szFullPath.data());
 	if (!openFile.is_open())	// << : 파일이 열리지 않는 상황입니다.
@@ -35,32 +43,40 @@ void cContainer::Setup(string key)
 	{
 		cPlayer* pTarget = NULL;
 		openFile.getline(szBuffer, 1000);
-		sscanf_s(szBuffer, "%s %s %f", &first,100, &second,100, &third);
+		sscanf_s(szBuffer, "%s %s", &Key1, 100, &Key2, 100);
 		if (strlen(szBuffer) <= 0) continue;
 
-		if (string(first) == "Player1")
+		if (string(Key1) == MAN)
 			pTarget = &m_stMan;
-		else if (string(first) == "Player2")
+		else if (string(Key1) == WOMAN)
 			pTarget = &m_stWoman;
 
 		if (pTarget == NULL) continue;		
 		
-		if (string(second) == "X")
+		if (string(Key2) == POSITION)
 		{
-			pTarget->SetX(third);
+			char Key[100] = { 0, };
+			float Value = 0;
+			sscanf_s(szBuffer, "%*s %*s %s %f", &Key, 100, &Value);
+			string Keyword = string(Key);
+
+			if (Keyword == "X")
+				pTarget->SetX(Value);
+			else if (Keyword == "Y")
+				pTarget->SetY(Value);
+			else if (Keyword == "Z")
+				pTarget->SetZ(Value);
+			else if (Keyword == "Angle")
+				pTarget->SetAngle(Value);
 		}
-		else if (string(second) == "Y")
+		else if (string(Key2) == INVENTORY_INDEX)
 		{
-			pTarget->SetY(third);
+			int Index = 0;
+			int ItemType = 0;
+			sscanf_s(szBuffer, "%*s %*s %d %d", &Index, &ItemType);
+			pTarget->SetItem(Index, ItemType);
 		}
-		else if (string(second) == "Z")
-		{
-			pTarget->SetZ(third);
-		}
-		else if (string(second) == "Angle")
-		{
-			pTarget->SetAngle(third);
-		}
+
 		cout << " 파일 로딩 " << endl;
 	}
 }
@@ -177,18 +193,18 @@ void cContainer::SaveData()
 
 	m_stMan.GetPosition(&x, &y, &z);
 	angle = m_stMan.GetAngle();
-	outFile << "Man " << "String " << "X " << x << endl;
-	outFile << "Man " << "String " << "Y " << y << endl;
-	outFile << "Man " << "String " << "Z " << z << endl;
-	outFile << "Man " << "String " << "Angle " << angle << endl;
+	outFile << "Man " << "Position " << "X " << x << endl;
+	outFile << "Man " << "Position " << "Y " << y << endl;
+	outFile << "Man " << "Position " << "Z " << z << endl;
+	outFile << "Man " << "Position " << "Angle " << angle << endl;
 	outFile << endl;
 
 	m_stWoman.GetPosition(&x, &y, &z);
 	angle = m_stWoman.GetAngle();
-	outFile << "Woman " << "String " << "X " << x << endl;
-	outFile << "Woman " << "String " << "Y " << y << endl;
-	outFile << "Woman " << "String " << "Z " << z << endl;
-	outFile << "Woman " << "String " << "Angle " << angle << endl;
+	outFile << "Woman " << "Position " << "X " << x << endl;
+	outFile << "Woman " << "Position " << "Y " << y << endl;
+	outFile << "Woman " << "Position " << "Z " << z << endl;
+	outFile << "Woman " << "Position " << "Angle " << angle << endl;
 	outFile << endl;
 
 	// << : 데이터 저장 (인벤토리 정보)
