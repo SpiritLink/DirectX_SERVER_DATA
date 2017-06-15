@@ -41,8 +41,12 @@
 
 #define WOMAN "Woman"
 #define MAN "Man"
-#define POSITION "Position"
-#define INVENTORY_INDEX "InventoryIndex"
+#define STUFF "Stuff"
+#define POSITION "Pos"
+#define ROTATION "Rot"
+#define ISRUNNING "IsRun"
+#define INVENTORY_INDEX "InvenIDX"
+#define STUFF_INDEX "StuffIDX"
 
 using namespace std;
 
@@ -137,6 +141,7 @@ enum SwitchInfo
 	SWITCH_SECONDFLOOR_VALVE1,
 	SWITCH_SECONDFLOOR_VALVE2,
 	SWITCH_SECONDFLOOR_BUTTON1,
+	SWITCH_SECONDFLOOR_BUTTON2,
 
 	SWITCH_DOOR_PRISON,
 	SWITCH_DOOR_1STROOM,
@@ -146,7 +151,6 @@ enum SwitchInfo
 
 	SWITCH_LASTNUM
 };
-
 enum FLAG
 {
 	FLAG_NONE = 1 << 0,

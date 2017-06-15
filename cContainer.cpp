@@ -135,10 +135,6 @@ void cContainer::Setup(string key)
 
 	char Key1[100] = { 0, };
 	char Key2[100] = { 0, };
-	char Key3Str[100] = { 0, };
-	int Key3Int = 0;
-	float Key4Float = 0;
-	float Key4Int = 0;
 
 	fstream openFile(szFullPath.data());
 	if (!openFile.is_open())	// << : 파일이 열리지 않는 상황입니다.
@@ -154,14 +150,13 @@ void cContainer::Setup(string key)
 		sscanf_s(szBuffer, "%s %s", &Key1, 100, &Key2, 100);
 		if (strlen(szBuffer) <= 0) continue;
 
+		// << : 플레이어 정보일 경우
 		if (string(Key1) == MAN)
 			pTarget = &m_stMan;
 		else if (string(Key1) == WOMAN)
 			pTarget = &m_stWoman;
 
-		if (pTarget == NULL) continue;
-
-		if (string(Key2) == POSITION)
+		if (string(Key2) == POSITION && pTarget != NULL)
 		{
 			char Key[100] = { 0, };
 			float Value = 0;
@@ -177,16 +172,45 @@ void cContainer::Setup(string key)
 			else if (Keyword == "Angle")
 				pTarget->SetAngle(Value);
 		}
-		else if (string(Key2) == INVENTORY_INDEX)
+		else if (string(Key2) == INVENTORY_INDEX && pTarget != NULL)
 		{
 			int Index = 0;
 			int ItemType = 0;
 			sscanf_s(szBuffer, "%*s %*s %d %d", &Index, &ItemType);
 			pTarget->SetItem(Index, ItemType);
 		}
+		// << : 맵 정보일 경우
+		if (string(Key1) == STUFF)
+		{
+			char szBuf1[100] = { 0, };
+			char szBuf2[100] = { 0, };
+			int Index;
+			sscanf_s(szBuffer, "%*s %s %d %s", szBuf1, 100, &Index, szBuf2, 100);
+			string keyword1 = string(szBuf1);
+			string keyword2 = string(szBuf2);
 
-		cout << " 파일 로딩 " << endl;
+			if (keyword1 == STUFF_INDEX && keyword2 == POSITION)
+			{
+				float fX, fY, fZ;
+				sscanf_s(szBuffer, "%*s %*s %*d %*s %f %f %f", &fX, &fY, &fZ);
+				m_aStuff[Index].SetPosition(fX, fY, fZ);
+			}
+			else if (keyword1 == STUFF_INDEX && keyword2 == ROTATION)
+			{
+				float fX, fY, fZ;
+				sscanf_s(szBuffer, "%*s %*s %*d %*s %f %f %f", &fX, &fY, &fZ);
+				m_aStuff[Index].SetRotate(fX, fY, fZ);
+			}
+			else if (keyword1 == STUFF_INDEX && keyword2 == ISRUNNING)
+			{
+				int IsRunning;
+				sscanf_s(szBuffer, "%*s %*s %*d %*s %d", &IsRunning);
+				m_aStuff[Index].SetIsRunning((bool)IsRunning);
+			}
+		}
 	}
+	if (openFile.eof())
+		cout << szFullPath << " : " << " 파일 로딩" << endl;
 
 }
 
@@ -214,33 +238,49 @@ void cContainer::SaveData()
 
 	m_stMan.GetPosition(&x, &y, &z);
 	angle = m_stMan.GetAngle();
-	outFile << "Man " << "Position " << "X " << x << endl;
-	outFile << "Man " << "Position " << "Y " << y << endl;
-	outFile << "Man " << "Position " << "Z " << z << endl;
-	outFile << "Man " << "Position " << "Angle " << angle << endl;
+	outFile << MAN << " " << POSITION << " " << "X " << x << endl;
+	outFile << MAN << " " << POSITION << " " << "Y " << y << endl;
+	outFile << MAN << " " << POSITION << " " << "Z " << z << endl;
+	outFile << MAN << " " << POSITION << " " << "Angle " << angle << endl;
 	outFile << endl;
 
 	m_stWoman.GetPosition(&x, &y, &z);
 	angle = m_stWoman.GetAngle();
-	outFile << "Woman " << "Position " << "X " << x << endl;
-	outFile << "Woman " << "Position " << "Y " << y << endl;
-	outFile << "Woman " << "Position " << "Z " << z << endl;
-	outFile << "Woman " << "Position " << "Angle " << angle << endl;
+	outFile << WOMAN << " " << POSITION << " " << "X " << x << endl;
+	outFile << WOMAN << " " << POSITION << " " << "Y " << y << endl;
+	outFile << WOMAN << " " << POSITION << " " << "Z " << z << endl;
+	outFile << WOMAN << " " << POSITION << " " << "Angle " << angle << endl;
 	outFile << endl;
 
-	// << : 데이터 저장 (인벤토리 정보)
+	// << : 인벤토리 데이터 저장
 	for (int i = 0; i < INVENTORY_SIZE; ++i)	// << : 남자 인벤토리 정보
 	{
-		outFile << "Man " << "InventoryIndex " << i << " " << m_stMan.GetItem(i) << endl;
+		outFile << MAN << " " << INVENTORY_INDEX << " " << i << " " << m_stMan.GetItem(i) << endl;
 		if (i == INVENTORY_SIZE - 1) outFile << endl;
 	}
 
 	for (int i = 0; i < INVENTORY_SIZE; ++i)	// << : 여자 인벤토리 정보
 	{
-		outFile << "Woman " << "InventoryIndex " << i << " " << m_stWoman.GetItem(i) << endl;
+		outFile << WOMAN << " " << INVENTORY_INDEX << " " << i << " " << m_stWoman.GetItem(i) << endl;
 		if (i == INVENTORY_SIZE - 1) outFile << endl;
 	}
 
+	// << : 맵 데이터 저장
+	for (int i = 0; i < SWITCH_LASTNUM; ++i)
+	{
+		float fX, fY, fZ;
+		float fRotX, fRotY, fRotZ;
+		bool IsRunning;
+
+		m_aStuff[i].GetPosition(&fX, &fY, &fZ);
+		m_aStuff[i].GetRotate(&fRotX, &fRotY, &fRotZ);
+		IsRunning = m_aStuff[i].GetIsRunning();
+
+		outFile << STUFF << " " << STUFF_INDEX << " " << i << " " << POSITION << " " << fX << " " << fY << " " << fZ << endl;
+		outFile << STUFF << " " << STUFF_INDEX << " " << i << " " << ROTATION << " " << fRotX << " " << fRotY << " " << fRotZ << endl;
+		outFile << STUFF << " " << STUFF_INDEX << " " << i << " " << ISRUNNING << " " << IsRunning << endl;
+		outFile << endl;
+	}
 	outFile.close();
 }
 
