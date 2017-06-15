@@ -11,7 +11,7 @@ void ProcessPosition(void* arg, string RoomName);
 
 void RecvPosition();
 
-void SendNetworkID(SOCKET* pSocket);
+void SendNetworkID(ST_SOCKET_ADDR* stData);
 void SendRoomName(SOCKET* pSocket, ST_FLAG* flag);
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag);
 void SendPosition(SOCKET* pSocket, ST_FLAG* flag);
@@ -174,7 +174,7 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 		case FLAG_NONE:	// << : 접속 확인용 ?
 			break;
 		case FLAG_NETWORK_ID:
-			SendNetworkID(&ClntSock);
+			SendNetworkID(&RecvSocket);
 			break;
 		case FLAG_ROOM_NAME:
 			SendRoomName(&ClntSock,&stFlag);
@@ -262,22 +262,24 @@ void RecvPosition()
 
 }
 
-void SendNetworkID(SOCKET* pSocket)
+void SendNetworkID(ST_SOCKET_ADDR* stData)
 {
-	int ID = g_nNetworkID++;
-	send(*pSocket, (char*)&ID, sizeof(int), 0);
+	ST_SOCKET_ADDR* pData = stData;
+	int ID = ++g_nNetworkID;
+	send(pData->stSocket, (char*)&ID, sizeof(int), 0);
+	g_pNetworkManager->addAddr(ID, pData->stAddr);		// << : 네트워크 아이디에 주소를 묶어서 등록합니다.
 }
 
 void SendRoomName(SOCKET* pSocket,ST_FLAG* flag)
 {
 	int IsOk = 0;
 	string RoomName = flag->szRoomName;
-	if (g_pNetworkManager->m_mapRoom[RoomName].size() < MAXCLIENT_ROOM)	// << : 접속 가능한 상황
+	if (g_pNetworkManager->GetClntNum(RoomName) < MAXCLIENT_ROOM)	// << : 접속 가능한 상황
 	{
 		IsOk = true;
 		send(*pSocket, (char*)&IsOk, sizeof(int), 0);
-		if(flag->nNetworkID != -1)
-			g_pNetworkManager->m_mapRoom[RoomName].push_back(flag->nNetworkID);
+		if(flag->nNetworkID != -1)	// << : NetwordID가 제대로 할당된 유저라면
+			g_pNetworkManager->addID(flag->nNetworkID, string(flag->szRoomName));
 	}
 	else
 	{

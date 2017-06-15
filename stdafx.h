@@ -33,6 +33,7 @@
 #define OUT_PLAYER1 1 << 0
 #define OUT_PLAYER2 1 << 1
 #define ONE_SECOND 1000
+#define MAXCLIENT_ROOM 2
 
 #define PORT_DATA_IN 1234
 #define PORT_DATA_OUT 1235

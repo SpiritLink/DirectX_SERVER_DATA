@@ -1,6 +1,5 @@
 #pragma once
 
-#define MAXCLIENT_ROOM 2
 #include "cStuff.h"
 
 class Server_DATA
