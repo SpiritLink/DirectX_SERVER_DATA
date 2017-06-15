@@ -156,11 +156,11 @@ int cContainer::GetOnlineUser()
 void cContainer::SaveData()
 {
 	// << : 폴더 없는 상황 예외처리
-	string szFullPath = "Server/" + m_sRoomName + ".txt";
+	string szFullPath = "DATA/" + m_sRoomName + ".txt";
 	ofstream outFile(szFullPath.data(), ios::trunc);
 	if (!outFile.is_open())
 	{
-		char strFolderPath[] = "Server";
+		char strFolderPath[] = "DATA";
 		int nResult = _mkdir(strFolderPath);
 		if (nResult == 0)
 			cout << "폴더 생성 성공" << endl;
@@ -172,22 +172,37 @@ void cContainer::SaveData()
 		outFile.open(szFullPath.data(), ios::trunc);
 	}
 
-	// << : 데이터 저장
+	// << : 데이터 저장 (플레이어 좌표)
 	float x, y, z, angle;
 
 	m_stMan.GetPosition(&x, &y, &z);
 	angle = m_stMan.GetAngle();
-	outFile << "Player1 X " << x << endl;
-	outFile << "Player1 Y " << y << endl;
-	outFile << "Player1 Z " << z << endl;
-	outFile << "Player1 Angle " << angle << endl;
+	outFile << "Man " << "String " << "X " << x << endl;
+	outFile << "Man " << "String " << "Y " << y << endl;
+	outFile << "Man " << "String " << "Z " << z << endl;
+	outFile << "Man " << "String " << "Angle " << angle << endl;
+	outFile << endl;
 
 	m_stWoman.GetPosition(&x, &y, &z);
 	angle = m_stWoman.GetAngle();
-	outFile << "Player2 X " << x << endl;
-	outFile << "Player2 Y " << y << endl;
-	outFile << "Player2 Z " << z << endl;
-	outFile << "Player2 Angle " << angle << endl;
+	outFile << "Woman " << "String " << "X " << x << endl;
+	outFile << "Woman " << "String " << "Y " << y << endl;
+	outFile << "Woman " << "String " << "Z " << z << endl;
+	outFile << "Woman " << "String " << "Angle " << angle << endl;
+	outFile << endl;
+
+	// << : 데이터 저장 (인벤토리 정보)
+	for (int i = 0; i < INVENTORY_SIZE; ++i)	// << : 남자 인벤토리 정보
+	{
+		outFile << "Man " << "InventoryIndex " << i << " " << m_stMan.GetItem(i) << endl;
+		if (i == INVENTORY_SIZE - 1) outFile << endl;
+	}
+
+	for (int i = 0; i < INVENTORY_SIZE; ++i)	// << : 여자 인벤토리 정보
+	{
+		outFile << "Woman " << "InventoryIndex " << i << " " << m_stWoman.GetItem(i) << endl;
+		if (i == INVENTORY_SIZE - 1) outFile << endl;
+	}
 
 	outFile.close();
 }

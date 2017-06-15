@@ -14,6 +14,12 @@ cPlayer::~cPlayer()
 {
 }
 
+int cPlayer::GetItem(int Index)
+{
+	if (Index >= INVENTORY_SIZE) return -1;
+	return Inventory[Index];
+}
+
 void cPlayer::SetAngle(float Value)
 {
 	fAngle = Value;
