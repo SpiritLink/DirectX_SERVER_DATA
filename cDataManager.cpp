@@ -10,7 +10,6 @@ cDataManager::cDataManager()
 {
 }
 
-
 cDataManager::~cDataManager()
 {
 }
@@ -20,6 +19,7 @@ void cDataManager::Setup()
 	InitializeCriticalSection(&cs);
 }
 
+/* 클라이언트의 IP주소를 네트워크 아이디에 맞춰 저장합니다 */
 void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
 {
 	/* 공간 동적할당 */
@@ -37,6 +37,7 @@ void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
 		m_mapContainer[key]->SetPlayer2Sock(stSocket);
 }
 
+/* 클라이언트의 소켓 정보를 얻어옵니다 (구버전) */
 ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)
 {
 	if (stFlag.nPlayerIndex == 1)
@@ -47,6 +48,7 @@ ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)
 	return ST_SOCKET_ADDR();
 }
 
+/* 플레이어의 좌표 정보를 컨테이너에 적용합니다 */
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 {
 	EnterCriticalSection(&cs);
@@ -65,6 +67,7 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 	LeaveCriticalSection(&cs);
 }
 
+/* 플레이어의 좌표 정보를 컨테이너에 저장하고 주소도 컨테이너에 저장합니다 (구버전) */
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 {
 	EnterCriticalSection(&cs);
@@ -77,6 +80,7 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 	LeaveCriticalSection(&cs);
 }
 
+/* 컨테이너에서 플레이어의 정보를 확인, 반환합니다 */
 ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 {
 	ST_PLAYER_POSITION stResult;
@@ -94,6 +98,7 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	return stResult;
 }
 
+/* 남자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
 	if (m_mapContainer[key] == NULL)
@@ -104,16 +109,19 @@ void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT f
 	m_mapContainer[key]->GetManPosition(x, y, z, angle);
 }
 
+/* 여자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetWomanData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
 	m_mapContainer[key]->GetWomanPosition(x, y, z, angle);
 }
 
+/* 맵의 정보를 얻어냅니다 */
 void cDataManager::GetMapData(IN string key, OUT float * X, OUT float * Y, OUT float * Z, OUT float * rotX, OUT float * rotY, OUT float * rotZ, OUT bool * IsRun)
 {
 	
 }
 
+/* 모든 컨테이너의 정보를 파일로 저장합니다 */
 void cDataManager::SaveAllData()
 {
 	map<string, cContainer*>::iterator iter;

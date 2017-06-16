@@ -14,6 +14,7 @@ cContainer::~cContainer()
 {
 }
 
+/* 수신한 구조체의 정보 및 소켓 , IP주소를 컨테이너에 적용합니다 (구버전) */
 void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 {
 	float x = stRecv.fX;
@@ -41,6 +42,7 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 	}
 }
 
+/* 수신한 구조체의 정보를 컨테이너에 적용합니다 */
 void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 {
 	float x = stRecv.fX;
@@ -64,6 +66,7 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
 	}
 }
 
+/* 인덱스에 따라 플레이어의 좌표를 반환합니다 */
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
 	ST_PLAYER_POSITION result;
@@ -84,6 +87,7 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	return result;
 }
 
+/* 현재 남자, 여자중 누가 접속했는지 확인합니다 (구버전) */
 int cContainer::GetOnlineUser()
 {
 	int nResult = 0;
@@ -102,18 +106,21 @@ int cContainer::GetOnlineUser()
 	return nResult;
 }
 
+/* 남자 캐릭터의 좌표를 반환합니다 */
 void cContainer::GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
 	m_stMan.GetPosition(x, y, z);
 	*angle = m_stMan.GetAngle();
 }
 
+/* 여자 캐릭터의 좌표를 반환합니다 */
 void cContainer::GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
 	m_stWoman.GetPosition(x, y, z);
 	*angle = m_stWoman.GetAngle();
 }
 
+/* 맵데이터를 반환합니다 */
 void cContainer::GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun)
 {
 	for (int i = 0; i < SWITCH_LASTNUM; ++i)
@@ -124,6 +131,7 @@ void cContainer::GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rot
 	}
 }
 
+/* 파일이 있는지 확인하고 있다면 해당파일에서 로드, 없다면 기본 설정함수를 호출합니다 */
 void cContainer::Setup(string key)
 {
 	m_sRoomName = key;
@@ -211,6 +219,7 @@ void cContainer::Setup(string key)
 
 }
 
+/* 컨테이너의 정보를 파일로 저장합니다 */
 void cContainer::SaveData()
 {
 	// << : 폴더 없는 상황 예외처리
@@ -281,6 +290,7 @@ void cContainer::SaveData()
 	outFile.close();
 }
 
+/* 로딩할 파일이 없을때 기본 설정하는 함수입니다. */
 void cContainer::SetDefault()
 {
 	m_stMan.SetX(0);

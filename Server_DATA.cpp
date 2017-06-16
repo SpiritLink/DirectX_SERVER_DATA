@@ -6,8 +6,8 @@ CRITICAL_SECTION CS_SERVER;
 // << : 스레드 함수
 unsigned int _stdcall RECV_REQUEST(void* arg);	// << : 수신
 unsigned int _stdcall SEND_REQUEST(void* arg);	// << : 전송
-// << : 일반 함수
 
+// << : 일반 함수
 void SendNetworkID(ST_SOCKET_ADDR* stData);
 void SendRoomName(SOCKET* pSocket, ST_FLAG* flag);
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag);
@@ -23,7 +23,6 @@ void ProcessGender(SOCKET* pSocket);
 Server_DATA::Server_DATA()
 {
 }
-
 
 Server_DATA::~Server_DATA()
 {
@@ -161,6 +160,7 @@ void Server_DATA::Destroy()
 	WSACleanup();
 }
 
+/* 요청을 대기하는 스레드 함수입니다 */
 unsigned int _stdcall RECV_REQUEST(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
@@ -203,6 +203,7 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 	return 0;
 }
 
+/* 요청을 전송하는 스레드 함수입니다 */
 unsigned int _stdcall SEND_REQUEST(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
@@ -268,11 +269,13 @@ void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID)
 	}
 }
 
+/* 클라이언트의 플레이어 좌표를 얻어옵니다 */
 void RecvPosition()
 {
 
 }
 
+/* 클라이언트 에게 또다른 클라이언트의 IP주소를 알려줍니다 */
 void SendNetworkID(ST_SOCKET_ADDR* stData)
 {
 	ST_SOCKET_ADDR* pData = stData;
@@ -281,6 +284,7 @@ void SendNetworkID(ST_SOCKET_ADDR* stData)
 	g_pNetworkManager->addAddr(ID, pData->stAddr);		// << : 네트워크 아이디에 주소를 묶어서 등록합니다.
 }
 
+/* 연결 가능한 방인지 확인하고 알려줍니다 */
 void SendRoomName(SOCKET* pSocket,ST_FLAG* flag)
 {
 	int IsOk = 0;
@@ -300,6 +304,7 @@ void SendRoomName(SOCKET* pSocket,ST_FLAG* flag)
 	}
 }
 
+/* 게임 시작에 필요한 초기 데이터를 전송합니다 */
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
 {
 	ST_ALL_DATA stData;
@@ -311,6 +316,7 @@ void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
 	send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
 }
 
+/* 상대가 어떤 성별을 골랐는지 확인, 전송합니다 */
 void SendGender(SOCKET* pSocket, int* nNetworkID)
 {
 	// << : 클라이언트에게 전송할 데이터를 알려줍니다.
@@ -340,6 +346,7 @@ void SendGender(SOCKET* pSocket, int* nNetworkID)
 	cout << "성별 : " << Gender << endl;
 }
 
+/* 다른 플레이어의 좌표를 전송합니다 */
 void SendPosition(SOCKET* pSocket, ST_FLAG* flag)
 {
 	string key = (flag->szRoomName);
@@ -347,6 +354,7 @@ void SendPosition(SOCKET* pSocket, ST_FLAG* flag)
 	send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
 }
 
+/* 좌표를 수신하면 다른 플레이어 좌표를 바로 전송합니다 (구버전) */
 void ProcessPosition(void* arg, string RoomName)
 {
 	SOCKET ClntSock = *(SOCKET*)arg;

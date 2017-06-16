@@ -16,6 +16,7 @@ cTimeManager::~cTimeManager()
 {
 }
 
+/* 현재 시간을 문자열로 반환합니다 */
 string cTimeManager::GetLocalTime_String()
 {
 	m_stTimer = time(NULL);
@@ -32,6 +33,7 @@ string cTimeManager::GetLocalTime_String()
 	return sTime;
 }
 
+/* 현재 시간을 Unsigned int형으로 반환합니다 (구버전) */
 unsigned int cTimeManager::GetLocalTime_UINT()
 {
 	m_stTimer = time(NULL);
