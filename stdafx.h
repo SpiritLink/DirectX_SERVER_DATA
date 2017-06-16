@@ -152,13 +152,14 @@ enum SwitchInfo
 
 	SWITCH_LASTNUM
 };
+
 enum FLAG
 {
 	FLAG_NONE = 1 << 0,
 	FLAG_NETWORK_ID = 1 << 1,
 	FLAG_ROOM_NAME = 1 << 2,
 	FLAG_ALL_DATA = 1 << 3,
-	FLAG_IP = 1 << 4,
+	FLAG_GENDER = 1 << 4,
 	FLAG_POSITION = 1 << 5,
 	FLAG_OBJECT_DATA = 1 << 6
 };
