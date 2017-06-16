@@ -76,9 +76,6 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	if (nIndex == 2)
 	{
 		m_stWoman.GetPosition(&result.fX, &result.fY, &result.fZ);
-		// << : 실험구간
-		m_stWoman.SetPosition(result.fX + 1, result.fY + 1, result.fZ + 1);
-		// >> :
 		result.fAngle = m_stWoman.GetAngle();
 		result.eAnimState = m_stWoman.GetAnimState();
 	}

@@ -223,7 +223,9 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			{
 			case 0: eFlag = FLAG::FLAG_NETWORK_ID; 
 				break;
-			case 1: continue; 
+			case 1:
+				if(nNetworkID == -1)
+					continue;
 				break;
 			case 2: eFlag = FLAG::FLAG_GENDER;
 				break;
@@ -335,6 +337,7 @@ void SendGender(SOCKET* pSocket, int* nNetworkID)
 	}
 	
 	send(*pSocket, (char*)&Gender, sizeof(int), 0);
+	cout << "¼ºº° : " << Gender << endl;
 }
 
 void SendPosition(SOCKET* pSocket, ST_FLAG* flag)

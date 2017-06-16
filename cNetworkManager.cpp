@@ -36,6 +36,6 @@ void cNetworkManager::SendGender(string Key)
 	
 	for (int i = 0; i < vecUser.size(); ++i)
 	{
-		m_mapSwitch[vecUser[i]] = 1;	// << : 스레드에서 성별을 보내라로 인식합니다.
+		m_mapSwitch[vecUser[i]] = 2;	// << : 스레드에서 성별을 보내라로 인식합니다.
 	}
 }
