@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Server_DATA.h"
 
+using namespace std;
 CRITICAL_SECTION CS_SERVER;
 
 // << : 스레드 함수
@@ -8,13 +9,13 @@ unsigned int _stdcall RECV_REQUEST(void* arg);	// << : 수신
 unsigned int _stdcall SEND_REQUEST(void* arg);	// << : 전송
 
 // << : 일반 함수
-void SendNetworkID(ST_SOCKET_ADDR* stData);
-void SendRoomName(SOCKET* pSocket, ST_FLAG* flag);
-void SendAllData(SOCKET* pSocket, ST_FLAG* flag);
-void SendGender(SOCKET* pSocket, int* nNetworkID);
+void SendNetworkID(ST_SOCKET_ADDR* stData, bool* bConnected);
+void SendRoomName(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
+void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
+void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void SendPosition(SOCKET* pSocket, ST_FLAG* flag);
 
-void RecvNetworkID(SOCKET* pSocket,FLAG* pFlag, int* nNetworkID);
+void RecvNetworkID(SOCKET* pSocket,FLAG* pFlag, int* nNetworkID, bool* bConnected);
 void RecvPosition();
 
 void ProcessPosition(void* arg, string RoomName);
@@ -63,10 +64,10 @@ void Server_DATA::Setup_RECV()
 		RecvSock.stAddr = clntAdr_RECV;
 		if (hClntSock_RECV > 0)
 		{
-			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_RECV.sin_addr) << endl;
+			cout << "accept IP :" << inet_ntoa(clntAdr_RECV.sin_addr) << endl;
 			hTestRecv = (HANDLE)_beginthreadex(NULL, 0, RECV_REQUEST, (void*)&RecvSock, 0, NULL);
-			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
 			g_nThreadCount++;
+			cout << " Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -107,10 +108,10 @@ void Server_DATA::Setup_SEND()
 		SendSock.stAddr = clntAdr_SEND;
 		if (hClntSock_SEND > 0)
 		{
-			if (g_pTime->GetShowAllLog()) cout << "accept IP :" << inet_ntoa(clntAdr_SEND.sin_addr) << endl;
+			cout << "accept IP :" << inet_ntoa(clntAdr_SEND.sin_addr) << endl;
 			hTestSend = (HANDLE)_beginthreadex(NULL, 0, SEND_REQUEST, (void*)&SendSock, 0, NULL);
 			g_nThreadCount++;
-			if (g_pTime->GetShowThread()) cout << "Add Thread Count : " << g_nThreadCount << endl;
+			cout << "Thread Count : " << g_nThreadCount << endl;
 		}
 		if (g_pTime->GetQuit()) break;
 	}
@@ -166,25 +167,28 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
 	SOCKET ClntSock = RecvSocket.stSocket;
 	char szBuffer[BUF_SIZE * 10] = { 0, };
-	int strLen;
+	int strLen, nNetworkID;
+	bool IsConnected = true;
 
-	while ((strLen = recv(ClntSock, szBuffer, sizeof(ST_FLAG), 0)) != 0)
+	while (IsConnected)
 	{
-		if (strLen == -1) break;
+		strLen = recv(ClntSock, szBuffer, sizeof(ST_FLAG), 0);
+		if (strLen == -1) IsConnected = false;
 
 		ST_FLAG stFlag = *(ST_FLAG*)szBuffer;
+		nNetworkID = stFlag.nNetworkID;
 		switch (stFlag.eFlag)
 		{
 		case FLAG_NONE:	// << : 접속 확인용 ?
 			break;
 		case FLAG_NETWORK_ID:
-			SendNetworkID(&RecvSocket);
+			SendNetworkID(&RecvSocket,&IsConnected);
 			break;
 		case FLAG_ROOM_NAME:
-			SendRoomName(&ClntSock,&stFlag);
+			SendRoomName(&ClntSock,&stFlag, &IsConnected);
 			break;
 		case FLAG_ALL_DATA:
-			SendAllData(&ClntSock, &stFlag);
+			SendAllData(&ClntSock, &stFlag, &IsConnected);
 			break;
 		case FLAG_GENDER:
 			ProcessGender(&ClntSock);
@@ -199,7 +203,11 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 		continue;
 	}
 
+	g_pNetworkManager->Quit(nNetworkID);
 	closesocket(ClntSock);
+
+	g_nThreadCount--;
+	cout << "Thread Count : " << g_nThreadCount << endl;
 	return 0;
 }
 
@@ -211,10 +219,11 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 	char szBuffer[BUF_SIZE * 10] = { 0, };
 	int strLen1;
 	int nNetworkID = -1;
+	bool IsConnected = true;
 	clock_t prevTime = clock();
 	FLAG eFlag = FLAG_NETWORK_ID;
 
-	while (true)
+	while (IsConnected)
 	{
 		switch (eFlag)
 		{
@@ -222,10 +231,10 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 		{
 			switch (g_pNetworkManager->m_mapSwitch[nNetworkID])
 			{
-			case 0: eFlag = FLAG::FLAG_NETWORK_ID; 
+			case 0: eFlag = FLAG::FLAG_NETWORK_ID;
 				break;
 			case 1:
-				if(nNetworkID == -1)
+				if (nNetworkID == -1)
 					continue;
 				break;
 			case 2: eFlag = FLAG::FLAG_GENDER;
@@ -234,39 +243,48 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 				break;
 			}
 		}
-			break;
+		break;
 		case FLAG::FLAG_NETWORK_ID:	// << : 클라이언트가 네트워크 아이디를 제대로 할당 받았을때까지 검사해야함
-			RecvNetworkID(&ClntSock, &eFlag, &nNetworkID);
+			RecvNetworkID(&ClntSock, &eFlag, &nNetworkID, &IsConnected);
 			break;
 		case FLAG::FLAG_GENDER:
-			SendGender(&ClntSock, &nNetworkID);
+			SendGender(&ClntSock, &nNetworkID, &IsConnected);
+			eFlag = FLAG_NONE;
+			g_pNetworkManager->m_mapSwitch[nNetworkID] = 0;
 			break;
 		case FLAG::FLAG_POSITION:
 			break;
 		case FLAG::FLAG_OBJECT_DATA:
 			break;
 		}
-		
-		// << : 만약 네트워크 아이디가 -1이라면 수신하고 적용은 하지 않는다.
 	}
-
+	// << : NetworkManager에서 정보 제거해야함
+	// << : 네트워크 매니저에 ID를 넣어주면 알아서 제거한다 ?
+	g_pNetworkManager->Quit(nNetworkID);
 	closesocket(ClntSock);
+
+	g_nThreadCount--;
+	cout << "Thread Count : " << g_nThreadCount << endl;
+
 	return 0;
 }
 
 /* 클라이언트의 NetworkID를 얻어옵니다 */
-void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID)
+void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnected)
 {
 	int eFlag = FLAG::FLAG_NETWORK_ID;
 	int NetworkID;
+	int result;
 	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
-	recv(*pSocket, (char*)&NetworkID, sizeof(int), 0);
+	result = recv(*pSocket, (char*)&NetworkID, sizeof(int), 0);
 	if (NetworkID != -1)
 	{
 		*nNetworkID = NetworkID;
 		g_pNetworkManager->m_mapSwitch[NetworkID] = 1;
 		*pFlag = FLAG::FLAG_NONE;
 	}
+	if (result == -1)
+		*bConnected = false;
 }
 
 /* 클라이언트의 플레이어 좌표를 얻어옵니다 */
@@ -276,53 +294,58 @@ void RecvPosition()
 }
 
 /* 클라이언트 에게 또다른 클라이언트의 IP주소를 알려줍니다 */
-void SendNetworkID(ST_SOCKET_ADDR* stData)
+void SendNetworkID(ST_SOCKET_ADDR* stData, bool* bConnected)
 {
 	ST_SOCKET_ADDR* pData = stData;
 	int ID = ++g_nNetworkID;
-	send(pData->stSocket, (char*)&ID, sizeof(int), 0);
+	int result;
+	result = send(pData->stSocket, (char*)&ID, sizeof(int), 0);
 	g_pNetworkManager->addAddr(ID, pData->stAddr);		// << : 네트워크 아이디에 주소를 묶어서 등록합니다.
+	if (result == -1) *bConnected = false;
 }
 
 /* 연결 가능한 방인지 확인하고 알려줍니다 */
-void SendRoomName(SOCKET* pSocket,ST_FLAG* flag)
+void SendRoomName(SOCKET* pSocket,ST_FLAG* flag, bool* bConnected)
 {
 	int IsOk = 0;
+	int result;
 	string RoomName = flag->szRoomName;
 	if (g_pNetworkManager->GetClntNum(RoomName) < MAXCLIENT_ROOM)	// << : 접속 가능한 상황
 	{
 		IsOk = true;
-		send(*pSocket, (char*)&IsOk, sizeof(int), 0);
+		result = send(*pSocket, (char*)&IsOk, sizeof(int), 0);
 		if(flag->nNetworkID != -1)	// << : NetwordID가 제대로 할당된 유저라면
 			g_pNetworkManager->addID(flag->nNetworkID, string(flag->szRoomName));
 	}
 	else
 	{
 		IsOk = false;
-		send(*pSocket, (char*)&IsOk, sizeof(int), 0);
+		result = send(*pSocket, (char*)&IsOk, sizeof(int), 0);
 		cout << "현재 방인원수 : " << g_pNetworkManager->m_mapRoom[RoomName].size() << "방 이름 : " << RoomName << endl;
 	}
+	if (result == -1) *bConnected = false;
 }
 
 /* 게임 시작에 필요한 초기 데이터를 전송합니다 */
-void SendAllData(SOCKET* pSocket, ST_FLAG* flag)
+void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected)
 {
 	ST_ALL_DATA stData;
+	int result;
 	// << : 플레이어 정보
 	g_pDataManager->GetManData(string(flag->szRoomName), &stData.manX, &stData.manY, &stData.manZ, &stData.manAngle);
 	g_pDataManager->GetWomanData(string(flag->szRoomName), &stData.womanX, &stData.womanY, &stData.womanZ, &stData.womanAngle);
 	// << : 맵정보
 	g_pDataManager->GetMapData(string(flag->szRoomName),stData.mapX,stData.mapY,stData.mapZ,stData.mapRotX, stData.mapRotY, stData.mapRotZ,stData.mapIsRunning);
-	send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
+	result = send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
+	if (result == -1) *bConnected = false;
 }
 
 /* 상대가 어떤 성별을 골랐는지 확인, 전송합니다 */
-void SendGender(SOCKET* pSocket, int* nNetworkID)
+void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 {
 	// << : 클라이언트에게 전송할 데이터를 알려줍니다.
 	FLAG eFlag = FLAG::FLAG_GENDER;
 	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
-
 
 	int Gender;
 	string key = g_pNetworkManager->m_mapID[*nNetworkID];
@@ -342,7 +365,13 @@ void SendGender(SOCKET* pSocket, int* nNetworkID)
 		Gender = g_pNetworkManager->m_mapGender[ClntID];
 	}
 	
-	send(*pSocket, (char*)&Gender, sizeof(int), 0);
+	int result;
+	result = send(*pSocket, (char*)&Gender, sizeof(int), 0);
+
+	// 연결이 끊긴 상황 예외처리
+	if (result == -1)
+		*bConnected = false;
+
 	cout << "성별 : " << Gender << endl;
 }
 

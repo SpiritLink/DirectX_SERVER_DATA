@@ -44,3 +44,31 @@ void cNetworkManager::SendGender(string Key)
 		m_mapSwitch[vecUser[i]] = 2;	// << : 스레드에서 성별을 보내라로 인식합니다.
 	}
 }
+
+void cNetworkManager::Quit(int Id)
+{
+	map<int, string>		 m_mapID;	// ID와 방이름을 묶어서 관리합니다.
+	map<string, vector<int>> m_mapRoom;	// 방이름과 ID를 묶어서 관리합니다.
+	string szTarget = m_mapID[Id];
+	// 1. 아이디와 방이름 제거
+	// 2. 방이름에서 아이디 제거
+	{
+		map<int, string>::iterator Iter;
+		for (Iter = m_mapID.begin(); Iter != m_mapID.end();)
+		{
+			if (Iter->first == Id)
+				m_mapID.erase(Iter++);
+			else
+				++Iter;
+		}
+	}
+	{
+		for (int i = 0; i < m_mapRoom[szTarget].size();)
+		{
+			if (m_mapRoom[szTarget][i] == Id)
+				m_mapRoom[szTarget].erase(m_mapRoom[szTarget].begin() + i);
+			else
+				i++;
+		}
+	}
+}
