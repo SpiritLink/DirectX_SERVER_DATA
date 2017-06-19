@@ -402,13 +402,16 @@ void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnect
 		*bConnected = false;
 }
 
-/* 다른 플레이어의 좌표를 전송합니다 */
+/* 플레이어의 좌표를 수신합니다. */
 void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 {
+	ST_PLAYER_POSITION stData;
+	recv(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
+	g_pDataManager->ReceiveData(stData);
 	string key = (flag->szRoomName);
-	ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
-	send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
-	// << : 여기서 바로 보내는게 아니라 스위치를 변경하게 해야함
+	g_pNetworkManager->m_mapSwitch[flag->nNetworkID] = 3;
+	//ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
+	//send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
 }
 
 /* 좌표를 수신하면 다른 플레이어 좌표를 바로 전송합니다 (구버전) */
