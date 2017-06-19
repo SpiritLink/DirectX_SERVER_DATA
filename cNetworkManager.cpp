@@ -54,8 +54,6 @@ void cNetworkManager::SendGender(string Key)
 void cNetworkManager::Quit(int Id)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);
-	map<int, string>		 m_mapID;	// ID와 방이름을 묶어서 관리합니다.
-	map<string, vector<int>> m_mapRoom;	// 방이름과 ID를 묶어서 관리합니다.
 	string szTarget = m_mapID[Id];
 	// 1. 아이디와 방이름 제거
 	// 2. 방이름에서 아이디 제거
