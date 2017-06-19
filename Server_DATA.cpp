@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Server_DATA.h"
 
-using namespace std;
 CRITICAL_SECTION CS_SERVER;
 
 // << : 스레드 함수
@@ -13,10 +12,10 @@ void SendNetworkID(ST_SOCKET_ADDR* stData, bool* bConnected);
 void SendRoomName(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
 void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void SendPosition(SOCKET* pSocket, ST_FLAG* flag);
+void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 
 void RecvNetworkID(SOCKET* pSocket,FLAG* pFlag, int* nNetworkID, bool* bConnected);
-void RecvPosition();
+void RecvPosition(SOCKET* pSocket, ST_FLAG* flag);
 
 void ProcessPosition(void* arg, string RoomName);
 void ProcessGender(SOCKET* pSocket);
@@ -124,11 +123,9 @@ void Server_DATA::Update()
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
 	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 10) < clock())
 	{
-		WaitForSingleObject(g_hMutex_DATA, INFINITE);
 		g_pTime->SetSaveTimer(clock());
 		g_pDataManager->SaveAllData();
 		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
-		ReleaseMutex(g_hMutex_DATA);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD3) & 0x0001)
@@ -195,7 +192,7 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			break;
 		case FLAG_POSITION:
 			//ProcessPosition(&RecvSocket, string(stFlag.szRoomName));
-			SendPosition(&ClntSock, &stFlag);
+			RecvPosition(&ClntSock, &stFlag);
 			break;
 		case FLAG_OBJECT_DATA:
 			break;
@@ -229,19 +226,15 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 		{
 		case FLAG::FLAG_NONE:
 		{
-			switch (g_pNetworkManager->m_mapSwitch[nNetworkID])
-			{
-			case 0: eFlag = FLAG::FLAG_NETWORK_ID;
-				break;
-			case 1:
-				if (nNetworkID == -1)
-					continue;
-				break;
-			case 2: eFlag = FLAG::FLAG_GENDER;
-				break;
-			default:
-				break;
-			}
+			int nSwitch = g_pNetworkManager->m_mapSwitch[nNetworkID];
+			if (nSwitch == 0)
+				eFlag = FLAG::FLAG_NETWORK_ID;
+			if (nSwitch == 1)
+				if (nNetworkID == -1) continue;
+			if (nSwitch == 2)
+				eFlag = FLAG::FLAG_GENDER;
+			if (nSwitch == 3)
+				eFlag = FLAG::FLAG_POSITION;
 		}
 		break;
 		case FLAG::FLAG_NETWORK_ID:	// << : 클라이언트가 네트워크 아이디를 제대로 할당 받았을때까지 검사해야함
@@ -253,6 +246,11 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			g_pNetworkManager->m_mapSwitch[nNetworkID] = 0;
 			break;
 		case FLAG::FLAG_POSITION:
+			if (prevTime + ONE_SECOND < clock())	// << : 상대 좌표 전송 간격
+			{
+				prevTime = clock();
+				SendPosition(&ClntSock, &nNetworkID, &IsConnected);
+			}
 			break;
 		case FLAG::FLAG_OBJECT_DATA:
 			break;
@@ -267,30 +265,6 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 	cout << "Thread Count : " << g_nThreadCount << endl;
 
 	return 0;
-}
-
-/* 클라이언트의 NetworkID를 얻어옵니다 */
-void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnected)
-{
-	int eFlag = FLAG::FLAG_NETWORK_ID;
-	int NetworkID;
-	int result;
-	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
-	result = recv(*pSocket, (char*)&NetworkID, sizeof(int), 0);
-	if (NetworkID != -1)
-	{
-		*nNetworkID = NetworkID;
-		g_pNetworkManager->m_mapSwitch[NetworkID] = 1;
-		*pFlag = FLAG::FLAG_NONE;
-	}
-	if (result == -1)
-		*bConnected = false;
-}
-
-/* 클라이언트의 플레이어 좌표를 얻어옵니다 */
-void RecvPosition()
-{
-
 }
 
 /* 클라이언트 에게 또다른 클라이언트의 IP주소를 알려줍니다 */
@@ -365,6 +339,7 @@ void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 		Gender = g_pNetworkManager->m_mapGender[ClntID];
 	}
 	
+	g_pNetworkManager->m_mapSwitch[*nNetworkID] = 3; // < : 성별 그만 보내게 함
 	int result;
 	result = send(*pSocket, (char*)&Gender, sizeof(int), 0);
 
@@ -375,12 +350,65 @@ void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	cout << "성별 : " << Gender << endl;
 }
 
+/* 클라이언트에게 상대의 좌표를 전송합니다.*/
+void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
+{
+	FLAG eFlag = FLAG::FLAG_POSITION;
+	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
+
+	int nGender = g_pNetworkManager->m_mapGender[*nNetworkID];
+	string szKey = g_pNetworkManager->m_mapID[*nNetworkID];
+	// << : ID로 성별을 조회
+	ST_PLAYER_POSITION stData;
+	stData.nPlayerIndex = -1;
+	if (nGender == IN_PLAYER1)
+	{
+		stData.nPlayerIndex = OUT_PLAYER2;
+		g_pDataManager->GetWomanData(szKey, &stData.fX, &stData.fY, &stData.fZ, &stData.fAngle);
+	}
+	else if (nGender == IN_PLAYER2)
+	{
+		stData.nPlayerIndex = OUT_PLAYER1;
+		g_pDataManager->GetManData(szKey, &stData.fX, &stData.fZ, &stData.fZ, &stData.fAngle);
+	}
+	
+	int result = send(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
+	if (result == -1) 
+		*bConnected = false;
+
+	cout << "ID : " << *nNetworkID;
+	cout << " X : " << stData.fX;
+	cout << " Y : " << stData.fY;
+	cout << " Z : " << stData.fZ;
+	cout << " Angle : " << stData.fAngle;
+
+}
+
+/* 클라이언트의 NetworkID를 얻어옵니다 */
+void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnected)
+{
+	int eFlag = FLAG::FLAG_NETWORK_ID;
+	int NetworkID;
+	int result;
+	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
+	result = recv(*pSocket, (char*)&NetworkID, sizeof(int), 0);
+	if (NetworkID != -1)
+	{
+		*nNetworkID = NetworkID;
+		g_pNetworkManager->m_mapSwitch[NetworkID] = 1;
+		*pFlag = FLAG::FLAG_NONE;
+	}
+	if (result == -1)
+		*bConnected = false;
+}
+
 /* 다른 플레이어의 좌표를 전송합니다 */
-void SendPosition(SOCKET* pSocket, ST_FLAG* flag)
+void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 {
 	string key = (flag->szRoomName);
 	ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
 	send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
+	// << : 여기서 바로 보내는게 아니라 스위치를 변경하게 해야함
 }
 
 /* 좌표를 수신하면 다른 플레이어 좌표를 바로 전송합니다 (구버전) */
@@ -390,14 +418,12 @@ void ProcessPosition(void* arg, string RoomName)
 	char szBuffer[1000] = { 0, };
 	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
 	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
-	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	g_pDataManager->ReceiveData(RecvPosition);
 
 	cout << "FLAG_POSITION 좌표 수신" << endl;
 	ST_PLAYER_POSITION SendPosition;
 	int nIndex;
 	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
-	ReleaseMutex(g_hMutex_DATA);
 	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
 	cout << "FLAG_POSITION 좌표 전송" << endl;
 

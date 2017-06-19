@@ -51,6 +51,7 @@ ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)
 /* 플레이어의 좌표 정보를 컨테이너에 적용합니다 */
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	EnterCriticalSection(&cs);
 	string key = string(stRecv.szRoomName);
 	if (m_mapContainer[key] == NULL)
@@ -65,11 +66,13 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 	cout << stRecv.fZ << " ";
 	cout << stRecv.fAngle << endl;
 	LeaveCriticalSection(&cs);
+	ReleaseMutex(g_hMutex_DATA);
 }
 
 /* 플레이어의 좌표 정보를 컨테이너에 저장하고 주소도 컨테이너에 저장합니다 (구버전) */
 void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	EnterCriticalSection(&cs);
 	string key = string(stRecv.szRoomName);
 	if (m_mapContainer[key] == NULL)
@@ -78,11 +81,13 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
 		m_mapContainer[key]->Setup(key);
 	}
 	LeaveCriticalSection(&cs);
+	ReleaseMutex(g_hMutex_DATA);
 }
 
 /* 컨테이너에서 플레이어의 정보를 확인, 반환합니다 */
 ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	ST_PLAYER_POSITION stResult;
 
 	if (m_mapContainer[key] == NULL)
@@ -95,24 +100,30 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 		stResult = m_mapContainer[key]->GetData(1);
 
 	stResult.nPlayerIndex = m_mapContainer[key]->GetOnlineUser();
+	ReleaseMutex(g_hMutex_DATA);
 	return stResult;
+	
 }
 
 /* 남자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	if (m_mapContainer[key] == NULL)
 	{
 		m_mapContainer[key] = new cContainer;
 		m_mapContainer[key]->Setup(key);
 	}
 	m_mapContainer[key]->GetManPosition(x, y, z, angle);
+	ReleaseMutex(g_hMutex_DATA);
 }
 
 /* 여자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetWomanData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	m_mapContainer[key]->GetWomanPosition(x, y, z, angle);
+	ReleaseMutex(g_hMutex_DATA);
 }
 
 /* 맵의 정보를 얻어냅니다 */
@@ -124,11 +135,13 @@ void cDataManager::GetMapData(IN string key, OUT float * X, OUT float * Y, OUT f
 /* 모든 컨테이너의 정보를 파일로 저장합니다 */
 void cDataManager::SaveAllData()
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	map<string, cContainer*>::iterator iter;
 	for (iter = m_mapContainer.begin(); iter != m_mapContainer.end(); ++iter)
 	{
 		iter->second->SaveData();	// << : SaveLog
 	}
+	ReleaseMutex(g_hMutex_DATA);
 }
 
 void cDataManager::Update()
@@ -141,9 +154,11 @@ void cDataManager::Update()
 
 void cDataManager::Destroy()
 {
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	for each(auto p in m_mapContainer)
 	{
 		p.second->SaveData();
 		SAFE_DELETE(p.second);
 	}
+	ReleaseMutex(g_hMutex_DATA);
 }
