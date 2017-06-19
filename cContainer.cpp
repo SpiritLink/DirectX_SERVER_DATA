@@ -4,8 +4,6 @@
 cContainer::cContainer()
 	: m_nManTime(0)
 	, m_nWomanTime(0)
-	, nPlayer1NetID(-1)
-	, nPlayer2NetID(-1)
 {
 }
 
@@ -27,17 +25,13 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 		m_stMan.SetPosition(x, y, z);
 		m_stMan.SetAngle(Angle);
 		m_stMan.SetAnimState(stRecv.eAnimState);
-		Player1Sock = stAddr;
 		m_nManTime = clock();
-		cout << inet_ntoa(Player1Sock.stAddr.sin_addr) << endl;
 	}
 	else if (stRecv.nPlayerIndex & IN_PLAYER2)
 	{
 		m_stWoman.SetPosition(x, y, z);
 		m_stWoman.SetAngle(Angle);
 		m_stWoman.SetAnimState(stRecv.eAnimState);
-		Player2Sock = stAddr;
-		cout << inet_ntoa(Player2Sock.stAddr.sin_addr) << endl;
 		m_nWomanTime = clock();
 	}
 }
@@ -113,11 +107,27 @@ void cContainer::GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT
 	*angle = m_stMan.GetAngle();
 }
 
+void cContainer::GetManInventory(OUT int * nArr)
+{
+	for (int i = 0; i < INVENTORY_SIZE; ++i)
+	{
+		nArr[i] = m_stMan.GetInventory()[i];
+	}
+}
+
 /* 여자 캐릭터의 좌표를 반환합니다 */
 void cContainer::GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
 	m_stWoman.GetPosition(x, y, z);
 	*angle = m_stWoman.GetAngle();
+}
+
+void cContainer::GetWomanInventory(OUT int * nArr)
+{
+	for (int i = 0; i < INVENTORY_SIZE; ++i)
+	{
+		nArr[i] = m_stWoman.GetInventory()[i];
+	}
 }
 
 /* 맵데이터를 반환합니다 */

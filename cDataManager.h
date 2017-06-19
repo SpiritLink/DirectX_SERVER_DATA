@@ -16,12 +16,13 @@ public:
 	void SaveAllData();
 	void Setup();
 	void ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket);
-	ST_SOCKET_ADDR GetSocket(ST_FLAG stFlag);
 	void ReceiveData(ST_PLAYER_POSITION stRecv);
 	void ReceiveData(ST_PLAYER_POSITION stRecv, SOCKADDR_IN stAddr);
 	ST_PLAYER_POSITION GetPlayerData(string key, int nIndex);
-	void GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
-	void GetWomanData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
+	void GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
+	void GetManInventory(IN string key, OUT int * arr);
+	void GetWomanPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
+	void GetWomanInventory(IN string key, OUT int * arr);
 	void GetMapData(IN string key, OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	void Update();
 	void Destroy();

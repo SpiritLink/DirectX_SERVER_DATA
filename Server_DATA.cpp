@@ -147,10 +147,6 @@ void Server_DATA::Update()
 		else if (!g_pTime->GetShowAllLog())
 			g_pTime->SetShowAllLog(true);
 	}
-	if (GetAsyncKeyState(VK_NUMPAD9) & 0x0001)
-	{
-		g_pTime->SetQuit(true);
-	}
 }
 
 void Server_DATA::Destroy()
@@ -310,12 +306,17 @@ void SendRoomName(SOCKET* pSocket,ST_FLAG* flag, bool* bConnected)
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected)
 {
 	ST_ALL_DATA stData;
+	string key = string(flag->szRoomName);
 	int result;
-	// << : 플레이어 정보
-	g_pDataManager->GetManData(string(flag->szRoomName), &stData.manX, &stData.manY, &stData.manZ, &stData.manAngle);
-	g_pDataManager->GetWomanData(string(flag->szRoomName), &stData.womanX, &stData.womanY, &stData.womanZ, &stData.womanAngle);
-	// << : 맵정보
+	// 플레이어 정보 , 인벤토리 정보, 맵정보
+	g_pDataManager->GetManPosition(key, &stData.manX, &stData.manY, &stData.manZ, &stData.manAngle);
+	g_pDataManager->GetWomanPosition(string(flag->szRoomName), &stData.womanX, &stData.womanY, &stData.womanZ, &stData.womanAngle);
+
+	g_pDataManager->GetManInventory(key, stData.manItem);
+	g_pDataManager->GetWomanInventory(key, stData.womanItem);
+
 	g_pDataManager->GetMapData(string(flag->szRoomName),stData.mapX,stData.mapY,stData.mapZ,stData.mapRotX, stData.mapRotY, stData.mapRotZ,stData.mapIsRunning);
+
 	result = send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
 	if (result == -1) *bConnected = false;
 }
@@ -370,12 +371,12 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	if (nGender == IN_PLAYER1)
 	{
 		stData.nPlayerIndex = OUT_PLAYER2;
-		g_pDataManager->GetWomanData(szKey, &stData.fX, &stData.fY, &stData.fZ, &stData.fAngle);
+		g_pDataManager->GetWomanPosition(szKey, &stData.fX, &stData.fY, &stData.fZ, &stData.fAngle);
 	}
 	else if (nGender == IN_PLAYER2)
 	{
 		stData.nPlayerIndex = OUT_PLAYER1;
-		g_pDataManager->GetManData(szKey, &stData.fX, &stData.fZ, &stData.fZ, &stData.fAngle);
+		g_pDataManager->GetManPosition(szKey, &stData.fX, &stData.fZ, &stData.fZ, &stData.fAngle);
 	}
 	
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
@@ -432,16 +433,17 @@ void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 	//ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
 	//send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
 }
+
+/* 맵정보를 수신합니다 */
 void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bConnected)
 {
 	ST_OBJECT_DATA stData;
 	string key = pFlag->szRoomName;
-	g_pDataManager->GetMapData(key, stData.mapX, stData.mapY, stData.mapZ, stDatda.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
+	g_pDataManager->GetMapData(key, stData.mapX, stData.mapY, stData.mapZ, stData.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
 
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	if (result == -1) *bConnected = false;
 }
-
 
 /* 좌표를 수신하면 다른 플레이어 좌표를 바로 전송합니다 (구버전) */
 void ProcessPosition(void* arg, string RoomName)

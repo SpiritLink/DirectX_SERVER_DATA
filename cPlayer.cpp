@@ -21,6 +21,11 @@ int cPlayer::GetItem(int Index)
 	return (int)Inventory[Index];
 }
 
+StuffCode* cPlayer::GetInventory()
+{
+	return Inventory;
+}
+
 /* 아이템을 설정합니다 */
 void cPlayer::SetItem(int Index, int Type)
 {

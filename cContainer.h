@@ -15,15 +15,6 @@ private:
 	clock_t m_nWomanTime;		// 여자 최근 접속 시간
 
 	cStuff m_aStuff[SWITCH_LASTNUM];	// << : 오브젝트
-
-	SYNTHESIZE(int, nPlayer1NetID, Player1NetID);
-	SYNTHESIZE(int, nPlayer2NetID, Player2NetID);
-
-	SYNTHESIZE(ST_SOCKET_ADDR, Player1Sock, Player1Sock);
-	SYNTHESIZE(ST_SOCKET_ADDR, Player2Sock, Player2Sock);
-
-	HANDLE hThread1P, hThread2P;
-	
 public:
 	cContainer();
 	~cContainer();
@@ -31,7 +22,9 @@ public:
 	ST_PLAYER_POSITION GetData(int nIndex);
 	int GetOnlineUser();
 	void GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
+	void GetManInventory(OUT int * nArr);
 	void GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
+	void GetWomanInventory(OUT int * nArr);
 	void GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	void Setup(string key);
 	void SaveData();

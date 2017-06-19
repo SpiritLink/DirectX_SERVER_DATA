@@ -29,23 +29,6 @@ void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
 		m_mapContainer[key] = new cContainer;
 		m_mapContainer[key]->Setup(key);
 	}
-
-	/* 클라이언트 정보 저장 */
-	if (stFlag.nPlayerIndex & IN_PLAYER1)
-		m_mapContainer[key]->SetPlayer1Sock(stSocket);
-	else if (stFlag.nPlayerIndex & IN_PLAYER2)
-		m_mapContainer[key]->SetPlayer2Sock(stSocket);
-}
-
-/* 클라이언트의 소켓 정보를 얻어옵니다 (구버전) */
-ST_SOCKET_ADDR cDataManager::GetSocket(ST_FLAG stFlag)
-{
-	if (stFlag.nPlayerIndex == 1)
-		return g_pDataManager->m_mapContainer[string(stFlag.szRoomName)]->GetPlayer2Sock();
-	else if(stFlag.nPlayerIndex == 2)
-		return g_pDataManager->m_mapContainer[string(stFlag.szRoomName)]->GetPlayer1Sock();
-
-	return ST_SOCKET_ADDR();
 }
 
 /* 플레이어의 좌표 정보를 컨테이너에 적용합니다 */
@@ -107,7 +90,7 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 }
 
 /* 남자 캐릭터의 정보를 얻어냅니다 */
-void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
+void cDataManager::GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
 	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	if (m_mapContainer[key] == NULL)
@@ -119,11 +102,40 @@ void cDataManager::GetManData(IN string key, OUT float * x, OUT float * y, OUT f
 	ReleaseMutex(g_hMutex_DATA);
 }
 
-/* 여자 캐릭터의 정보를 얻어냅니다 */
-void cDataManager::GetWomanData(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
+void cDataManager::GetManInventory(IN string key, OUT int * arr)
 {
 	WaitForSingleObject(g_hMutex_DATA, INFINITE);
+	if (m_mapContainer[key] == NULL)
+	{
+		m_mapContainer[key] = new cContainer;
+		m_mapContainer[key]->Setup(key);
+	}
+	m_mapContainer[key]->GetManInventory(arr);
+	ReleaseMutex(g_hMutex_DATA);
+}
+
+/* 여자 캐릭터의 정보를 얻어냅니다 */
+void cDataManager::GetWomanPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
+{
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
+	if (m_mapContainer[key] == NULL)
+	{
+		m_mapContainer[key] = new cContainer;
+		m_mapContainer[key]->Setup(key);
+	}
 	m_mapContainer[key]->GetWomanPosition(x, y, z, angle);
+	ReleaseMutex(g_hMutex_DATA);
+}
+
+void cDataManager::GetWomanInventory(IN string key, OUT int * arr)
+{
+	WaitForSingleObject(g_hMutex_DATA, INFINITE);
+	if (m_mapContainer[key] == NULL)
+	{
+		m_mapContainer[key] = new cContainer;
+		m_mapContainer[key]->Setup(key);
+	}
+	m_mapContainer[key]->GetWomanInventory(arr);
 	ReleaseMutex(g_hMutex_DATA);
 }
 
