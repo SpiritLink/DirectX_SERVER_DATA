@@ -19,7 +19,6 @@ void RecvNetworkID(SOCKET* pSocket,FLAG* pFlag, int* nNetworkID, bool* bConnecte
 void RecvPosition(SOCKET* pSocket, ST_FLAG* flag);
 void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bConnected);
 
-void ProcessPosition(void* arg, string RoomName);
 void ProcessGender(SOCKET* pSocket);
 
 Server_DATA::Server_DATA()
@@ -189,7 +188,6 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			ProcessGender(&ClntSock);
 			break;
 		case FLAG_POSITION:
-			//ProcessPosition(&RecvSocket, string(stFlag.szRoomName));
 			RecvPosition(&ClntSock, &stFlag);
 			break;
 		case FLAG_OBJECT_DATA:
@@ -364,6 +362,7 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
 
 	int nGender = g_pNetworkManager->m_mapGender[*nNetworkID];
+	cout << "성별 : " << nGender << endl;
 	string szKey = g_pNetworkManager->m_mapID[*nNetworkID];
 	// << : ID로 성별을 조회
 	ST_PLAYER_POSITION stData;
@@ -383,7 +382,7 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	if (result == -1) 
 		*bConnected = false;
 
-	cout << "ID : " << *nNetworkID;
+	cout << "Room : " << szKey;
 	cout << " X : " << stData.fX;
 	cout << " Y : " << stData.fY;
 	cout << " Z : " << stData.fZ;
@@ -443,24 +442,6 @@ void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bCon
 
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	if (result == -1) *bConnected = false;
-}
-
-/* 좌표를 수신하면 다른 플레이어 좌표를 바로 전송합니다 (구버전) */
-void ProcessPosition(void* arg, string RoomName)
-{
-	SOCKET ClntSock = *(SOCKET*)arg;
-	char szBuffer[1000] = { 0, };
-	recv(ClntSock, szBuffer, sizeof(ST_PLAYER_POSITION), 0);
-	ST_PLAYER_POSITION RecvPosition = *(ST_PLAYER_POSITION*)szBuffer;
-	g_pDataManager->ReceiveData(RecvPosition);
-
-	cout << "FLAG_POSITION 좌표 수신" << endl;
-	ST_PLAYER_POSITION SendPosition;
-	int nIndex;
-	SendPosition = g_pDataManager->GetPlayerData(RoomName, RecvPosition.nPlayerIndex);
-	send(ClntSock, (char*)&SendPosition, sizeof(ST_PLAYER_POSITION), 0);
-	cout << "FLAG_POSITION 좌표 전송" << endl;
-
 }
 
 /* 성별을 서버에 적용하고 해당 내용을 전송하게 합니다.*/
