@@ -130,7 +130,7 @@ void cDataManager::GetWomanData(IN string key, OUT float * x, OUT float * y, OUT
 /* 맵의 정보를 얻어냅니다 */
 void cDataManager::GetMapData(IN string key, OUT float * X, OUT float * Y, OUT float * Z, OUT float * rotX, OUT float * rotY, OUT float * rotZ, OUT bool * IsRun)
 {
-	
+	m_mapContainer[key]->GetMap(X, Y, Z, rotX, rotY, rotZ, IsRun);
 }
 
 /* 모든 컨테이너의 정보를 파일로 저장합니다 */

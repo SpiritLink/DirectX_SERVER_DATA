@@ -10,10 +10,12 @@ unsigned int _stdcall SEND_REQUEST_CLIENT(LPVOID lpParam);
 int g_nNetworkID = 0;
 int g_nThreadCount;
 HANDLE g_hMutex_DATA;
+HANDLE g_hMutex_Net;
 
 int main()
 {
 	g_hMutex_DATA = CreateMutex(NULL, FALSE, NULL);
+	g_hMutex_Net = CreateMutex(NULL, FALSE, NULL);
 	g_pDataManager->Setup();
 	DWORD dwThID1, dwThID2;
 	HANDLE hThread_RECV, hThread_SEND;

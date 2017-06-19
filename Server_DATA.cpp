@@ -13,9 +13,11 @@ void SendRoomName(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
 void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
+void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 
 void RecvNetworkID(SOCKET* pSocket,FLAG* pFlag, int* nNetworkID, bool* bConnected);
 void RecvPosition(SOCKET* pSocket, ST_FLAG* flag);
+void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bConnected);
 
 void ProcessPosition(void* arg, string RoomName);
 void ProcessGender(SOCKET* pSocket);
@@ -195,6 +197,7 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			RecvPosition(&ClntSock, &stFlag);
 			break;
 		case FLAG_OBJECT_DATA:
+			RecvObjectData(&ClntSock, &stFlag, &nNetworkID,&IsConnected);
 			break;
 		}
 		continue;
@@ -235,6 +238,8 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 				eFlag = FLAG::FLAG_GENDER;
 			if (nSwitch == 3)
 				eFlag = FLAG::FLAG_POSITION;
+			if (nSwitch == 4)
+				eFlag = FLAG::FLAG_OBJECT_DATA;
 		}
 		break;
 		case FLAG::FLAG_NETWORK_ID:	// << : 클라이언트가 네트워크 아이디를 제대로 할당 받았을때까지 검사해야함
@@ -253,6 +258,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			}
 			break;
 		case FLAG::FLAG_OBJECT_DATA:
+			SendObjectData(&ClntSock, &nNetworkID, &IsConnected);
 			break;
 		}
 	}
@@ -384,6 +390,19 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 
 }
 
+/* 맵 정보를 전송합니다 */
+void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
+{
+	FLAG eFlag = FLAG::FLAG_OBJECT_DATA;
+	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
+
+	string szKey = g_pNetworkManager->m_mapID[*nNetworkID];
+	ST_OBJECT_DATA stData;
+	g_pDataManager->GetMapData(szKey, stData.mapX, stData.mapY, stData.mapZ, stData.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
+
+	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
+}
+
 /* 클라이언트의 NetworkID를 얻어옵니다 */
 void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnected)
 {
@@ -413,6 +432,16 @@ void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 	//ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
 	//send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
 }
+void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bConnected)
+{
+	ST_OBJECT_DATA stData;
+	string key = pFlag->szRoomName;
+	g_pDataManager->GetMapData(key, stData.mapX, stData.mapY, stData.mapZ, stDatda.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
+
+	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
+	if (result == -1) *bConnected = false;
+}
+
 
 /* 좌표를 수신하면 다른 플레이어 좌표를 바로 전송합니다 (구버전) */
 void ProcessPosition(void* arg, string RoomName)
@@ -445,7 +474,7 @@ void ProcessGender(SOCKET* pSocket)
 		g_pNetworkManager->m_mapGender[stRecv.nNetworkID] = IN_PLAYER2;
 	else
 		g_pNetworkManager->m_mapGender[stRecv.nNetworkID] = 0;
-
+	cout << "Recv Gender : " << stRecv.nPlayerIndex << endl;
 	// << : 성별을 방에있는 모든 유저에게 날리도록 처리한다.
 	g_pNetworkManager->SendGender(string(stRecv.szRoomName));
 }
