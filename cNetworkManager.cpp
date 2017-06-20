@@ -32,6 +32,11 @@ void cNetworkManager::addAddr(int ID, SOCKADDR_IN stAddr)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+void cNetworkManager::AddFlag(int ID, FLAG eFlag)
+{
+	m_mapSwitch[ID] = m_mapSwitch[ID] | eFlag;
+}
+
 /* 한개의 방(컨테이너)에 몇명이 접속했는지 확인하는 함수입니다 */
 int cNetworkManager::GetClntNum(string RoomName)
 {
@@ -62,6 +67,12 @@ void cNetworkManager::SendObject(string Key)
 	}
 
 	ReleaseMutex(g_hMutex_Net);
+}
+
+void cNetworkManager::SubFlag(int ID, FLAG eFlag)
+{
+	if (m_mapSwitch[ID] & eFlag)
+		m_mapSwitch[ID] = m_mapSwitch[ID] - eFlag;
 }
 
 void cNetworkManager::Quit(int Id)

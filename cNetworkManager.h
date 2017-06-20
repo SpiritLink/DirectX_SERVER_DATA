@@ -15,9 +15,11 @@ private:
 public:
 	void addID(int ID, string RoomName);
 	void addAddr(int ID, SOCKADDR_IN stAddr);
+	void AddFlag(int ID, FLAG eFlag);
 	int GetClntNum(string RoomName);
 	void SendGender(string Key);
 	void SendObject(string Key);
+	void SubFlag(int ID, FLAG eFlag);
 	void Quit(int Id);
 };
 

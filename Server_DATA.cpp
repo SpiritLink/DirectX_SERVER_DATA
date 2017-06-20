@@ -15,7 +15,7 @@ void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 
-void RecvNetworkID(SOCKET* pSocket,FLAG* pFlag, int* nNetworkID, bool* bConnected);
+void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void RecvPosition(SOCKET* pSocket, ST_FLAG* flag);
 void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bConnected);
 
@@ -217,45 +217,42 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 	clock_t prevTime = clock();
 	FLAG eFlag = FLAG_NETWORK_ID;
 
+	// << : 연결하기 전에 먼저 네트워크 아이디가 -1이 아닐때까지 얻어와야 한다.
+	while (nNetworkID == -1)
+	{
+		if (prevTime + ONE_SECOND > clock()) continue;
+		prevTime = clock();
+		RecvNetworkID(&ClntSock, &nNetworkID, &IsConnected);
+	}
+	
+	// << : 네트워크 아이디를 이제 얻어왔다면 ?
 	while (IsConnected)
 	{
-		switch (eFlag)
+		int nSwitch = g_pNetworkManager->m_mapSwitch[nNetworkID];
+
+		if (nSwitch & FLAG::FLAG_NETWORK_ID)
 		{
-		case FLAG::FLAG_NONE:
-		{
-			int nSwitch = g_pNetworkManager->m_mapSwitch[nNetworkID];
-			if (nSwitch == 0)
-				eFlag = FLAG::FLAG_NETWORK_ID;
-			if (nSwitch == 1)
-				if (nNetworkID == -1) continue;
-			if (nSwitch == 2)
-				eFlag = FLAG::FLAG_GENDER;
-			if (nSwitch == 3)
-				eFlag = FLAG::FLAG_POSITION;
-			if (nSwitch == 4)
-				eFlag = FLAG::FLAG_OBJECT_DATA;
+			RecvNetworkID(&ClntSock, &nNetworkID, &IsConnected);
+			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_NETWORK_ID);
 		}
-		break;
-		case FLAG::FLAG_NETWORK_ID:	// << : 클라이언트가 네트워크 아이디를 제대로 할당 받았을때까지 검사해야함
-			RecvNetworkID(&ClntSock, &eFlag, &nNetworkID, &IsConnected);
-			break;
-		case FLAG::FLAG_GENDER:
+
+		if (nSwitch & FLAG::FLAG_GENDER)
+		{
 			SendGender(&ClntSock, &nNetworkID, &IsConnected);
 			eFlag = FLAG::FLAG_NONE;
-			g_pNetworkManager->m_mapSwitch[nNetworkID] = 0;
-			break;
-		case FLAG::FLAG_POSITION:
-			if (prevTime + ONE_SECOND < clock())	// << : 상대 좌표 전송 간격
-			{
-				prevTime = clock();
-				SendPosition(&ClntSock, &nNetworkID, &IsConnected);
-			}
-			break;
-		case FLAG::FLAG_OBJECT_DATA:
+			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_GENDER);
+		}
+
+		if (nSwitch & FLAG::FLAG_POSITION && prevTime + ONE_SECOND < clock())
+		{
+			prevTime = clock();
+			SendPosition(&ClntSock, &nNetworkID, &IsConnected);
+		}
+
+		if (nSwitch & FLAG::FLAG_OBJECT_DATA)
+		{
 			SendObjectData(&ClntSock, &nNetworkID, &IsConnected);
-			eFlag = FLAG::FLAG_NONE;
-			g_pNetworkManager->m_mapSwitch[nNetworkID] = 3;	// << : 다시 좌표를 전송하게 함
-			break;
+			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_OBJECT_DATA);
 		}
 	}
 	// << : NetworkManager에서 정보 제거해야함
@@ -346,15 +343,12 @@ void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 		Gender = g_pNetworkManager->m_mapGender[ClntID];
 	}
 	
-	g_pNetworkManager->m_mapSwitch[*nNetworkID] = 3; // < : 성별 그만 보내게 함
 	int result;
 	result = send(*pSocket, (char*)&Gender, sizeof(int), 0);
 
 	// 연결이 끊긴 상황 예외처리
 	if (result == -1)
 		*bConnected = false;
-
-	cout << "성별 : " << Gender << endl;
 }
 
 /* 클라이언트에게 상대의 좌표를 전송합니다.*/
@@ -412,12 +406,10 @@ void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	if (result == -1) *bConnected = false;
-
-	g_pNetworkManager->m_mapSwitch[*nNetworkID] = 3; // < : 좌표를 다시 전송하게 함
 }
 
 /* 클라이언트의 NetworkID를 얻어옵니다 */
-void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnected)
+void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 {
 	int eFlag = FLAG::FLAG_NETWORK_ID;
 	int NetworkID;
@@ -427,8 +419,7 @@ void RecvNetworkID(SOCKET* pSocket, FLAG* pFlag, int* nNetworkID, bool* bConnect
 	if (NetworkID != -1)
 	{
 		*nNetworkID = NetworkID;
-		g_pNetworkManager->m_mapSwitch[NetworkID] = 1;
-		*pFlag = FLAG::FLAG_NONE;
+		g_pNetworkManager->AddFlag(NetworkID, FLAG::FLAG_GENDER);
 	}
 	if (result == -1)
 		*bConnected = false;
@@ -441,7 +432,6 @@ void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 	recv(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
 	g_pDataManager->ReceivePosition(stData);
 	string key = (flag->szRoomName);
-	g_pNetworkManager->m_mapSwitch[flag->nNetworkID] = 3;
 }
 
 /* 맵정보를 수신합니다 */
@@ -454,6 +444,7 @@ void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bCon
 	// >> 수신한 데이터를 컨테이너에 적용시키고 영향받는 유저들의 스위치를 변경합니다.
 	if (result == -1) *bConnected = false;
 	g_pDataManager->ReceiveObject(key, stData);
+	cout << "Recv Object Data" << endl;
 
 }
 
