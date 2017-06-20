@@ -48,6 +48,7 @@
 #define ISRUNNING "IsRun"
 #define INVENTORY_INDEX "InvenIDX"
 #define STUFF_INDEX "StuffIDX"
+#define MAPSTATUS "MapStatus"
 
 using namespace std;
 

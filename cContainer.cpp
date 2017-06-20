@@ -222,6 +222,31 @@ void cContainer::Setup(string key)
 				m_aStuff[Index].SetIsRunning((bool)IsRunning);
 			}
 		}
+
+		// << : 맵 상태 정보일경우
+		if (string(Key1) == MAPSTATUS)
+		{
+			int nNum1, nNum2;
+			sscanf_s(szBuffer, "%*s %d %d", &nNum1, &nNum2);
+			switch (nNum1)
+			{
+			case 1:
+				m_stMapStatus.bValve1 = (bool)nNum2;
+				break;
+			case 2:
+				m_stMapStatus.bValve2 = (bool)nNum2;
+				break;
+			case 3:
+				m_stMapStatus.nFValve1Count = nNum2;
+				break;
+			case 4:
+				m_stMapStatus.nFValve2Count = nNum2;
+				break;
+			case 5:
+				m_stMapStatus.nBrickCount = nNum2;
+				break;
+			}
+		}
 	}
 	if (openFile.eof())
 		cout << szFullPath << " : " << " 파일 로딩" << endl;
@@ -296,6 +321,13 @@ void cContainer::SaveData()
 		outFile << STUFF << " " << STUFF_INDEX << " " << i << " " << ISRUNNING << " " << IsRunning << endl;
 		outFile << endl;
 	}
+
+	outFile << MAPSTATUS << " " << 1 << " " << m_stMapStatus.bValve1 << endl;
+	outFile << MAPSTATUS << " " << 2 << " " << m_stMapStatus.bValve2 << endl;
+	outFile << MAPSTATUS << " " << 3 << " " << m_stMapStatus.nFValve1Count << endl;
+	outFile << MAPSTATUS << " " << 4 << " " << m_stMapStatus.nFValve2Count << endl;
+	outFile << MAPSTATUS << " " << 5 << " " << m_stMapStatus.nBrickCount << endl;
+
 	outFile.close();
 }
 
