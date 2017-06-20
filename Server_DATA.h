@@ -2,7 +2,7 @@
 
 #include "cStuff.h"
 
-#define SLEEP_TIME 50
+#define SLEEP_TIME 100
 
 class Server_DATA
 {

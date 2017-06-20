@@ -12,6 +12,7 @@ private:
 	map<int, SOCKADDR_IN> m_mapAddr;	// 네트워크 아이디와 IP주소를 묶어서 관리합니다.
 	map<int, int>	m_mapGender;		// 플레이어의 성별을 관리합니다.
 	map<int, int>	m_mapSwitch;		// 스레드가 어떤 데이터를 보내야 할지 구분하는 변수입니다.
+	map<int, bool>	m_mapDisconnect;	// 연결이 종료된 아이디들을 저장합니다.
 public:
 	void addID(int ID, string RoomName);
 	void addAddr(int ID, SOCKADDR_IN stAddr);

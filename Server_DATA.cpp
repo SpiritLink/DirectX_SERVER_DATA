@@ -16,10 +16,10 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 
 void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void RecvPosition(SOCKET* pSocket, ST_FLAG* flag);
+void RecvPosition(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected);
 void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bConnected);
 
-void ProcessGender(SOCKET* pSocket);
+void ProcessGender(SOCKET* pSocket, bool* bConnected);
 
 Server_DATA::Server_DATA()
 {
@@ -122,7 +122,7 @@ void Server_DATA::Setup_SEND()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 10) < clock())
+	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 60) < clock())
 	{
 		g_pTime->SetSaveTimer(clock());
 		g_pDataManager->SaveAllData();
@@ -185,10 +185,10 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			SendAllData(&ClntSock, &stFlag, &IsConnected);
 			break;
 		case FLAG_GENDER:
-			ProcessGender(&ClntSock);
+			ProcessGender(&ClntSock, &IsConnected);
 			break;
 		case FLAG_POSITION:
-			RecvPosition(&ClntSock, &stFlag);
+			RecvPosition(&ClntSock, &stFlag, &IsConnected);
 			break;
 		case FLAG_OBJECT_DATA:
 			RecvObjectData(&ClntSock, &stFlag, &nNetworkID,&IsConnected);
@@ -233,7 +233,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 
 		if (nSwitch == FLAG::FLAG_NONE)
 		{
-			cout << "Flag None" << endl;
+			cout << "Sleep" << endl;
 			Sleep(5);
 			continue;
 		}
@@ -269,6 +269,8 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 
 		if (!IsWorked)
 		{
+			cout << "Sleep" << endl;
+			if (g_pNetworkManager->m_mapDisconnect[nNetworkID]) break;
 			Sleep(SLEEP_TIME);
 		}
 	}
@@ -405,7 +407,7 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 {
 	FLAG eFlag = FLAG::FLAG_OBJECT_DATA;
-	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
+	int result = send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
 
 	string szKey = g_pNetworkManager->m_mapID[*nNetworkID];
 	ST_OBJECT_DATA stData;
@@ -419,7 +421,7 @@ void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	stData.nFValve2Count = stMapStatus.nFValve2Count;
 	stData.nBrickCount = stMapStatus.nBrickCount;
 
-	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
+	result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	if (result == -1) *bConnected = false;
 }
 
@@ -429,7 +431,7 @@ void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	int eFlag = FLAG::FLAG_NETWORK_ID;
 	int NetworkID;
 	int result;
-	send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
+	result = send(*pSocket, (char*)&eFlag, sizeof(FLAG), 0);
 	result = recv(*pSocket, (char*)&NetworkID, sizeof(int), 0);
 	if (NetworkID != -1)
 	{
@@ -441,12 +443,14 @@ void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 }
 
 /* 플레이어의 좌표를 수신합니다. */
-void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
+void RecvPosition(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected)
 {
 	ST_PLAYER_POSITION stData;
-	recv(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
+	int result = recv(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
 	g_pDataManager->ReceivePosition(stData);
 	string key = (flag->szRoomName);
+	if (result == -1)
+		*bConnected = false;
 }
 
 /* 맵정보를 수신합니다 */
@@ -464,10 +468,11 @@ void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bCon
 }
 
 /* 성별을 서버에 적용하고 해당 내용을 전송하게 합니다.*/
-void ProcessGender(SOCKET* pSocket)
+void ProcessGender(SOCKET* pSocket, bool* bConnected)
 {
 	ST_FLAG stRecv;
-	recv(*pSocket, (char*)&stRecv, sizeof(ST_FLAG), 0);	// << : 성별을 수신한다
+	int result;
+	result = recv(*pSocket, (char*)&stRecv, sizeof(ST_FLAG), 0);	// << : 성별을 수신한다
 
 	// << : 성별을 서버에 적용한다.
 	if (stRecv.nPlayerIndex == IN_PLAYER1)
@@ -479,6 +484,9 @@ void ProcessGender(SOCKET* pSocket)
 	cout << "Recv Gender : " << stRecv.nPlayerIndex << endl;
 	// << : 성별을 방에있는 모든 유저에게 날리도록 처리한다.
 	g_pNetworkManager->SendGender(string(stRecv.szRoomName));
+
+	if (result == -1)
+		*bConnected = false;
 }
 
 

@@ -100,5 +100,6 @@ void cNetworkManager::Quit(int Id)
 				i++;
 		}
 	}
+	m_mapDisconnect[Id] = true;
 	ReleaseMutex(g_hMutex_Net);
 }
