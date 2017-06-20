@@ -4,6 +4,12 @@
 #define CONNECT_TIME 5
 #define D3DX_PI 3.141592654f
 
+#define DEFAULT_MAN_STARTX -30
+#define DEFAULT_MAN_STARTY 0
+#define DEFAULT_MAN_STARTZ 18
+#define DEFAULT_WOMAN_STARTX -32
+#define DEFAULT_WOMAN_STARTY 0
+#define DEFAULT_WOMAN_STARTZ 10
 class cContainer
 {
 private:

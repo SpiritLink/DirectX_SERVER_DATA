@@ -302,14 +302,14 @@ void cContainer::SaveData()
 /* 로딩할 파일이 없을때 기본 설정하는 함수입니다. */
 void cContainer::SetDefault()
 {
-	m_stMan.SetX(0);
-	m_stMan.SetY(0);
-	m_stMan.SetZ(0);
+	m_stMan.SetX(DEFAULT_MAN_STARTX);
+	m_stMan.SetY(DEFAULT_MAN_STARTY);
+	m_stMan.SetZ(DEFAULT_MAN_STARTZ);
 	m_stMan.SetAngle(0);
 
-	m_stWoman.SetX(0);
-	m_stWoman.SetY(0);
-	m_stWoman.SetZ(0);
+	m_stWoman.SetX(DEFAULT_WOMAN_STARTX);
+	m_stWoman.SetY(DEFAULT_WOMAN_STARTY);
+	m_stWoman.SetZ(DEFAULT_WOMAN_STARTZ);
 	m_stWoman.SetAngle(0);
 
 	// << : 초기 아이템과 관련된 설정
@@ -317,7 +317,7 @@ void cContainer::SetDefault()
 		m_aStuff[i].SetIsRunning(false);
 
 	m_aStuff[SWITCH_ONMAP_CROWBAR].SetIsRunning(true);
-	m_aStuff[SWITCH_ONMAP_CROWBAR].SetPosition(-40, 12, 12);
+	m_aStuff[SWITCH_ONMAP_CROWBAR].SetPosition(-40, 12.2f, 12);
 	m_aStuff[SWITCH_ONMAP_CROWBAR].SetRotate(0, D3DX_PI / 2.2f, 0);
 
 	m_aStuff[SWITCH_ONMAP_PAPER1].SetIsRunning(true);
@@ -352,8 +352,12 @@ void cContainer::SetDefault()
 	}
 
 	m_aStuff[SWITCH_FIRSTFLOOR_WOODBOARD1].SetPosition(-7, 12, 19.5f);
-
-	SaveData();
+	
+	m_stMapStatus.bValve1 = false;
+	m_stMapStatus.bValve2 = false;
+	m_stMapStatus.nFValve1Count = 0;
+	m_stMapStatus.nFValve2Count = 0;
+	m_stMapStatus.nBrickCount = 0;
 }
 
 void cContainer::Update()
