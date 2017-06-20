@@ -20,6 +20,7 @@ public:
 	int GetClntNum(string RoomName);
 	void SendGender(string Key);
 	void SendObject(string Key);
+	void SendPosition(string Key);
 	void SubFlag(int ID, FLAG eFlag);
 	void Quit(int Id);
 };

@@ -22,8 +22,10 @@ public:
 	ST_MAP_STATUS GetMapStatus(string key);
 	void GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetManInventory(IN string key, OUT int * arr);
+	animationState GetManAnim(IN string key);
 	void GetWomanPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetWomanInventory(IN string key, OUT int * arr);
+	animationState GetWomanAnim(IN string key);
 	void GetMapData(IN string key, OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	void Update();
 	void Destroy();

@@ -30,8 +30,10 @@ public:
 	int GetOnlineUser();
 	void GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetManInventory(OUT int * nArr);
+	animationState GetManAnim();
 	void GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetWomanInventory(OUT int * nArr);
+	animationState GetWomanAnim();
 	void GetStuff(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	ST_MAP_STATUS GetMapStatus();
 	void Setup(string key);

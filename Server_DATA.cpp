@@ -189,6 +189,8 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			break;
 		case FLAG_POSITION:
 			RecvPosition(&ClntSock, &stFlag, &IsConnected);
+			if (!(g_pNetworkManager->m_mapSwitch[nNetworkID] & FLAG::FLAG_POSITION))
+				g_pNetworkManager->SendPosition(string(stFlag.szRoomName));
 			break;
 		case FLAG_OBJECT_DATA:
 			RecvObjectData(&ClntSock, &stFlag, &nNetworkID,&IsConnected);
@@ -269,7 +271,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 
 		if (!IsWorked)
 		{
-			cout << "Sleep" << endl;
+			//cout << "Sleep" << endl;
 			if (g_pNetworkManager->m_mapDisconnect[nNetworkID]) break;
 			Sleep(SLEEP_TIME);
 		}
@@ -384,11 +386,13 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	{
 		stData.nPlayerIndex = OUT_PLAYER2;
 		g_pDataManager->GetWomanPosition(szKey, &stData.fX, &stData.fY, &stData.fZ, &stData.fAngle);
+		stData.eAnimState = g_pDataManager->GetWomanAnim(szKey);
 	}
 	else if (nGender == IN_PLAYER2)
 	{
 		stData.nPlayerIndex = OUT_PLAYER1;
 		g_pDataManager->GetManPosition(szKey, &stData.fX, &stData.fZ, &stData.fZ, &stData.fAngle);
+		stData.eAnimState = g_pDataManager->GetManAnim(szKey);
 	}
 	
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);

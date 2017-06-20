@@ -109,6 +109,11 @@ void cContainer::GetManInventory(OUT int * nArr)
 	}
 }
 
+animationState cContainer::GetManAnim()
+{
+	return m_stMan.GetAnimState();
+}
+
 /* 여자 캐릭터의 좌표를 반환합니다 */
 void cContainer::GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
@@ -122,6 +127,11 @@ void cContainer::GetWomanInventory(OUT int * nArr)
 	{
 		nArr[i] = m_stWoman.GetInventory()[i];
 	}
+}
+
+animationState cContainer::GetWomanAnim()
+{
+	return m_stWoman.GetAnimState();
 }
 
 /* 맵데이터를 반환합니다 */

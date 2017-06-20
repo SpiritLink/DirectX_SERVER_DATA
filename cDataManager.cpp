@@ -113,6 +113,11 @@ void cDataManager::GetManInventory(IN string key, OUT int * arr)
 	ReleaseMutex(g_hMutex_DATA);
 }
 
+animationState cDataManager::GetManAnim(IN string key)
+{
+	return m_mapContainer[key]->GetManAnim();
+}
+
 /* 여자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetWomanPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
@@ -136,6 +141,11 @@ void cDataManager::GetWomanInventory(IN string key, OUT int * arr)
 	}
 	m_mapContainer[key]->GetWomanInventory(arr);
 	ReleaseMutex(g_hMutex_DATA);
+}
+
+animationState cDataManager::GetWomanAnim(IN string key)
+{
+	return m_mapContainer[key]->GetWomanAnim();
 }
 
 /* 맵의 정보를 얻어냅니다 */
