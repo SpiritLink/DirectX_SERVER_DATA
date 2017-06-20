@@ -341,8 +341,8 @@ void cContainer::SetDefault()
 	m_aStuff[SWITCH_ONMAP_KEY2].SetRotate(0, 0.3f, 0);
 
 	m_aStuff[SWITCH_ONMAP_KEY3].SetIsRunning(false);
-	m_aStuff[SWITCH_ONMAP_CROWBAR].SetPosition(0, 0, 0);
-	m_aStuff[SWITCH_ONMAP_CROWBAR].SetRotate(0, 0, 0);
+	m_aStuff[SWITCH_ONMAP_KEY3].SetPosition(0, 0, 0);
+	m_aStuff[SWITCH_ONMAP_KEY3].SetRotate(0, 0, 0);
 
 	for (int i = SWITCH_ONMAP_BRICK1; i <= SWITCH_ONMAP_BRICK5; ++i)
 	{
@@ -352,6 +352,8 @@ void cContainer::SetDefault()
 	}
 
 	m_aStuff[SWITCH_FIRSTFLOOR_WOODBOARD1].SetPosition(-7, 12, 19.5f);
+
+	SaveData();
 }
 
 void cContainer::Update()
