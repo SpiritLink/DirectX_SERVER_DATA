@@ -32,7 +32,7 @@ void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
 }
 
 /* 플레이어의 좌표 정보를 컨테이너에 적용합니다 */
-void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
+void cDataManager::ReceivePosition(ST_PLAYER_POSITION stRecv)
 {
 	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	EnterCriticalSection(&cs);
@@ -53,19 +53,14 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 	ReleaseMutex(g_hMutex_DATA);
 }
 
-/* 플레이어의 좌표 정보를 컨테이너에 저장하고 주소도 컨테이너에 저장합니다 (구버전) */
-void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv,SOCKADDR_IN stAddr)
+void cDataManager::ReceiveObject(string key, ST_OBJECT_DATA stObjectData)
 {
+	// << : 키를 통해 컨테이너에 접근하고 수신한 데이터를 적용합니다.
 	WaitForSingleObject(g_hMutex_DATA, INFINITE);
-	EnterCriticalSection(&cs);
-	string key = string(stRecv.szRoomName);
-	if (m_mapContainer[key] == NULL)
-	{
-		m_mapContainer[key] = new cContainer;
-		m_mapContainer[key]->Setup(key);
-	}
-	LeaveCriticalSection(&cs);
+	m_mapContainer[key]->ReceiveMap(stObjectData);
 	ReleaseMutex(g_hMutex_DATA);
+
+	//<< : 수신한 데이터를 전부 적용했으니 이제 해당하는 플레이어가 수신하게 해야함
 }
 
 /* 컨테이너에서 플레이어의 정보를 확인, 반환합니다 */

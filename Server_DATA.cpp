@@ -241,7 +241,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			break;
 		case FLAG::FLAG_GENDER:
 			SendGender(&ClntSock, &nNetworkID, &IsConnected);
-			eFlag = FLAG_NONE;
+			eFlag = FLAG::FLAG_NONE;
 			g_pNetworkManager->m_mapSwitch[nNetworkID] = 0;
 			break;
 		case FLAG::FLAG_POSITION:
@@ -253,6 +253,8 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			break;
 		case FLAG::FLAG_OBJECT_DATA:
 			SendObjectData(&ClntSock, &nNetworkID, &IsConnected);
+			eFlag = FLAG::FLAG_NONE;
+			g_pNetworkManager->m_mapSwitch[nNetworkID] = 3;	// << : 다시 좌표를 전송하게 함
 			break;
 		}
 	}
@@ -401,6 +403,9 @@ void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	g_pDataManager->GetMapData(szKey, stData.mapX, stData.mapY, stData.mapZ, stData.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
 
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
+	if (result == -1) *bConnected = false;
+
+	g_pNetworkManager->m_mapSwitch[*nNetworkID] = 3; // < : 좌표를 다시 전송하게 함
 }
 
 /* 클라이언트의 NetworkID를 얻어옵니다 */
@@ -426,7 +431,7 @@ void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 {
 	ST_PLAYER_POSITION stData;
 	recv(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
-	g_pDataManager->ReceiveData(stData);
+	g_pDataManager->ReceivePosition(stData);
 	string key = (flag->szRoomName);
 	g_pNetworkManager->m_mapSwitch[flag->nNetworkID] = 3;
 }
@@ -440,6 +445,7 @@ void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bCon
 	int result = recv(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	// >> 수신한 데이터를 컨테이너에 적용시키고 영향받는 유저들의 스위치를 변경합니다.
 	if (result == -1) *bConnected = false;
+
 }
 
 /* 성별을 서버에 적용하고 해당 내용을 전송하게 합니다.*/

@@ -38,7 +38,13 @@ void cContainer::ReceivePosition(ST_PLAYER_POSITION stRecv)
 
 void cContainer::ReceiveMap(ST_OBJECT_DATA stData)
 {
-	// << : 오브젝트의 정보를 받고 컨테이너에 적용
+	// 맵 정보 변경
+	for (int i = 0; i < SWITCH_LASTNUM; ++i)
+	{
+		m_aStuff[i].SetPosition(stData.mapX[i], stData.mapY[i], stData.mapZ[i]);
+		m_aStuff[i].SetRotate(stData.mapRotX[i], stData.mapRotY[i], stData.mapRotZ[i]);
+		m_aStuff[i].SetIsRunning(stData.mapIsRunning[i]);
+	}
 }
 
 /* 인덱스에 따라 플레이어의 좌표를 반환합니다 */

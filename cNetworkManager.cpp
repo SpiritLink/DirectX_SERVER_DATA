@@ -51,6 +51,19 @@ void cNetworkManager::SendGender(string Key)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+void cNetworkManager::SendObject(string Key)
+{
+	WaitForSingleObject(g_hMutex_Net, INFINITE);
+	vector<int> vecUser = m_mapRoom[Key];
+
+	for (int i = 0; i < vecUser.size(); ++i)
+	{
+		m_mapSwitch[vecUser[i]] = 4;	// << : 스레드에서 오브젝트를 보내라로 인식합니다.
+	}
+
+	ReleaseMutex(g_hMutex_Net);
+}
+
 void cNetworkManager::Quit(int Id)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);

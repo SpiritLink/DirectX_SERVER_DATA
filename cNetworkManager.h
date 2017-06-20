@@ -17,6 +17,7 @@ public:
 	void addAddr(int ID, SOCKADDR_IN stAddr);
 	int GetClntNum(string RoomName);
 	void SendGender(string Key);
+	void SendObject(string Key);
 	void Quit(int Id);
 };
 
