@@ -21,6 +21,7 @@ void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void RecvPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 void RecvObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
+void RecvInventoryData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 
 void ProcessGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
 
@@ -196,6 +197,9 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			break;
 		case FLAG_OBJECT_DATA:
 			RecvObjectData(&ClntSock, &nNetworkID, &IsConnected);
+			break;
+		case FLAG_INVENTORY:
+			RecvInventoryData(&ClntSock, &nNetworkID, &IsConnected);
 			break;
 		}
 		continue;
@@ -480,6 +484,16 @@ void RecvObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	cout << "Recv Object Data" << endl;
 
 }
+
+/* 인벤토리 정보를 수신합니다.*/
+void RecvInventoryData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
+{
+	ST_INVENTORY_DATA stData;
+	int result = recv(*pSocket, (char*)&stData, sizeof(ST_INVENTORY_DATA), 0);
+	g_pDataManager->ReceiveInventory(*nNetworkID, stData);
+	if (result == -1) *bConnected = false;
+}
+
 
 /* 성별을 서버에 적용하고 해당 내용을 전송하게 합니다.*/
 void ProcessGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected)

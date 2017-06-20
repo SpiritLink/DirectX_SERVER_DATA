@@ -17,6 +17,7 @@ public:
 	void Setup();
 	void ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv);
 	void ReceiveObject(string key, ST_OBJECT_DATA stObjectData);
+	void ReceiveInventory(int nNetworkID, ST_INVENTORY_DATA stData);
 	ST_PLAYER_POSITION GetPlayerData(string key, int nIndex);
 	void GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetManInventory(IN string key, OUT int * arr);

@@ -163,7 +163,8 @@ enum FLAG
 	FLAG_ALL_DATA = 1 << 3,
 	FLAG_GENDER = 1 << 4,
 	FLAG_POSITION = 1 << 5,
-	FLAG_OBJECT_DATA = 1 << 6
+	FLAG_OBJECT_DATA = 1 << 6,
+	FLAG_INVENTORY = 1 << 7
 };
 
 struct ST_SOCKET_ADDR
@@ -209,6 +210,11 @@ struct ST_MAP_STATUS
 	int nFValve2Count;
 	int nBrickCount;
 	ST_MAP_STATUS() { bValve1 = false, bValve2 = false, nFValve1Count = 0, nFValve2Count = 0, nBrickCount = 0; }
+};
+
+struct ST_INVENTORY_DATA
+{
+	StuffCode Stuff[INVENTORY_SIZE];
 };
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.

@@ -403,6 +403,16 @@ void cContainer::SetDefault()
 	m_stMapStatus.nBrickCount = 0;
 }
 
+void cContainer::SetManInventory(ST_INVENTORY_DATA stData)
+{
+	m_stMan.SetInventory(stData);
+}
+
+void cContainer::SetWomanInventory(ST_INVENTORY_DATA stData)
+{
+	m_stWoman.SetInventory(stData);
+}
+
 void cContainer::Update()
 {
 }

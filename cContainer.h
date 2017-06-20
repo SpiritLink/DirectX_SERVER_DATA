@@ -36,9 +36,13 @@ public:
 	animationState GetWomanAnim();
 	void GetStuff(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
 	ST_MAP_STATUS GetMapStatus();
+
 	void Setup(string key);
 	void SaveData();
 	void SetDefault();
+	void SetManInventory(ST_INVENTORY_DATA stData);
+	void SetWomanInventory(ST_INVENTORY_DATA stData);
+
 	void Update();
 	void ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv);
 	void ReceiveMap(ST_OBJECT_DATA stData);

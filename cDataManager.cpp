@@ -49,6 +49,23 @@ void cDataManager::ReceiveObject(string key, ST_OBJECT_DATA stObjectData)
 	//<< : 수신한 데이터를 전부 적용했으니 이제 해당하는 플레이어가 수신하게 해야함
 }
 
+void cDataManager::ReceiveInventory(int nNetworkID, ST_INVENTORY_DATA stData)
+{
+	string key = g_pNetworkManager->m_mapID[nNetworkID];
+	int Gender = g_pNetworkManager->m_mapGender[nNetworkID];
+
+	if (Gender == IN_PLAYER1)
+	{
+		m_mapContainer[key]->SetManInventory(stData);
+		cout << "Set Man Inventory" << endl;
+	}
+	else if (Gender == IN_PLAYER2)
+	{
+		m_mapContainer[key]->SetWomanInventory(stData);
+		cout << "Set Woman Inventory" << endl;
+	}
+}
+
 /* 컨테이너에서 플레이어의 정보를 확인, 반환합니다 */
 ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 {

@@ -34,6 +34,14 @@ void cPlayer::SetItem(int Index, int Type)
 	Inventory[Index] = (StuffCode)Type;
 }
 
+void cPlayer::SetInventory(ST_INVENTORY_DATA stData)
+{
+	for (int i = 0; i < INVENTORY_SIZE; ++i)
+	{
+		Inventory[i] = stData.Stuff[i];
+	}
+}
+
 /* 회전값을 설정합니다 */
 void cPlayer::SetAngle(float Value)
 {

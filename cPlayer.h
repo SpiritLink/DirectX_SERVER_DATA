@@ -14,6 +14,7 @@ public:
 	int GetItem(int Index);
 	StuffCode* GetInventory();
 	void SetItem(int Index, int Type);
+	void SetInventory(ST_INVENTORY_DATA stData);
 	void SetAngle(float Value);
 	float GetAngle();
 };
