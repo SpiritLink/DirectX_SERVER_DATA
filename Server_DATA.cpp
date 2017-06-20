@@ -401,6 +401,14 @@ void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	string szKey = g_pNetworkManager->m_mapID[*nNetworkID];
 	ST_OBJECT_DATA stData;
 	g_pDataManager->GetMapData(szKey, stData.mapX, stData.mapY, stData.mapZ, stData.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
+	
+	ST_MAP_STATUS stMapStatus;
+	stMapStatus = g_pDataManager->GetMapStatus(szKey);
+	stData.bValve1 = stMapStatus.bValve1;
+	stData.bValve2 = stMapStatus.bValve2;
+	stData.nFValve1Count = stMapStatus.nFValve1Count;
+	stData.nFValve2Count = stMapStatus.nFValve2Count;
+	stData.nBrickCount = stMapStatus.nBrickCount;
 
 	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	if (result == -1) *bConnected = false;
@@ -445,6 +453,7 @@ void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bCon
 	int result = recv(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
 	// >> 수신한 데이터를 컨테이너에 적용시키고 영향받는 유저들의 스위치를 변경합니다.
 	if (result == -1) *bConnected = false;
+	g_pDataManager->ReceiveObject(key, stData);
 
 }
 

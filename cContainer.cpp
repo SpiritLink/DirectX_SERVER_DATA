@@ -45,6 +45,13 @@ void cContainer::ReceiveMap(ST_OBJECT_DATA stData)
 		m_aStuff[i].SetRotate(stData.mapRotX[i], stData.mapRotY[i], stData.mapRotZ[i]);
 		m_aStuff[i].SetIsRunning(stData.mapIsRunning[i]);
 	}
+
+	// 밸브 정보 변경
+	m_stMapStatus.bValve1 = stData.bValve1;
+	m_stMapStatus.bValve2 = stData.bValve2;
+	m_stMapStatus.nFValve1Count = stData.nFValve1Count;
+	m_stMapStatus.nFValve2Count = stData.nFValve2Count;
+	m_stMapStatus.nBrickCount = stData.nBrickCount;
 }
 
 /* 인덱스에 따라 플레이어의 좌표를 반환합니다 */
@@ -118,7 +125,7 @@ void cContainer::GetWomanInventory(OUT int * nArr)
 }
 
 /* 맵데이터를 반환합니다 */
-void cContainer::GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun)
+void cContainer::GetStuff(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun)
 {
 	for (int i = 0; i < SWITCH_LASTNUM; ++i)
 	{
@@ -126,6 +133,11 @@ void cContainer::GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rot
 		m_aStuff[i].GetRotate(&rotX[i], &rotY[i], &rotZ[i]);
 		IsRun[i] = m_aStuff[i].GetIsRunning();
 	}
+}
+
+ST_MAP_STATUS cContainer::GetMapStatus()
+{
+	return m_stMapStatus;
 }
 
 /* 파일이 있는지 확인하고 있다면 해당파일에서 로드, 없다면 기본 설정함수를 호출합니다 */

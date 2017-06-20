@@ -15,6 +15,7 @@ private:
 	clock_t m_nWomanTime;		// 여자 최근 접속 시간
 
 	cStuff m_aStuff[SWITCH_LASTNUM];	// << : 오브젝트
+	ST_MAP_STATUS m_stMapStatus;		// << : 밸브 회전 상태
 public:
 	cContainer();
 	~cContainer();
@@ -25,7 +26,8 @@ public:
 	void GetManInventory(OUT int * nArr);
 	void GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetWomanInventory(OUT int * nArr);
-	void GetMap(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
+	void GetStuff(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
+	ST_MAP_STATUS GetMapStatus();
 	void Setup(string key);
 	void SaveData();
 	void SetDefault();

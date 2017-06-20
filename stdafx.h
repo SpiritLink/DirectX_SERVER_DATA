@@ -201,6 +201,22 @@ struct ST_OBJECT_DATA
 	float mapRotY[SWITCH_LASTNUM];
 	float mapRotZ[SWITCH_LASTNUM];
 	bool mapIsRunning[SWITCH_LASTNUM];
+
+	bool bValve1;
+	bool bValve2;
+	int nFValve1Count;
+	int nFValve2Count;
+	int nBrickCount;
+};
+
+struct ST_MAP_STATUS
+{
+	bool bValve1;
+	bool bValve2;
+	int nFValve1Count;
+	int nFValve2Count;
+	int nBrickCount;
+	ST_MAP_STATUS() { bValve1 = false, bValve2 = false, nFValve1Count = 0, nFValve2Count = 0, nBrickCount = 0; }
 };
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.

@@ -84,6 +84,11 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	
 }
 
+ST_MAP_STATUS cDataManager::GetMapStatus(string key)
+{
+	return m_mapContainer[key]->GetMapStatus();
+}
+
 /* 남자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)
 {
@@ -137,7 +142,7 @@ void cDataManager::GetWomanInventory(IN string key, OUT int * arr)
 /* 맵의 정보를 얻어냅니다 */
 void cDataManager::GetMapData(IN string key, OUT float * X, OUT float * Y, OUT float * Z, OUT float * rotX, OUT float * rotY, OUT float * rotZ, OUT bool * IsRun)
 {
-	m_mapContainer[key]->GetMap(X, Y, Z, rotX, rotY, rotZ, IsRun);
+	m_mapContainer[key]->GetStuff(X, Y, Z, rotX, rotY, rotZ, IsRun);
 }
 
 /* 모든 컨테이너의 정보를 파일로 저장합니다 */
