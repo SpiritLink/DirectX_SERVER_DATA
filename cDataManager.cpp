@@ -37,7 +37,6 @@ void cDataManager::ReceivePosition(ST_PLAYER_POSITION stRecv)
 	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	EnterCriticalSection(&cs);
 	string key = string(stRecv.szRoomName);
-	cout << "RoomName : " << key << endl;
 	if (m_mapContainer[key] == NULL)
 	{
 		m_mapContainer[key] = new cContainer;

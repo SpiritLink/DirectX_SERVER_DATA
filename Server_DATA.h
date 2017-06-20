@@ -2,6 +2,8 @@
 
 #include "cStuff.h"
 
+#define SLEEP_TIME 50
+
 class Server_DATA
 {
 private:

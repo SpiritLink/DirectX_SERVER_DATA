@@ -228,12 +228,21 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 	// << : 네트워크 아이디를 이제 얻어왔다면 ?
 	while (IsConnected)
 	{
+		bool IsWorked = false;
 		int nSwitch = g_pNetworkManager->m_mapSwitch[nNetworkID];
+
+		if (nSwitch == FLAG::FLAG_NONE)
+		{
+			cout << "Flag None" << endl;
+			Sleep(5);
+			continue;
+		}
 
 		if (nSwitch & FLAG::FLAG_NETWORK_ID)
 		{
 			RecvNetworkID(&ClntSock, &nNetworkID, &IsConnected);
 			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_NETWORK_ID);
+			IsWorked = true;
 		}
 
 		if (nSwitch & FLAG::FLAG_GENDER)
@@ -241,22 +250,28 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			SendGender(&ClntSock, &nNetworkID, &IsConnected);
 			eFlag = FLAG::FLAG_NONE;
 			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_GENDER);
+			IsWorked = true;
 		}
 
 		if (nSwitch & FLAG::FLAG_POSITION && prevTime + ONE_SECOND < clock())
 		{
 			prevTime = clock();
 			SendPosition(&ClntSock, &nNetworkID, &IsConnected);
+			IsWorked = true;
 		}
 
 		if (nSwitch & FLAG::FLAG_OBJECT_DATA)
 		{
 			SendObjectData(&ClntSock, &nNetworkID, &IsConnected);
 			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_OBJECT_DATA);
+			IsWorked = true;
+		}
+
+		if (!IsWorked)
+		{
+			Sleep(SLEEP_TIME);
 		}
 	}
-	// << : NetworkManager에서 정보 제거해야함
-	// << : 네트워크 매니저에 ID를 넣어주면 알아서 제거한다 ?
 	g_pNetworkManager->Quit(nNetworkID);
 	closesocket(ClntSock);
 
