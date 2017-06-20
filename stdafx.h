@@ -166,14 +166,6 @@ enum FLAG
 	FLAG_OBJECT_DATA = 1 << 6
 };
 
-struct ST_FLAG
-{
-	char szRoomName[50] = { 0, };
-	int nNetworkID;
-	int nPlayerIndex;
-	int eFlag;
-};
-
 struct ST_SOCKET_ADDR
 {
 	SOCKET stSocket;

@@ -19,18 +19,6 @@ void cDataManager::Setup()
 	InitializeCriticalSection(&cs);
 }
 
-/* 클라이언트의 IP주소를 네트워크 아이디에 맞춰 저장합니다 */
-void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
-{
-	/* 공간 동적할당 */
-	string key = string(stFlag.szRoomName);
-	if (m_mapContainer[key] == NULL)
-	{
-		m_mapContainer[key] = new cContainer;
-		m_mapContainer[key]->Setup(key);
-	}
-}
-
 /* 플레이어의 좌표 정보를 컨테이너에 적용합니다 */
 void cDataManager::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 {
