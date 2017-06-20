@@ -69,10 +69,11 @@ void cNetworkManager::SendObject(string Key)
 	ReleaseMutex(g_hMutex_Net);
 }
 
-void cNetworkManager::SendPosition(string Key)
+void cNetworkManager::SendPosition(int nNetworkID)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);
-	vector<int> vecUser = m_mapRoom[Key];
+	string key = m_mapID[nNetworkID];
+	vector<int> vecUser = m_mapRoom[key];
 	for (int i = 0; i < vecUser.size(); ++i)
 	{
 		m_mapSwitch[vecUser[i]] = m_mapSwitch[vecUser[i]] | FLAG::FLAG_POSITION;

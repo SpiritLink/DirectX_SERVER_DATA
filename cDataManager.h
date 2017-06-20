@@ -16,7 +16,7 @@ public:
 	void SaveAllData();
 	void Setup();
 	void ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket);
-	void ReceivePosition(ST_PLAYER_POSITION stRecv);
+	void ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv);
 	void ReceiveObject(string key, ST_OBJECT_DATA stObjectData);
 	ST_PLAYER_POSITION GetPlayerData(string key, int nIndex);
 	void GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);

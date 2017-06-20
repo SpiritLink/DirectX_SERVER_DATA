@@ -13,21 +13,22 @@ cContainer::~cContainer()
 }
 
 /* 수신한 구조체의 정보를 컨테이너에 적용합니다 */
-void cContainer::ReceivePosition(ST_PLAYER_POSITION stRecv)
+void cContainer::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 {
 	float x = stRecv.fX;
 	float y = stRecv.fY;
 	float z = stRecv.fZ;
 	float Angle = stRecv.fAngle;
+	int nGender = g_pNetworkManager->m_mapGender[nNetworkID];
 
-	if (stRecv.nPlayerIndex & IN_PLAYER1)
+	if (nGender & IN_PLAYER1)
 	{
 		m_stMan.SetPosition(x, y, z);
 		m_stMan.SetAngle(Angle);
 		m_stMan.SetAnimState(stRecv.eAnimState);
 		m_nManTime = clock();
 	}
-	else if (stRecv.nPlayerIndex & IN_PLAYER2)
+	else if (nGender & IN_PLAYER2)
 	{
 		m_stWoman.SetPosition(x, y, z);
 		m_stWoman.SetAngle(Angle);
@@ -70,7 +71,6 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 		result.fAngle = m_stWoman.GetAngle();
 		result.eAnimState = m_stWoman.GetAnimState();
 	}
-	sprintf_s(result.szRoomName, "%s", "FROM SERVER",11);
 
 	return result;
 }

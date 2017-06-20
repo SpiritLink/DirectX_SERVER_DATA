@@ -40,7 +40,7 @@ public:
 	void SaveData();
 	void SetDefault();
 	void Update();
-	void ReceivePosition(ST_PLAYER_POSITION stRecv);
+	void ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv);
 	void ReceiveMap(ST_OBJECT_DATA stData);
 };
 

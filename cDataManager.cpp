@@ -32,18 +32,17 @@ void cDataManager::ReceiveSocket(ST_FLAG stFlag, ST_SOCKET_ADDR stSocket)
 }
 
 /* 플레이어의 좌표 정보를 컨테이너에 적용합니다 */
-void cDataManager::ReceivePosition(ST_PLAYER_POSITION stRecv)
+void cDataManager::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 {
 	WaitForSingleObject(g_hMutex_DATA, INFINITE);
 	EnterCriticalSection(&cs);
-	string key = string(stRecv.szRoomName);
+	string key = g_pNetworkManager->m_mapID[nNetworkID];
 	if (m_mapContainer[key] == NULL)
 	{
 		m_mapContainer[key] = new cContainer;
 		m_mapContainer[key]->Setup(key);
 	}
-	m_mapContainer[key]->ReceivePosition(stRecv);
-	cout << stRecv.nPlayerIndex << " ";
+	m_mapContainer[key]->ReceivePosition(nNetworkID, stRecv);
 	cout << stRecv.fX << " ";
 	cout << stRecv.fY << " ";
 	cout << stRecv.fZ << " ";
@@ -71,13 +70,11 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	if (m_mapContainer[key] == NULL)
 		return ST_PLAYER_POSITION();
 	
-	stResult.nPlayerIndex = 0;
 	if (nIndex & IN_PLAYER1)
 		stResult = m_mapContainer[key]->GetData(2);
 	if(nIndex & IN_PLAYER2)
 		stResult = m_mapContainer[key]->GetData(1);
 
-	stResult.nPlayerIndex = m_mapContainer[key]->GetOnlineUser();
 	ReleaseMutex(g_hMutex_DATA);
 	return stResult;
 	

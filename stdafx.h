@@ -183,14 +183,12 @@ struct ST_SOCKET_ADDR
 struct ST_PLAYER_POSITION
 {
 	// << : 
-	char  szRoomName[50] = { 0, };	// << : Key
-	int	  nPlayerIndex;				// << : Current Player Index
 	animationState eAnimState;		// << : Animation index
 	float fX;						
 	float fY;
 	float fZ;
 	float fAngle;
-	ST_PLAYER_POSITION() : nPlayerIndex(0), eAnimState(ANIM_IDLE), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
+	ST_PLAYER_POSITION() : eAnimState(ANIM_IDLE), fX(0.0f), fY(0.0f), fZ(0.0f), fAngle(0.0f) {};
 	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
 };
 
