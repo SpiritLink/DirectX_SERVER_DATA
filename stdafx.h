@@ -192,6 +192,16 @@ struct ST_PLAYER_POSITION
 	ST_PLAYER_POSITION(float x, float y, float z, float angle) { fX = x, fY = y, fZ = z, fAngle = angle; };
 };
 
+struct ST_OBJECT_DATA
+{
+	float mapX[SWITCH_LASTNUM];
+	float mapY[SWITCH_LASTNUM];
+	float mapZ[SWITCH_LASTNUM];
+	float mapRotX[SWITCH_LASTNUM];
+	float mapRotY[SWITCH_LASTNUM];
+	float mapRotZ[SWITCH_LASTNUM];
+	bool mapIsRunning[SWITCH_LASTNUM];
+};
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include "cDataManager.h"

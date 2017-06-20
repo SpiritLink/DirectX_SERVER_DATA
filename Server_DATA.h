@@ -48,17 +48,3 @@ struct ST_ALL_DATA
 	float mapRotZ[SWITCH_LASTNUM];
 	bool mapIsRunning[SWITCH_LASTNUM];
 };
-
-struct ST_OBJECT_DATA
-{
-	float mapX[SWITCH_LASTNUM];
-	float mapY[SWITCH_LASTNUM];
-	float mapZ[SWITCH_LASTNUM];
-	float mapRotX[SWITCH_LASTNUM];
-	float mapRotY[SWITCH_LASTNUM];
-	float mapRotZ[SWITCH_LASTNUM];
-	bool mapIsRunning[SWITCH_LASTNUM];
-};
-
-
-

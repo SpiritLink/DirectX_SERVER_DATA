@@ -429,8 +429,6 @@ void RecvPosition(SOCKET* pSocket, ST_FLAG* flag)
 	g_pDataManager->ReceiveData(stData);
 	string key = (flag->szRoomName);
 	g_pNetworkManager->m_mapSwitch[flag->nNetworkID] = 3;
-	//ST_PLAYER_POSITION stSend = g_pDataManager->GetPlayerData(key, IN_PLAYER1);
-	//send(*pSocket, (char*)&stSend, sizeof(ST_PLAYER_POSITION), 0);	// << : 플레이어에게 데이터 전송
 }
 
 /* 맵정보를 수신합니다 */
@@ -438,9 +436,9 @@ void RecvObjectData(SOCKET* pSocket, ST_FLAG* pFlag, int* nNetworkID, bool* bCon
 {
 	ST_OBJECT_DATA stData;
 	string key = pFlag->szRoomName;
-	g_pDataManager->GetMapData(key, stData.mapX, stData.mapY, stData.mapZ, stData.mapRotX, stData.mapRotY, stData.mapRotZ, stData.mapIsRunning);
 
-	int result = send(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
+	int result = recv(*pSocket, (char*)&stData, sizeof(ST_OBJECT_DATA), 0);
+	// >> 수신한 데이터를 컨테이너에 적용시키고 영향받는 유저들의 스위치를 변경합니다.
 	if (result == -1) *bConnected = false;
 }
 

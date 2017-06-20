@@ -30,7 +30,7 @@ public:
 	void SaveData();
 	void SetDefault();
 	void Update();
-	void UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr);
-	void UpdateData(ST_PLAYER_POSITION stRecv);
+	void ReceivePosition(ST_PLAYER_POSITION stRecv);
+	void ReceiveMap(ST_OBJECT_DATA stData);
 };
 

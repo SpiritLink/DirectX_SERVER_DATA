@@ -43,7 +43,7 @@ void cDataManager::ReceiveData(ST_PLAYER_POSITION stRecv)
 		m_mapContainer[key] = new cContainer;
 		m_mapContainer[key]->Setup(key);
 	}
-	m_mapContainer[key]->UpdateData(stRecv);
+	m_mapContainer[key]->ReceivePosition(stRecv);
 	cout << stRecv.nPlayerIndex << " ";
 	cout << stRecv.fX << " ";
 	cout << stRecv.fY << " ";

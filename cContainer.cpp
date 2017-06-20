@@ -12,8 +12,8 @@ cContainer::~cContainer()
 {
 }
 
-/* 수신한 구조체의 정보 및 소켓 , IP주소를 컨테이너에 적용합니다 (구버전) */
-void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
+/* 수신한 구조체의 정보를 컨테이너에 적용합니다 */
+void cContainer::ReceivePosition(ST_PLAYER_POSITION stRecv)
 {
 	float x = stRecv.fX;
 	float y = stRecv.fY;
@@ -36,28 +36,9 @@ void cContainer::UpdateData(ST_PLAYER_POSITION stRecv, ST_SOCKET_ADDR stAddr)
 	}
 }
 
-/* 수신한 구조체의 정보를 컨테이너에 적용합니다 */
-void cContainer::UpdateData(ST_PLAYER_POSITION stRecv)
+void cContainer::ReceiveMap(ST_OBJECT_DATA stData)
 {
-	float x = stRecv.fX;
-	float y = stRecv.fY;
-	float z = stRecv.fZ;
-	float Angle = stRecv.fAngle;
-
-	if (stRecv.nPlayerIndex & IN_PLAYER1)
-	{
-		m_stMan.SetPosition(x, y, z);
-		m_stMan.SetAngle(Angle);
-		m_stMan.SetAnimState(stRecv.eAnimState);
-		m_nManTime = clock();
-	}
-	else if (stRecv.nPlayerIndex & IN_PLAYER2)
-	{
-		m_stWoman.SetPosition(x, y, z);
-		m_stWoman.SetAngle(Angle);
-		m_stWoman.SetAnimState(stRecv.eAnimState);
-		m_nWomanTime = clock();
-	}
+	// << : 오브젝트의 정보를 받고 컨테이너에 적용
 }
 
 /* 인덱스에 따라 플레이어의 좌표를 반환합니다 */
