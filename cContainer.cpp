@@ -256,6 +256,7 @@ void cContainer::Setup(string key)
 				m_stMapStatus.nBrickCount = nNum2;
 				break;
 			}
+			cout << nNum2 << endl;
 		}
 	}
 	if (openFile.eof())

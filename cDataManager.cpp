@@ -83,10 +83,6 @@ ST_PLAYER_POSITION cDataManager::GetPlayerData(string key, int nIndex)
 	
 }
 
-ST_MAP_STATUS cDataManager::GetMapStatus(string key)
-{
-	return m_mapContainer[key]->GetMapStatus();
-}
 
 /* 남자 캐릭터의 정보를 얻어냅니다 */
 void cDataManager::GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle)

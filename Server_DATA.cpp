@@ -340,7 +340,7 @@ void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected)
 	stData.bValve2 = stMap.bValve2;
 	stData.nFValve1Count = stMap.nFValve1Count;
 	stData.nFValve2Count = stMap.nFValve2Count;
-	stData.nBrickCount = stData.nBrickCount;
+	stData.nBrickCount = stMap.nBrickCount;
 	
 	result = send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
 	if (result == -1) *bConnected = false;
