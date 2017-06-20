@@ -322,6 +322,7 @@ void SendRoomName(SOCKET* pSocket,ST_FLAG* flag, bool* bConnected)
 void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected)
 {
 	ST_ALL_DATA stData;
+	ST_MAP_STATUS stMap;
 	string key = string(flag->szRoomName);
 	int result;
 	// 플레이어 정보 , 인벤토리 정보, 맵정보
@@ -332,7 +333,15 @@ void SendAllData(SOCKET* pSocket, ST_FLAG* flag, bool* bConnected)
 	g_pDataManager->GetWomanInventory(key, stData.womanItem);
 
 	g_pDataManager->GetMapData(string(flag->szRoomName),stData.mapX,stData.mapY,stData.mapZ,stData.mapRotX, stData.mapRotY, stData.mapRotZ,stData.mapIsRunning);
-
+	
+	// << : 추가된 데이터
+	stMap = g_pDataManager->GetMapStatus(string(flag->szRoomName));
+	stData.bValve1 = stMap.bValve1;
+	stData.bValve2 = stMap.bValve2;
+	stData.nFValve1Count = stMap.nFValve1Count;
+	stData.nFValve2Count = stMap.nFValve2Count;
+	stData.nBrickCount = stData.nBrickCount;
+	
 	result = send(*pSocket, (char*)&stData, sizeof(ST_ALL_DATA), 0);	// << : 클라이언트에게 전송
 	if (result == -1) *bConnected = false;
 }

@@ -49,4 +49,11 @@ struct ST_ALL_DATA
 	float mapRotY[SWITCH_LASTNUM];
 	float mapRotZ[SWITCH_LASTNUM];
 	bool mapIsRunning[SWITCH_LASTNUM];
+
+	// << : 벨브 데이터
+	bool bValve1;
+	bool bValve2;
+	int nFValve1Count;
+	int nFValve2Count;
+	int nBrickCount;
 };

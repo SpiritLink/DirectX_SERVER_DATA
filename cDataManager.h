@@ -23,6 +23,7 @@ public:
 	void GetManPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetManInventory(IN string key, OUT int * arr);
 	animationState GetManAnim(IN string key);
+	ST_MAP_STATUS GetMapStatus(IN string key);
 	void GetWomanPosition(IN string key, OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetWomanInventory(IN string key, OUT int * arr);
 	animationState GetWomanAnim(IN string key);
