@@ -481,8 +481,8 @@ void RecvObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	// >> 수신한 데이터를 컨테이너에 적용시키고 영향받는 유저들의 스위치를 변경합니다.
 	if (result == -1) *bConnected = false;
 	g_pDataManager->ReceiveObject(key, stData);
-	cout << "Recv Object Data" << endl;
 	g_pNetworkManager->SendObject(*nNetworkID);
+	cout << "Recv Object Data" << endl;
 }
 
 /* 인벤토리 정보를 수신합니다.*/

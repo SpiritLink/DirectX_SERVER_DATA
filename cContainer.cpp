@@ -137,107 +137,107 @@ void cContainer::Setup(string key)
 	char Key1[100] = { 0, };
 	char Key2[100] = { 0, };
 
-	fstream openFile(szFullPath.data());
-	if (!openFile.is_open())	// << : 파일이 열리지 않는 상황입니다.
-	{
+	//fstream openFile(szFullPath.data());
+	//if (!openFile.is_open())	// << : 파일이 열리지 않는 상황입니다.
+	//{
 		SetDefault();
 		return;
-	}
+	//}
 
-	while (!openFile.eof())		// << : Parsing Data
-	{
-		cPlayer* pTarget = NULL;
-		openFile.getline(szBuffer, 1000);
-		sscanf_s(szBuffer, "%s %s", &Key1, 100, &Key2, 100);
-		if (strlen(szBuffer) <= 0) continue;
+	//while (!openFile.eof())		// << : Parsing Data
+	//{
+	//	cPlayer* pTarget = NULL;
+	//	openFile.getline(szBuffer, 1000);
+	//	sscanf_s(szBuffer, "%s %s", &Key1, 100, &Key2, 100);
+	//	if (strlen(szBuffer) <= 0) continue;
 
-		// << : 플레이어 정보일 경우
-		if (string(Key1) == MAN)
-			pTarget = &m_stMan;
-		else if (string(Key1) == WOMAN)
-			pTarget = &m_stWoman;
+	//	// << : 플레이어 정보일 경우
+	//	if (string(Key1) == MAN)
+	//		pTarget = &m_stMan;
+	//	else if (string(Key1) == WOMAN)
+	//		pTarget = &m_stWoman;
 
-		if (string(Key2) == POSITION && pTarget != NULL)
-		{
-			char Key[100] = { 0, };
-			float Value = 0;
-			sscanf_s(szBuffer, "%*s %*s %s %f", &Key, 100, &Value);
-			string Keyword = string(Key);
+	//	if (string(Key2) == POSITION && pTarget != NULL)
+	//	{
+	//		char Key[100] = { 0, };
+	//		float Value = 0;
+	//		sscanf_s(szBuffer, "%*s %*s %s %f", &Key, 100, &Value);
+	//		string Keyword = string(Key);
 
-			if (Keyword == "X")
-				pTarget->SetX(Value);
-			else if (Keyword == "Y")
-				pTarget->SetY(Value);
-			else if (Keyword == "Z")
-				pTarget->SetZ(Value);
-			else if (Keyword == "Angle")
-				pTarget->SetAngle(Value);
-		}
-		else if (string(Key2) == INVENTORY_INDEX && pTarget != NULL)
-		{
-			int Index = 0;
-			int ItemType = 0;
-			sscanf_s(szBuffer, "%*s %*s %d %d", &Index, &ItemType);
-			pTarget->SetItem(Index, ItemType);
-		}
-		// << : 맵 정보일 경우
-		if (string(Key1) == STUFF)
-		{
-			char szBuf1[100] = { 0, };
-			char szBuf2[100] = { 0, };
-			int Index;
-			sscanf_s(szBuffer, "%*s %s %d %s", szBuf1, 100, &Index, szBuf2, 100);
-			string keyword1 = string(szBuf1);
-			string keyword2 = string(szBuf2);
+	//		if (Keyword == "X")
+	//			pTarget->SetX(Value);
+	//		else if (Keyword == "Y")
+	//			pTarget->SetY(Value);
+	//		else if (Keyword == "Z")
+	//			pTarget->SetZ(Value);
+	//		else if (Keyword == "Angle")
+	//			pTarget->SetAngle(Value);
+	//	}
+	//	else if (string(Key2) == INVENTORY_INDEX && pTarget != NULL)
+	//	{
+	//		int Index = 0;
+	//		int ItemType = 0;
+	//		sscanf_s(szBuffer, "%*s %*s %d %d", &Index, &ItemType);
+	//		pTarget->SetItem(Index, ItemType);
+	//	}
+	//	// << : 맵 정보일 경우
+	//	if (string(Key1) == STUFF)
+	//	{
+	//		char szBuf1[100] = { 0, };
+	//		char szBuf2[100] = { 0, };
+	//		int Index;
+	//		sscanf_s(szBuffer, "%*s %s %d %s", szBuf1, 100, &Index, szBuf2, 100);
+	//		string keyword1 = string(szBuf1);
+	//		string keyword2 = string(szBuf2);
 
-			if (keyword1 == STUFF_INDEX && keyword2 == POSITION)
-			{
-				float fX, fY, fZ;
-				sscanf_s(szBuffer, "%*s %*s %*d %*s %f %f %f", &fX, &fY, &fZ);
-				m_aStuff[Index].SetPosition(fX, fY, fZ);
-			}
-			else if (keyword1 == STUFF_INDEX && keyword2 == ROTATION)
-			{
-				float fX, fY, fZ;
-				sscanf_s(szBuffer, "%*s %*s %*d %*s %f %f %f", &fX, &fY, &fZ);
-				m_aStuff[Index].SetRotate(fX, fY, fZ);
-			}
-			else if (keyword1 == STUFF_INDEX && keyword2 == ISRUNNING)
-			{
-				int IsRunning;
-				sscanf_s(szBuffer, "%*s %*s %*d %*s %d", &IsRunning);
-				m_aStuff[Index].SetIsRunning((bool)IsRunning);
-			}
-		}
+	//		if (keyword1 == STUFF_INDEX && keyword2 == POSITION)
+	//		{
+	//			float fX, fY, fZ;
+	//			sscanf_s(szBuffer, "%*s %*s %*d %*s %f %f %f", &fX, &fY, &fZ);
+	//			m_aStuff[Index].SetPosition(fX, fY, fZ);
+	//		}
+	//		else if (keyword1 == STUFF_INDEX && keyword2 == ROTATION)
+	//		{
+	//			float fX, fY, fZ;
+	//			sscanf_s(szBuffer, "%*s %*s %*d %*s %f %f %f", &fX, &fY, &fZ);
+	//			m_aStuff[Index].SetRotate(fX, fY, fZ);
+	//		}
+	//		else if (keyword1 == STUFF_INDEX && keyword2 == ISRUNNING)
+	//		{
+	//			int IsRunning;
+	//			sscanf_s(szBuffer, "%*s %*s %*d %*s %d", &IsRunning);
+	//			m_aStuff[Index].SetIsRunning((bool)IsRunning);
+	//		}
+	//	}
 
-		// << : 맵 상태 정보일경우
-		if (string(Key1) == MAPSTATUS)
-		{
-			int nNum1, nNum2;
-			sscanf_s(szBuffer, "%*s %d %d", &nNum1, &nNum2);
-			switch (nNum1)
-			{
-			case 1:
-				m_stMapStatus.bValve1 = (bool)nNum2;
-				break;
-			case 2:
-				m_stMapStatus.bValve2 = (bool)nNum2;
-				break;
-			case 3:
-				m_stMapStatus.nFValve1Count = nNum2;
-				break;
-			case 4:
-				m_stMapStatus.nFValve2Count = nNum2;
-				break;
-			case 5:
-				m_stMapStatus.nBrickCount = nNum2;
-				break;
-			}
-			cout << nNum2 << endl;
-		}
-	}
-	if (openFile.eof())
-		cout << szFullPath << " : " << " 파일 로딩" << endl;
+	//	// << : 맵 상태 정보일경우
+	//	if (string(Key1) == MAPSTATUS)
+	//	{
+	//		int nNum1, nNum2;
+	//		sscanf_s(szBuffer, "%*s %d %d", &nNum1, &nNum2);
+	//		switch (nNum1)
+	//		{
+	//		case 1:
+	//			m_stMapStatus.bValve1 = (bool)nNum2;
+	//			break;
+	//		case 2:
+	//			m_stMapStatus.bValve2 = (bool)nNum2;
+	//			break;
+	//		case 3:
+	//			m_stMapStatus.nFValve1Count = nNum2;
+	//			break;
+	//		case 4:
+	//			m_stMapStatus.nFValve2Count = nNum2;
+	//			break;
+	//		case 5:
+	//			m_stMapStatus.nBrickCount = nNum2;
+	//			break;
+	//		}
+	//		cout << nNum2 << endl;
+	//	}
+	//}
+	//if (openFile.eof())
+	//	cout << szFullPath << " : " << " 파일 로딩" << endl;
 
 }
 

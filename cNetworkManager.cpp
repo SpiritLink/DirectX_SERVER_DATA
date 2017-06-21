@@ -76,6 +76,7 @@ void cNetworkManager::SendObject(int ID)
 	WaitForSingleObject(g_hMutex_Net, INFINITE);
 	for (int i = 0; i < vecUser.size(); ++i)
 	{
+		if (vecUser[i] == ID) continue;
 		m_mapSwitch[vecUser[i]] = m_mapSwitch[vecUser[i]] | FLAG::FLAG_OBJECT_DATA;
 	}
 	ReleaseMutex(g_hMutex_Net);
