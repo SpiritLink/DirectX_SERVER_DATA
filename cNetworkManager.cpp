@@ -69,6 +69,30 @@ void cNetworkManager::SendObject(string Key)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+void cNetworkManager::SendObject(int ID)
+{
+	string key = m_mapID[ID];
+	vector<int> vecUser = m_mapRoom[key];
+	WaitForSingleObject(g_hMutex_Net, INFINITE);
+	for (int i = 0; i < vecUser.size(); ++i)
+	{
+		m_mapSwitch[vecUser[i]] = m_mapSwitch[vecUser[i]] | FLAG::FLAG_OBJECT_DATA;
+	}
+	ReleaseMutex(g_hMutex_Net);
+}
+
+void cNetworkManager::SendInventory(int ID)
+{
+	string key = m_mapID[ID];
+	vector<int> vecUser = m_mapRoom[key];
+	WaitForSingleObject(g_hMutex_Net, INFINITE);
+	for (int i = 0; i < vecUser.size(); ++i)
+	{
+		m_mapSwitch[vecUser[i]] = m_mapSwitch[vecUser[i]] | FLAG::FLAG_INVENTORY;
+	}
+	ReleaseMutex(g_hMutex_Net);
+}
+
 void cNetworkManager::SendPosition(int nNetworkID)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);

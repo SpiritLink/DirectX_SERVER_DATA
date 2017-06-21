@@ -482,7 +482,7 @@ void RecvObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	if (result == -1) *bConnected = false;
 	g_pDataManager->ReceiveObject(key, stData);
 	cout << "Recv Object Data" << endl;
-
+	g_pNetworkManager->SendObject(*nNetworkID);
 }
 
 /* 인벤토리 정보를 수신합니다.*/
@@ -492,6 +492,7 @@ void RecvInventoryData(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	int result = recv(*pSocket, (char*)&stData, sizeof(ST_INVENTORY_DATA), 0);
 	g_pDataManager->ReceiveInventory(*nNetworkID, stData);
 	if (result == -1) *bConnected = false;
+	g_pNetworkManager->SendInventory(*nNetworkID);
 }
 
 
