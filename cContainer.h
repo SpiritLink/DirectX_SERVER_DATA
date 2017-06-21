@@ -17,9 +17,6 @@ private:
 	cPlayer m_stMan;			// 남자 데이터
 	cPlayer m_stWoman;			// 여자 데이터
 
-	clock_t m_nManTime;			// 남자 최근 접속 시간
-	clock_t m_nWomanTime;		// 여자 최근 접속 시간
-
 	cStuff m_aStuff[SWITCH_LASTNUM];	// << : 오브젝트
 	ST_MAP_STATUS m_stMapStatus;		// << : 밸브 회전 상태
 public:
@@ -27,7 +24,6 @@ public:
 	~cContainer();
 
 	ST_PLAYER_POSITION GetData(int nIndex);
-	int GetOnlineUser();
 	void GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT float * angle);
 	void GetManInventory(OUT int * nArr);
 	animationState GetManAnim();

@@ -2,8 +2,6 @@
 #include "cContainer.h"
 
 cContainer::cContainer()
-	: m_nManTime(0)
-	, m_nWomanTime(0)
 {
 }
 
@@ -26,14 +24,12 @@ void cContainer::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 		m_stMan.SetPosition(x, y, z);
 		m_stMan.SetAngle(Angle);
 		m_stMan.SetAnimState(stRecv.eAnimState);
-		m_nManTime = clock();
 	}
 	else if (nGender & IN_PLAYER2)
 	{
 		m_stWoman.SetPosition(x, y, z);
 		m_stWoman.SetAngle(Angle);
 		m_stWoman.SetAnimState(stRecv.eAnimState);
-		m_nWomanTime = clock();
 	}
 }
 
@@ -73,25 +69,6 @@ ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 	}
 
 	return result;
-}
-
-/* 현재 남자, 여자중 누가 접속했는지 확인합니다 (구버전) */
-int cContainer::GetOnlineUser()
-{
-	int nResult = 0;
-
-	if (m_nManTime + (ONE_SECOND * 5) > clock())
-	{
-		nResult = nResult | (OUT_PLAYER1);
-		cout << "1P 접속 확인" << endl;
-	}
-	if (m_nWomanTime + (ONE_SECOND * 5) > clock())
-	{
-		nResult = nResult | (OUT_PLAYER2);
-		cout << "2P 접속 확인" << endl;
-	}
-		
-	return nResult;
 }
 
 /* 남자 캐릭터의 좌표를 반환합니다 */
@@ -355,6 +332,10 @@ void cContainer::SetDefault()
 	m_stWoman.SetZ(DEFAULT_WOMAN_STARTZ);
 	m_stWoman.SetAngle(0);
 
+	float x, y, z;
+	m_stMan.GetPosition(&x, &y, &z);
+	cout << "X : " << x << "Y : " << y << "Z : " << z << endl;
+
 	// << : 초기 아이템과 관련된 설정
 	for (int i = 0; i < SWITCH_LASTNUM; ++i)	// << : 아이템 활성화 상태
 		m_aStuff[i].SetIsRunning(false);
@@ -401,6 +382,7 @@ void cContainer::SetDefault()
 	m_stMapStatus.nFValve1Count = 0;
 	m_stMapStatus.nFValve2Count = 0;
 	m_stMapStatus.nBrickCount = 0;
+	SaveData();
 }
 
 void cContainer::SetManInventory(ST_INVENTORY_DATA stData)
