@@ -277,7 +277,6 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 
 		if (!IsWorked)
 		{
-			//cout << "Sleep" << endl;
 			if (g_pNetworkManager->m_mapDisconnect[nNetworkID]) break;
 			Sleep(SLEEP_TIME);
 		}
@@ -465,8 +464,10 @@ void RecvPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 {
 	ST_PLAYER_POSITION stData;
 	int result = recv(*pSocket, (char*)&stData, sizeof(ST_PLAYER_POSITION), 0);
+	if (stData.fX == 0 && stData.fY == 0 && stData.fZ == 0 && stData.fAngle == 0) return;
 	string key = g_pNetworkManager->m_mapID[*nNetworkID];
 	g_pDataManager->ReceivePosition(*nNetworkID, stData);
+	cout << "RecvPosition : " << stData.fX << " " << stData.fY << " " << stData.fZ << " " << stData.fAngle << endl;
 	if (result == -1)
 		*bConnected = false;
 }

@@ -31,10 +31,6 @@ void cDataManager::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 		m_mapContainer[key]->Setup(key);
 	}
 	m_mapContainer[key]->ReceivePosition(nNetworkID, stRecv);
-	cout << stRecv.fX << " ";
-	cout << stRecv.fY << " ";
-	cout << stRecv.fZ << " ";
-	cout << stRecv.fAngle << endl;
 	LeaveCriticalSection(&cs);
 	ReleaseMutex(g_hMutex_DATA);
 }
