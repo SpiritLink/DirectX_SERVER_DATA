@@ -2,7 +2,20 @@
 #include "stdafx.h"
 
 #define g_pLogManager cLogManager::GetInstance()
-#define ROOT_FOLDER "LOG"
+#define FOLDER_ROOT "LOG"
+#define FOLDER_SEND_NETWORKID "SendNetworkID"
+#define FOLDER_SEND_ROOMNAME "SendRoomName"
+#define FOLDER_SEND_ALL_DATA "SendAllData"
+#define FOLDER_SEND_GENDER "SendGender"
+#define FOLDER_SEND_POSITION "SendPosition"
+#define FOLDER_SEND_OBJECT_DATA "SendObjectData"
+
+#define FOLDER_RECV_NETWORKID "RecvNetworkID"
+#define FOLDER_RECV_POSITION "RecvPosition"
+#define FOLDER_RECV_OBJECT_DATA "RecvObjectData"
+#define FOLDER_RECV_INVENTORY_DATA "RecvInventoryData"
+
+#define FOLDER_PROCESS_GENDER "ProcessGender"
 
 struct ST_TASK_LOG;
 enum TAG;

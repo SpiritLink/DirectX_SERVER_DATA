@@ -11,11 +11,13 @@ int g_nNetworkID = 0;
 int g_nThreadCount;
 HANDLE g_hMutex_DATA;
 HANDLE g_hMutex_Net;
+HANDLE g_hMutex_LOG;
 
 int main()
 {
 	g_hMutex_DATA = CreateMutex(NULL, FALSE, NULL);
 	g_hMutex_Net = CreateMutex(NULL, FALSE, NULL);
+	g_hMutex_LOG = CreateMutex(NULL, FALSE, NULL);
 	g_pDataManager->Setup();
 	DWORD dwThID1, dwThID2;
 	HANDLE hThread_RECV, hThread_SEND;

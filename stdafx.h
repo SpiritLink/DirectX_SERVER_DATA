@@ -228,3 +228,4 @@ extern int g_nNetworkID;
 extern int g_nThreadCount;
 extern HANDLE g_hMutex_DATA;
 extern HANDLE g_hMutex_Net;
+extern HANDLE g_hMutex_LOG;

@@ -4,7 +4,19 @@
 
 cLogManager::cLogManager()
 {
-	CreateFolder("SendNetworkID");
+	CreateFolder(FOLDER_SEND_NETWORKID);
+	CreateFolder(FOLDER_SEND_ROOMNAME);
+	CreateFolder(FOLDER_SEND_ALL_DATA);
+	CreateFolder(FOLDER_SEND_GENDER);
+	CreateFolder(FOLDER_SEND_POSITION);
+	CreateFolder(FOLDER_SEND_OBJECT_DATA);
+
+	CreateFolder(FOLDER_RECV_NETWORKID);
+	CreateFolder(FOLDER_RECV_POSITION);
+	CreateFolder(FOLDER_RECV_OBJECT_DATA);
+	CreateFolder(FOLDER_RECV_INVENTORY_DATA);
+
+	CreateFolder(FOLDER_PROCESS_GENDER);
 }
 
 
@@ -58,7 +70,7 @@ void cLogManager::CreateLog_ProcessGender(ST_TASK_LOG stTask)
 
 void cLogManager::CreateFolder(string FolderName)
 {
-	char strFolderPath[] = ROOT_FOLDER;
+	char strFolderPath[] = FOLDER_ROOT;
 	int nResult = _mkdir(strFolderPath);
 	if (nResult == 0)
 		cout << strFolderPath << "폴더 생성 성공" << endl;
@@ -81,7 +93,9 @@ void cLogManager::SendNetworkID(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::SEND_NETWORKID;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG,INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::SendRoomName(int nID)
@@ -89,7 +103,9 @@ void cLogManager::SendRoomName(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::SEND_ROOMNAME;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::SendAllData(int nID)
@@ -97,7 +113,9 @@ void cLogManager::SendAllData(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::SEND_ALL_DATA;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::SendGender(int nID)
@@ -105,7 +123,9 @@ void cLogManager::SendGender(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::SEND_GENDER;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::SendPosition(int nID)
@@ -113,7 +133,9 @@ void cLogManager::SendPosition(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::SEND_POSITION;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::SendObjectData(int nID)
@@ -121,7 +143,9 @@ void cLogManager::SendObjectData(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::SEND_OBJECT_DATA;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::RecvNetworkID(int nID)
@@ -129,7 +153,9 @@ void cLogManager::RecvNetworkID(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::RECV_NETWORKID;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::RecvPosition(int nID)
@@ -137,7 +163,9 @@ void cLogManager::RecvPosition(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::RECV_POSITION;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::RecvObjectData(int nID)
@@ -145,7 +173,9 @@ void cLogManager::RecvObjectData(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::RECV_OBJECT_DATA;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::RecvInventoryData(int nID)
@@ -153,7 +183,9 @@ void cLogManager::RecvInventoryData(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::RECV_INVENTORY_DATA;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::ProcessGender(int nID)
@@ -161,16 +193,23 @@ void cLogManager::ProcessGender(int nID)
 	ST_TASK_LOG stTask;
 	stTask.key = TAG::PROCESS_GENDER;
 	stTask.ID = nID;
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	m_listQueue.push_back(stTask);
+	ReleaseMutex(g_hMutex_LOG);
 }
 
 void cLogManager::Update()
 {
+	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	if (m_listQueue.empty())
+	{
+		ReleaseMutex(g_hMutex_LOG);
 		return;
+	}
 	
 	ST_TASK_LOG stTask = m_listQueue.front();
 	m_listQueue.pop_front();
+	ReleaseMutex(g_hMutex_LOG);
 
 	switch (stTask.ID)
 	{
