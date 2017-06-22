@@ -21,7 +21,8 @@ int main()
 	HANDLE hThread_RECV, hThread_SEND;
 	unsigned long ulStackSize = 0;
 	g_nThreadCount = 0;
-	
+
+
 	Server_DATA* pServerData = new Server_DATA;
 	hThread_RECV = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) RECV_REQUEST_CLIENT, (void*)&pServerData, 0, (unsigned*)&dwThID1);	// << : 데이터 수신 스레드
 	hThread_SEND = (HANDLE)_beginthreadex(NULL, 0, (unsigned(_stdcall*)(void*)) SEND_REQUEST_CLIENT, (void*)&pServerData, 0, (unsigned*)&dwThID2);	// << : 데이터 전송 스레드

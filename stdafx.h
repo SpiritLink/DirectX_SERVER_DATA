@@ -221,6 +221,8 @@ struct ST_INVENTORY_DATA
 #include "cDataManager.h"
 #include "cTimeManager.h"
 #include "cNetworkManager.h"
+#include "cLogManager.h"
+
 
 extern int g_nNetworkID;
 extern int g_nThreadCount;
