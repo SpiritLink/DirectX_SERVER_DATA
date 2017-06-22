@@ -404,7 +404,7 @@ void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected)
 	}
 	else if (nGender == IN_PLAYER2)
 	{
-		g_pDataManager->GetManPosition(szKey, &stData.fX, &stData.fZ, &stData.fZ, &stData.fAngle);
+		g_pDataManager->GetManPosition(szKey, &stData.fX, &stData.fY, &stData.fZ, &stData.fAngle);
 		stData.eAnimState = g_pDataManager->GetManAnim(szKey);
 	}
 	
