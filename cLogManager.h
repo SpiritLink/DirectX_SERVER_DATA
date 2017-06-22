@@ -26,19 +26,19 @@ private:
 	SINGLETONE(cLogManager);
 	list<ST_TASK_LOG> m_listQueue;
 	
-	void CreateLog_SendNetworkID(ST_TASK_LOG stTask);
-	void CreateLog_SendRoomName(ST_TASK_LOG stTask);
-	void CreateLog_SendAllData(ST_TASK_LOG stTask);
-	void CreateLog_SendGender(ST_TASK_LOG stTask);
-	void CreateLog_SendPosition(ST_TASK_LOG stTask);
-	void CreateLog_SendObjectData(ST_TASK_LOG stTask);
+	void CreateLog_SendNetworkID(int nNetworkID);
+	void CreateLog_SendRoomName(int nNetworkID);
+	void CreateLog_SendAllData(int nNetworkID);
+	void CreateLog_SendGender(int nNetworkID);
+	void CreateLog_SendPosition(int nNetworkID);
+	void CreateLog_SendObjectData(int nNetworkID);
 
-	void CreateLog_RecvNetworkID(ST_TASK_LOG stTask);
-	void CreateLog_RecvPosition(ST_TASK_LOG stTask);
-	void CreateLog_RecvObjectData(ST_TASK_LOG stTask);
-	void CreateLog_RecvInventoryData(ST_TASK_LOG stTask);
+	void CreateLog_RecvNetworkID(int nNetworkID);
+	void CreateLog_RecvPosition(int nNetworkID);
+	void CreateLog_RecvObjectData(int nNetworkID);
+	void CreateLog_RecvInventoryData(int nNetworkID);
 
-	void CreateLog_ProcessGender(ST_TASK_LOG stTask);
+	void CreateLog_ProcessGender(int nNetworkID);
 
 	void CreateFolder(string FolderName);
 public:

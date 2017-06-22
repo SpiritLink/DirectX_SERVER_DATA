@@ -24,48 +24,201 @@ cLogManager::~cLogManager()
 {
 }
 
-void cLogManager::CreateLog_SendNetworkID(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_SendNetworkID(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_NETWORKID + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_NETWORKID + string("/") + string("ALL_LOG.txt");
+	ofstream UserLog(szFullPath_User.data(),ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_SendRoomName(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_SendRoomName(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_ROOMNAME + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_ROOMNAME + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_SendAllData(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_SendAllData(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_ALL_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_ALL_DATA + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_SendGender(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_SendGender(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_GENDER + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_GENDER + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_SendPosition(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_SendPosition(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_POSITION + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_POSITION + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_SendObjectData(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_SendObjectData(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_OBJECT_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_OBJECT_DATA + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_RecvNetworkID(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_RecvNetworkID(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_NETWORKID + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_NETWORKID + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_RecvPosition(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_RecvPosition(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_POSITION + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_POSITION + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_RecvObjectData(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_RecvObjectData(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_OBJECT_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_OBJECT_DATA + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_RecvInventoryData(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_RecvInventoryData(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_INVENTORY_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_INVENTORY_DATA + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
-void cLogManager::CreateLog_ProcessGender(ST_TASK_LOG stTask)
+void cLogManager::CreateLog_ProcessGender(int nNetworkID)
 {
+	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_PROCESS_GENDER + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_PROCESS_GENDER + string("/") + string("ALL_LOG.txt");
+
+	ofstream UserLog(szFullPath_User.data(), ios::app);
+	ofstream AllLog(szFullPath_Root.data(), ios::app);
+
+	string IP = inet_ntoa(g_pNetworkManager->m_mapAddr[nNetworkID].sin_addr);
+	string RoomName = g_pNetworkManager->m_mapID[nNetworkID];
+
+	UserLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+	AllLog << g_pTime->GetLocalTime_String() << " " << "IP : " << IP << " ROOM : " << RoomName << endl;
+
+	UserLog.close();
+	AllLog.close();
 }
 
 void cLogManager::CreateFolder(string FolderName)
@@ -204,6 +357,7 @@ void cLogManager::Update()
 	if (m_listQueue.empty())
 	{
 		ReleaseMutex(g_hMutex_LOG);
+		int a = 3;
 		return;
 	}
 	
@@ -211,40 +365,51 @@ void cLogManager::Update()
 	m_listQueue.pop_front();
 	ReleaseMutex(g_hMutex_LOG);
 
-	switch (stTask.ID)
+	switch (stTask.key)
 	{
 	case TAG::SEND_NETWORKID:
-		CreateLog_SendNetworkID(stTask);
+		CreateLog_SendNetworkID(stTask.ID);
+		cout << "Log Send Net work" << endl;
 		break;
 	case TAG::SEND_ROOMNAME:
-		CreateLog_SendRoomName(stTask);
+		CreateLog_SendRoomName(stTask.ID);
+		cout << "Log Send Room Name" << endl;
 		break;
 	case TAG::SEND_ALL_DATA:
-		CreateLog_SendAllData(stTask);
+		CreateLog_SendAllData(stTask.ID);
+		cout << "Log Send All Data" << endl;
 		break;
 	case TAG::SEND_GENDER:
-		CreateLog_SendGender(stTask);
+		CreateLog_SendGender(stTask.ID);
+		cout << "Log Send Gender" << endl;
 		break;
 	case TAG::SEND_POSITION:
-		CreateLog_SendPosition(stTask);
+		CreateLog_SendPosition(stTask.ID);
+		cout << "Log Send Position" << endl;
 		break;
 	case TAG::SEND_OBJECT_DATA:
-		CreateLog_SendObjectData(stTask);
+		CreateLog_SendObjectData(stTask.ID);
+		cout << "Log Send Object Data " << endl;
 		break;
 	case TAG::RECV_NETWORKID:
-		CreateLog_RecvNetworkID(stTask);
+		CreateLog_RecvNetworkID(stTask.ID);
+		cout << "Log Recv NetworkID " << endl;
 		break;
 	case TAG::RECV_POSITION:
-		CreateLog_RecvPosition(stTask);
+		CreateLog_RecvPosition(stTask.ID);
+		cout << "Log Recv Position " << endl;
 		break;
 	case TAG::RECV_OBJECT_DATA:
-		CreateLog_RecvObjectData(stTask);
+		CreateLog_RecvObjectData(stTask.ID);
+		cout << "Log Recv Object Data " << endl;
 		break;
 	case TAG::RECV_INVENTORY_DATA:
-		CreateLog_RecvInventoryData(stTask);
+		CreateLog_RecvInventoryData(stTask.ID);
+		cout << "Log Recv Inventory Data " << endl;
 		break;
 	case TAG::PROCESS_GENDER:
-		CreateLog_ProcessGender(stTask);
+		CreateLog_ProcessGender(stTask.ID);
+		cout << "Log Process Gender" << endl;
 		break;
 	}
 }

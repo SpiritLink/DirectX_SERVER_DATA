@@ -126,7 +126,6 @@ void Server_DATA::Setup_SEND()
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
-	Sleep(10000);
 	if (g_pTime->GetSaveTimer() + (ONE_SECOND * 60) < clock())
 	{
 		g_pTime->SetSaveTimer(clock());
@@ -151,6 +150,8 @@ void Server_DATA::Update()
 		else if (!g_pTime->GetShowAllLog())
 			g_pTime->SetShowAllLog(true);
 	}
+
+	g_pLogManager->Update();
 }
 
 void Server_DATA::Destroy()
@@ -180,26 +181,33 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 			break;
 		case FLAG_NETWORK_ID:
 			SendNetworkID(&RecvSocket, &nNetworkID, &IsConnected);
+			g_pLogManager->SendNetworkID(nNetworkID);
 			break;
 		case FLAG_ROOM_NAME:
 			SendRoomName(&ClntSock, &nNetworkID, &IsConnected);
+			g_pLogManager->SendRoomName(nNetworkID);
 			break;
 		case FLAG_ALL_DATA:
 			SendAllData(&ClntSock, &nNetworkID , &IsConnected);
+			g_pLogManager->SendAllData(nNetworkID);
 			break;
 		case FLAG_GENDER:
 			ProcessGender(&ClntSock, &nNetworkID, &IsConnected);
+			g_pLogManager->ProcessGender(nNetworkID);
 			break;
 		case FLAG_POSITION:
 			RecvPosition(&ClntSock, &nNetworkID, &IsConnected);
+			g_pLogManager->RecvPosition(nNetworkID);
 			if (!(g_pNetworkManager->m_mapSwitch[nNetworkID] & FLAG::FLAG_POSITION))
 				g_pNetworkManager->SendPosition(nNetworkID);
 			break;
 		case FLAG_OBJECT_DATA:
 			RecvObjectData(&ClntSock, &nNetworkID, &IsConnected);
+			g_pLogManager->RecvObjectData(nNetworkID);
 			break;
 		case FLAG_INVENTORY:
 			RecvInventoryData(&ClntSock, &nNetworkID, &IsConnected);
+			g_pLogManager->RecvInventoryData(nNetworkID);
 			break;
 		}
 		continue;
@@ -231,6 +239,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 		if (prevTime + ONE_SECOND > clock()) continue;
 		prevTime = clock();
 		RecvNetworkID(&ClntSock, &nNetworkID, &IsConnected);
+		g_pLogManager->RecvNetworkID(nNetworkID);
 	}
 	
 	// << : 네트워크 아이디를 이제 얻어왔다면 ?
@@ -251,6 +260,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			RecvNetworkID(&ClntSock, &nNetworkID, &IsConnected);
 			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_NETWORK_ID);
 			IsWorked = true;
+			g_pLogManager->RecvNetworkID(nNetworkID);
 		}
 
 		if (nSwitch & FLAG::FLAG_GENDER)
@@ -258,6 +268,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 			SendGender(&ClntSock, &nNetworkID, &IsConnected);
 			eFlag = FLAG::FLAG_NONE;
 			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_GENDER);
+			//<< : 로그에 Send Gender가 한개 필요함
 			IsWorked = true;
 		}
 
@@ -265,6 +276,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 		{
 			prevTime = clock();
 			SendPosition(&ClntSock, &nNetworkID, &IsConnected);
+			g_pLogManager->SendPosition(nNetworkID);
 			IsWorked = true;
 		}
 
@@ -272,6 +284,7 @@ unsigned int _stdcall SEND_REQUEST(void* arg)
 		{
 			SendObjectData(&ClntSock, &nNetworkID, &IsConnected);
 			g_pNetworkManager->SubFlag(nNetworkID, FLAG::FLAG_OBJECT_DATA);
+			g_pLogManager->SendObjectData(nNetworkID);
 			IsWorked = true;
 		}
 
