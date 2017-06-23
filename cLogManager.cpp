@@ -26,8 +26,8 @@ cLogManager::~cLogManager()
 
 void cLogManager::CreateLog_SendNetworkID(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_NETWORKID + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_NETWORKID + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 	ofstream UserLog(szFullPath_User.data(),ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
 
@@ -43,8 +43,8 @@ void cLogManager::CreateLog_SendNetworkID(int nNetworkID)
 
 void cLogManager::CreateLog_SendRoomName(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_ROOMNAME + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_ROOMNAME + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -61,8 +61,8 @@ void cLogManager::CreateLog_SendRoomName(int nNetworkID)
 
 void cLogManager::CreateLog_SendAllData(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_ALL_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_ALL_DATA + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -79,8 +79,8 @@ void cLogManager::CreateLog_SendAllData(int nNetworkID)
 
 void cLogManager::CreateLog_SendGender(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_GENDER + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_GENDER + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -97,8 +97,8 @@ void cLogManager::CreateLog_SendGender(int nNetworkID)
 
 void cLogManager::CreateLog_SendPosition(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_POSITION + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_POSITION + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -115,8 +115,8 @@ void cLogManager::CreateLog_SendPosition(int nNetworkID)
 
 void cLogManager::CreateLog_SendObjectData(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_SEND_OBJECT_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_SEND_OBJECT_DATA + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -133,8 +133,8 @@ void cLogManager::CreateLog_SendObjectData(int nNetworkID)
 
 void cLogManager::CreateLog_RecvNetworkID(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_NETWORKID + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_NETWORKID + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -151,8 +151,8 @@ void cLogManager::CreateLog_RecvNetworkID(int nNetworkID)
 
 void cLogManager::CreateLog_RecvPosition(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_POSITION + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_POSITION + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -169,8 +169,8 @@ void cLogManager::CreateLog_RecvPosition(int nNetworkID)
 
 void cLogManager::CreateLog_RecvObjectData(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_OBJECT_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_OBJECT_DATA + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -187,8 +187,8 @@ void cLogManager::CreateLog_RecvObjectData(int nNetworkID)
 
 void cLogManager::CreateLog_RecvInventoryData(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_RECV_INVENTORY_DATA + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_RECV_INVENTORY_DATA + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
@@ -205,8 +205,8 @@ void cLogManager::CreateLog_RecvInventoryData(int nNetworkID)
 
 void cLogManager::CreateLog_ProcessGender(int nNetworkID)
 {
-	string szFullPath_User = FOLDER_ROOT + string("/") + FOLDER_PROCESS_GENDER + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
-	string szFullPath_Root = FOLDER_ROOT + string("/") + FOLDER_PROCESS_GENDER + string("/") + string("ALL_LOG.txt");
+	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
+	string szFullPath_Root = FOLDER_ROOT + string("/") + string("ALL_LOG.txt");
 
 	ofstream UserLog(szFullPath_User.data(), ios::app);
 	ofstream AllLog(szFullPath_Root.data(), ios::app);
