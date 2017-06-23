@@ -167,6 +167,21 @@ enum FLAG
 	FLAG_INVENTORY = 1 << 7
 };
 
+enum TAG
+{
+	SEND_NETWORKID,
+	SEND_ROOMNAME,
+	SEND_ALL_DATA,
+	SEND_GENDER,
+	SEND_POSITION,
+	SEND_OBJECT_DATA,
+	RECV_NETWORKID,
+	RECV_POSITION,
+	RECV_OBJECT_DATA,
+	RECV_INVENTORY_DATA,
+	PROCESS_GENDER
+};
+
 struct ST_SOCKET_ADDR
 {
 	SOCKET stSocket;
@@ -212,9 +227,49 @@ struct ST_MAP_STATUS
 	ST_MAP_STATUS() { bValve1 = false, bValve2 = false, nFValve1Count = 0, nFValve2Count = 0, nBrickCount = 0; }
 };
 
+struct ST_ALL_DATA
+{
+	// << : 플레이어 데이터
+	float manX;
+	float manY;
+	float manZ;
+	float manAngle;
+	int manAnim;
+	int manItem[INVENTORY_SIZE];
+
+	float womanX;
+	float womanY;
+	float womanZ;
+	float womanAngle;
+	int womanAnim;
+	int womanItem[INVENTORY_SIZE];
+
+	// << : 맵 데이터
+	float mapX[SWITCH_LASTNUM];
+	float mapY[SWITCH_LASTNUM];
+	float mapZ[SWITCH_LASTNUM];
+	float mapRotX[SWITCH_LASTNUM];
+	float mapRotY[SWITCH_LASTNUM];
+	float mapRotZ[SWITCH_LASTNUM];
+	bool mapIsRunning[SWITCH_LASTNUM];
+
+	// << : 벨브 데이터
+	bool bValve1;
+	bool bValve2;
+	int nFValve1Count;
+	int nFValve2Count;
+	int nBrickCount;
+};
+
 struct ST_INVENTORY_DATA
 {
 	StuffCode Stuff[INVENTORY_SIZE];
+};
+
+struct ST_TASK_LOG
+{
+	TAG key;
+	int ID;
 };
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
@@ -222,7 +277,6 @@ struct ST_INVENTORY_DATA
 #include "cTimeManager.h"
 #include "cNetworkManager.h"
 #include "cLogManager.h"
-
 
 extern int g_nNetworkID;
 extern int g_nThreadCount;
