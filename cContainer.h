@@ -3,13 +3,14 @@
 #include "cStuff.h"
 #define CONNECT_TIME 5
 #define D3DX_PI 3.141592654f
-
 #define DEFAULT_MAN_STARTX -30
 #define DEFAULT_MAN_STARTY 0
 #define DEFAULT_MAN_STARTZ 18
 #define DEFAULT_WOMAN_STARTX -29
 #define DEFAULT_WOMAN_STARTY 0
 #define DEFAULT_WOMAN_STARTZ 9
+
+/* 플레이어 정보, 맵의 상태를 저장하기 위한 클래스 입니다 */
 class cContainer
 {
 private:
@@ -39,7 +40,6 @@ public:
 	void SetManInventory(ST_INVENTORY_DATA stData);
 	void SetWomanInventory(ST_INVENTORY_DATA stData);
 
-	void Update();
 	void ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv);
 	void ReceiveMap(ST_OBJECT_DATA stData);
 };

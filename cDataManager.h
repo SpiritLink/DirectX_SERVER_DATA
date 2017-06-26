@@ -27,7 +27,6 @@ public:
 	void GetWomanInventory(IN string key, OUT int * arr);
 	animationState GetWomanAnim(IN string key);
 	void GetMapData(IN string key, OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun);
-	void Update();
 	void Destroy();
 };
 

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "cLogManager.h"
 
-
+/* 로그를 저장할 폴더를 생성합니다 */
 cLogManager::cLogManager()
 {
 	CreateFolder(FOLDER_SEND_NETWORKID);
@@ -24,6 +24,7 @@ cLogManager::~cLogManager()
 {
 }
 
+/* SendNetworkID함수를 호출했을때 txt 파일에 기록합니다 */
 void cLogManager::CreateLog_SendNetworkID(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -41,6 +42,7 @@ void cLogManager::CreateLog_SendNetworkID(int nNetworkID)
 	AllLog.close();
 }
 
+/* SendRoomName함수를 호출했을때 txt 파일에 기록합니다 */
 void cLogManager::CreateLog_SendRoomName(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -59,6 +61,7 @@ void cLogManager::CreateLog_SendRoomName(int nNetworkID)
 	AllLog.close();
 }
 
+/* SendAllData 함수를 호출했을때 txt 파일에 기록합니다 */
 void cLogManager::CreateLog_SendAllData(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -77,6 +80,7 @@ void cLogManager::CreateLog_SendAllData(int nNetworkID)
 	AllLog.close();
 }
 
+/* SendGender 함수를 호출했을때 txt 파일에 기록합니다 */
 void cLogManager::CreateLog_SendGender(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -95,6 +99,7 @@ void cLogManager::CreateLog_SendGender(int nNetworkID)
 	AllLog.close();
 }
 
+/* SendPosition 함수를 호출했을때 txt 파일에 기록합니다 */
 void cLogManager::CreateLog_SendPosition(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -113,6 +118,7 @@ void cLogManager::CreateLog_SendPosition(int nNetworkID)
 	AllLog.close();
 }
 
+/* SendObjectData 함수를 호출했을때 txt파일에 기록합니다 */
 void cLogManager::CreateLog_SendObjectData(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -131,6 +137,7 @@ void cLogManager::CreateLog_SendObjectData(int nNetworkID)
 	AllLog.close();
 }
 
+/* RecvNetworkID를 호출했을때 txt 파일에 기록합니다 */
 void cLogManager::CreateLog_RecvNetworkID(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -149,6 +156,7 @@ void cLogManager::CreateLog_RecvNetworkID(int nNetworkID)
 	AllLog.close();
 }
 
+/* RecvPosition 함수를 호출했을때 txt파일에 기록합니다 */
 void cLogManager::CreateLog_RecvPosition(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -167,6 +175,7 @@ void cLogManager::CreateLog_RecvPosition(int nNetworkID)
 	AllLog.close();
 }
 
+/* RecvObjectData 함수를 호출했을때 txt파일에 기록합니다 */
 void cLogManager::CreateLog_RecvObjectData(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -185,6 +194,7 @@ void cLogManager::CreateLog_RecvObjectData(int nNetworkID)
 	AllLog.close();
 }
 
+/* RecvInventoryData 함수를 호출했을때 txt파일에 기록합니다 */
 void cLogManager::CreateLog_RecvInventoryData(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -203,6 +213,7 @@ void cLogManager::CreateLog_RecvInventoryData(int nNetworkID)
 	AllLog.close();
 }
 
+/* ProcessGender 함수를 호출했을때 txt파일에 기록합니다 */
 void cLogManager::CreateLog_ProcessGender(int nNetworkID)
 {
 	string szFullPath_User = FOLDER_ROOT + string("/") + g_pNetworkManager->m_mapID[nNetworkID] + string(".txt");
@@ -221,6 +232,7 @@ void cLogManager::CreateLog_ProcessGender(int nNetworkID)
 	AllLog.close();
 }
 
+/* 폴더를 생성하는 함수입니다 */
 void cLogManager::CreateFolder(string FolderName)
 {
 	char strFolderPath[] = FOLDER_ROOT;
@@ -241,6 +253,7 @@ void cLogManager::CreateFolder(string FolderName)
 		cout << FullPath << "는 이미 존재하거나 부정확 합니다." << endl;
 }
 
+/* 큐에 SendNetworkID 함수가 호출됬다고 등록합니다 */
 void cLogManager::SendNetworkID(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -251,6 +264,7 @@ void cLogManager::SendNetworkID(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 SendRoomName 함수가 호출됬다고 등록합니다 */
 void cLogManager::SendRoomName(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -261,6 +275,7 @@ void cLogManager::SendRoomName(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 SendAllData 함수가 호출됬다고 등록합니다 */
 void cLogManager::SendAllData(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -271,6 +286,7 @@ void cLogManager::SendAllData(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 SendGender 함수가 호출됬다고 등록합니다 */
 void cLogManager::SendGender(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -281,6 +297,7 @@ void cLogManager::SendGender(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 SendPosition 함수가 호출됬다고 등록합니다 */
 void cLogManager::SendPosition(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -291,6 +308,7 @@ void cLogManager::SendPosition(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 SendObjectData 함수가 호출됬다고 등록합니다 */
 void cLogManager::SendObjectData(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -301,6 +319,7 @@ void cLogManager::SendObjectData(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 RecvNetworkID 함수가 호출됬다고 등록합니다 */
 void cLogManager::RecvNetworkID(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -311,6 +330,7 @@ void cLogManager::RecvNetworkID(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 RecvPosition 함수가 호출됬다고 등록합니다 */
 void cLogManager::RecvPosition(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -321,6 +341,7 @@ void cLogManager::RecvPosition(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 RecvObjectData 함수가 호출됬다고 등록합니다 */
 void cLogManager::RecvObjectData(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -331,6 +352,7 @@ void cLogManager::RecvObjectData(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 RecvInventoryData 함수가 호출됬다고 등록합니다 */
 void cLogManager::RecvInventoryData(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -341,6 +363,7 @@ void cLogManager::RecvInventoryData(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* 큐에 ProcessGender 함수가 호출됬다고 등록합니다 */
 void cLogManager::ProcessGender(int nID)
 {
 	ST_TASK_LOG stTask;
@@ -351,13 +374,16 @@ void cLogManager::ProcessGender(int nID)
 	ReleaseMutex(g_hMutex_LOG);
 }
 
+/* ------------------------------------------------------------------------
+큐에 로그를 남겨야할 정보가 있는지 확인합니다. 큐가 비어있다면 함수를 종료합니다. 
+큐에 첫번째를 뽑아낸뒤 해당하는 로그를 작성합니다
+ *///----------------------------------------------------------------------
 void cLogManager::Update()
 {
 	WaitForSingleObject(g_hMutex_LOG, INFINITE);
 	if (m_listQueue.empty())
 	{
 		ReleaseMutex(g_hMutex_LOG);
-		int a = 3;
 		return;
 	}
 	

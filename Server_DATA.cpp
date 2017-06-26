@@ -5,25 +5,22 @@ CRITICAL_SECTION CS_SERVER;
 
 #define ROOM_NAME_SIZE 50
 
+unsigned int _stdcall RECV_REQUEST(void* arg);	// 클라이언트의 요청을 수신하는 함수입니다
+unsigned int _stdcall SEND_REQUEST(void* arg);	// 클라이언트 에게 요청을 전송하는 함수입니다
 
-// << : 스레드 함수
-unsigned int _stdcall RECV_REQUEST(void* arg);	// << : 수신
-unsigned int _stdcall SEND_REQUEST(void* arg);	// << : 전송
+void SendNetworkID(ST_SOCKET_ADDR* stData, int* nNetworkID, bool* bConnected);	// NetworkID를 전송합니다
+void SendRoomName(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// RoomName에 해당하는 방에 접속이 가능한지 알려줍니다
+void SendAllData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// 초기 데이터(모든 데이터)를 전송합니다
+void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// 방에 접속한 상대 성별을 전송합니다
+void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// 방에 접속한 상대 좌표를 전송합니다
+void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);		// 방의 물체 정보를 전송합니다
 
-// << : 일반 함수
-void SendNetworkID(ST_SOCKET_ADDR* stData, int* nNetworkID, bool* bConnected);
-void SendRoomName(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void SendAllData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void SendGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void SendPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void SendObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
+void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// 클라이언트의 NetworkID를 수신합니다
+void RecvPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// 클라이언트의 좌표를 수신합니다
+void RecvObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);		// 클라이언트의 물체 정보를 수신합니다
+void RecvInventoryData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);		// 클라이언트의 인벤토리 정보를 수신합니다
 
-void RecvNetworkID(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void RecvPosition(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void RecvObjectData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-void RecvInventoryData(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
-
-void ProcessGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);
+void ProcessGender(SOCKET* pSocket, int* nNetworkID, bool* bConnected);			// 클라이언트의 성별을 수신하고 다른 플레이어의 성별을 알려줍니다
 
 Server_DATA::Server_DATA()
 {
@@ -33,6 +30,10 @@ Server_DATA::~Server_DATA()
 {
 }
 
+/*-------------------------------------------- 
+클라이언트의 요청을 accept 합니다 (무한루프)
+accept한뒤 RECV_REQUEST 스레드 함수를 호출합니다
+ *///-----------------------------------------
 void Server_DATA::Setup_RECV()
 {
 	InitializeCriticalSection(&CS_SERVER);
@@ -77,6 +78,10 @@ void Server_DATA::Setup_RECV()
 	}
 
 }
+/*--------------------------------------------
+클라이언트의 요청을 accept 합니다 (무한루프)
+accept한뒤 SEND_REQUEST 스레드 함수를 호출합니다
+*///-----------------------------------------
 
 void Server_DATA::Setup_SEND()
 {
@@ -123,6 +128,12 @@ void Server_DATA::Setup_SEND()
 	LeaveCriticalSection(&CS_SERVER);
 }
 
+/*--------------------------------------------
+60초에 한번 cDataManager->SaveAllData() 함수를 실행합니다
+숫자 패드 7을 누르면 현재 스레드 개수를 알려줍니다
+숫자 패드 8을 누르면 현재 어떤 함수가 실행되는지 더 상세히 알려줍니다
+cLogManager->Update() 함수를 실행합니다
+*///-----------------------------------------
 void Server_DATA::Update()
 {
 	// << : 10초에 한번 모든 데이터를 파일로 저장합니다.
@@ -131,11 +142,6 @@ void Server_DATA::Update()
 		g_pTime->SetSaveTimer(clock());
 		g_pDataManager->SaveAllData();
 		cout << g_pTime->GetLocalTime_String() << " : Save Data" << endl;
-	}
-
-	if (GetAsyncKeyState(VK_NUMPAD3) & 0x0001)
-	{
-		g_pDataManager->Update();
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0x0001)
@@ -154,6 +160,7 @@ void Server_DATA::Update()
 	g_pLogManager->Update();
 }
 
+/* 사용한 모든 소켓을 close 한뒤 WSACleanup을 실행합니다 */
 void Server_DATA::Destroy()
 {
 	closesocket(hServSock_RECV);
@@ -161,7 +168,10 @@ void Server_DATA::Destroy()
 	WSACleanup();
 }
 
-/* 요청을 대기하는 스레드 함수입니다 */
+/*--------------------------------------------
+클라이언트와 연결된 이후 클라이언트의 데이터 전송을 기다립니다.
+클라이언트가 데이터 (FLAG)를 전송하면 확인 이후 요청한 데이터를 전송합니다.
+*///-----------------------------------------
 unsigned int _stdcall RECV_REQUEST(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;
@@ -221,7 +231,12 @@ unsigned int _stdcall RECV_REQUEST(void* arg)
 	return 0;
 }
 
-/* 요청을 전송하는 스레드 함수입니다 */
+/*--------------------------------------------
+클라이언트와 연결된 이후 특정 상황에 클라이언트에게 데이터를 전송하는 함수입니다.
+먼저 NetworkID가 초기값 -1이 아닐때까지 클라이언트 로부터 NetworkID를 얻어옵니다.
+cNetworkManager->m_mapSwitch[NetworkID] 를 확인한뒤
+전송해야 할 내용이 있다면 해당 내용을 전송해줍니다.
+*///-----------------------------------------
 unsigned int _stdcall SEND_REQUEST(void* arg)
 {
 	ST_SOCKET_ADDR RecvSocket = *(ST_SOCKET_ADDR*)arg;

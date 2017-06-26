@@ -10,7 +10,7 @@ cContainer::~cContainer()
 {
 }
 
-/* 수신한 구조체의 정보를 컨테이너에 적용합니다 */
+/* 수신한 좌표 구조체의 정보를 컨테이너에 적용합니다 */
 void cContainer::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 {
 	float x = stRecv.fX;
@@ -33,6 +33,7 @@ void cContainer::ReceivePosition(int nNetworkID, ST_PLAYER_POSITION stRecv)
 	}
 }
 
+/* 수신한 맵 구조체의 정보를 컨테이너에 적용합니다 */
 void cContainer::ReceiveMap(ST_OBJECT_DATA stData)
 {
 	// 맵 정보 변경
@@ -51,7 +52,7 @@ void cContainer::ReceiveMap(ST_OBJECT_DATA stData)
 	m_stMapStatus.nBrickCount = stData.nBrickCount;
 }
 
-/* 인덱스에 따라 플레이어의 좌표를 반환합니다 */
+/* 요청한 클라이언트의 성별에 따라 상대 플레이어의 좌표를 반환합니다 */
 ST_PLAYER_POSITION cContainer::GetData(int nIndex)
 {
 	ST_PLAYER_POSITION result;
@@ -78,6 +79,7 @@ void cContainer::GetManPosition(OUT float * x, OUT float * y, OUT float * z, OUT
 	*angle = m_stMan.GetAngle();
 }
 
+/* 남자 캐릭터의 인벤토리 정보를 반환합니다 */
 void cContainer::GetManInventory(OUT int * nArr)
 {
 	for (int i = 0; i < INVENTORY_SIZE; ++i)
@@ -86,6 +88,7 @@ void cContainer::GetManInventory(OUT int * nArr)
 	}
 }
 
+/* 남자 캐릭터의 애니메이션 정보를 반환합니다 */
 animationState cContainer::GetManAnim()
 {
 	return m_stMan.GetAnimState();
@@ -98,6 +101,7 @@ void cContainer::GetWomanPosition(OUT float * x, OUT float * y, OUT float * z, O
 	*angle = m_stWoman.GetAngle();
 }
 
+/* 여자 캐릭터의 인벤토리 정보를 반환합니다 */
 void cContainer::GetWomanInventory(OUT int * nArr)
 {
 	for (int i = 0; i < INVENTORY_SIZE; ++i)
@@ -106,12 +110,13 @@ void cContainer::GetWomanInventory(OUT int * nArr)
 	}
 }
 
+/* 여자 캐릭터의 애니메이션 정보를 반환합니다 */
 animationState cContainer::GetWomanAnim()
 {
 	return m_stWoman.GetAnimState();
 }
 
-/* 맵데이터를 반환합니다 */
+/* 맵 물체의 정보를 반환합니다 */
 void cContainer::GetStuff(OUT float* X, OUT float* Y, OUT float* Z, OUT float* rotX, OUT float* rotY, OUT float* rotZ, OUT bool* IsRun)
 {
 	for (int i = 0; i < SWITCH_LASTNUM; ++i)
@@ -122,6 +127,7 @@ void cContainer::GetStuff(OUT float* X, OUT float* Y, OUT float* Z, OUT float* r
 	}
 }
 
+/* 맵의 상태를 반환합니다 (밸브 회전 등) */
 ST_MAP_STATUS cContainer::GetMapStatus()
 {
 	return m_stMapStatus;
@@ -385,17 +391,14 @@ void cContainer::SetDefault()
 	SaveData();
 }
 
+/* 인벤토리 구조체의 정보를 남자 인벤토리에 적용합니다 */
 void cContainer::SetManInventory(ST_INVENTORY_DATA stData)
 {
 	m_stMan.SetInventory(stData);
 }
 
+/* 인벤토리 구조체의 정보를 여자 인벤토리에 적용합니다 */
 void cContainer::SetWomanInventory(ST_INVENTORY_DATA stData)
 {
 	m_stWoman.SetInventory(stData);
 }
-
-void cContainer::Update()
-{
-}
-

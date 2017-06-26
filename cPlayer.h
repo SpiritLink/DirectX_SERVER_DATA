@@ -1,7 +1,7 @@
 #pragma once
 #include "cObject.h"
 
-
+/* 플레이어에 대한 정보를 지닌 클래스 입니다 cObject 클래스를 상속합니다 */
 class cPlayer : public cObject
 {
 protected:

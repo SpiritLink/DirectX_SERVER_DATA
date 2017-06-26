@@ -6,6 +6,7 @@
 
 struct ST_ALL_DATA;
 
+/* 클라이언트와 통신하는 클래스입니다 */
 class Server_DATA
 {
 private:

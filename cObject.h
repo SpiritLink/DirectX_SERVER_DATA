@@ -1,4 +1,6 @@
 #pragma once
+
+/* 좌표에 대한 정보를 지닌 클래스 입니다 */
 class cObject
 {
 protected:

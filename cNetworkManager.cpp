@@ -32,6 +32,7 @@ void cNetworkManager::addAddr(int ID, SOCKADDR_IN stAddr)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+/* Switch에 Flag를 등록합니다*/
 void cNetworkManager::AddFlag(int ID, FLAG eFlag)
 {
 	m_mapSwitch[ID] = m_mapSwitch[ID] | eFlag;
@@ -56,6 +57,7 @@ void cNetworkManager::SendGender(string Key)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+/* 클라이언트 에게 Map정보를 전송합니다 (key값 이용)*/
 void cNetworkManager::SendObject(string Key)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);
@@ -69,6 +71,7 @@ void cNetworkManager::SendObject(string Key)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+/* 클라이언트 에게 Map정보를 전송합니다 (networkID 이용)*/
 void cNetworkManager::SendObject(int ID)
 {
 	string key = m_mapID[ID];
@@ -82,6 +85,7 @@ void cNetworkManager::SendObject(int ID)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+/* 클라이언트 에게 Inventory정보를 전송합니다 */
 void cNetworkManager::SendInventory(int ID)
 {
 	string key = m_mapID[ID];
@@ -94,6 +98,7 @@ void cNetworkManager::SendInventory(int ID)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+/* 클라이언트 에게 Position정보를 전송합니다 */
 void cNetworkManager::SendPosition(int nNetworkID)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);
@@ -107,12 +112,14 @@ void cNetworkManager::SendPosition(int nNetworkID)
 	ReleaseMutex(g_hMutex_Net);
 }
 
+/* Switch에서 해당하는 FLAG를 삭제합니다 (전송을 완료했을때) */
 void cNetworkManager::SubFlag(int ID, FLAG eFlag)
 {
 	if (m_mapSwitch[ID] & eFlag)
 		m_mapSwitch[ID] = m_mapSwitch[ID] - eFlag;
 }
 
+/* 접속이 종료되었을때 클라이언트의 정보를 NetworkManager에서 제거합니다 */
 void cNetworkManager::Quit(int Id)
 {
 	WaitForSingleObject(g_hMutex_Net, INFINITE);

@@ -3,6 +3,7 @@
 
 #define g_pNetworkManager cNetworkManager::GetInstance()
 
+/* 클라이언트의 IP 및 Switch(FLAG) 를 관리합니다*/
 class cNetworkManager
 {
 private:
